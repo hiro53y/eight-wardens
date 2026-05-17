@@ -62,7 +62,7 @@ export function TitleScreen({
         </button>
       </nav>
 
-      <div className="version-label">Ver.1.0.0</div>
+      <div className="version-label">Ver.1.1.0</div>
     </section>
   );
 }

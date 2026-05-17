@@ -1,0 +1,76 @@
+import type { WaveDefinition } from '../types/game';
+
+export const waves: WaveDefinition[] = [
+  {
+    id: 1,
+    title: '草原の先触れ',
+    entries: [{ enemyId: 'grassSlime', count: 10 }],
+    spawnInterval: 1,
+    restExp: 1,
+  },
+  {
+    id: 2,
+    title: '走る影',
+    entries: [{ enemyId: 'runningChick', count: 10 }],
+    spawnInterval: 1,
+    restExp: 1,
+  },
+  {
+    id: 3,
+    title: '空からの襲撃',
+    entries: [{ enemyId: 'smallBat', count: 8 }],
+    spawnInterval: 1.2,
+    restExp: 2,
+  },
+  {
+    id: 4,
+    title: '青い群れ',
+    entries: [{ enemyId: 'blueSlime', count: 10 }],
+    spawnInterval: 1,
+    restExp: 4,
+  },
+  {
+    id: 5,
+    title: '大イモムシ',
+    entries: [{ enemyId: 'bigWorm', count: 1 }],
+    spawnInterval: 1,
+    restExp: 0,
+    isBoss: true,
+  },
+  {
+    id: 6,
+    title: '重い波',
+    entries: [{ enemyId: 'bigSlime', count: 10 }],
+    spawnInterval: 1,
+    restExp: 8,
+  },
+  {
+    id: 7,
+    title: '高速突破',
+    entries: [{ enemyId: 'dashBird', count: 12 }],
+    spawnInterval: 0.6,
+    restExp: 10,
+  },
+  {
+    id: 8,
+    title: '夜の羽音',
+    entries: [{ enemyId: 'batSwarm', count: 10 }],
+    spawnInterval: 0.9,
+    restExp: 12,
+  },
+  {
+    id: 9,
+    title: '鉄粒の行進',
+    entries: [{ enemyId: 'metalSlime', count: 10 }],
+    spawnInterval: 0.8,
+    restExp: 20,
+  },
+  {
+    id: 10,
+    title: '毒サソリ決戦',
+    entries: [{ enemyId: 'poisonScorpion', count: 1 }],
+    spawnInterval: 1,
+    restExp: 0,
+    isBoss: true,
+  },
+];

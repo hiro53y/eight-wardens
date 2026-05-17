@@ -5,7 +5,7 @@ export function registerServiceWorker() {
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('/sw.js')
+      .register('/service-worker.js')
       .then((registration) => registration.update())
       .catch((error: unknown) => {
         console.warn('Service worker registration failed', error);

@@ -1356,3 +1356,553 @@ button {
     min-width: auto;
   }
 }
+
+/* 2026-05-17 mobile landscape fit pass.
+   The live Android screenshots show Chrome UI covering the lower edge, so the
+   playable frame intentionally keeps a conservative bottom gutter outside
+   standalone mode. */
+.app-shell {
+  padding:
+    max(4px, env(safe-area-inset-top))
+    max(4px, env(safe-area-inset-right))
+    max(38px, env(safe-area-inset-bottom))
+    max(4px, env(safe-area-inset-left));
+}
+
+@media (display-mode: standalone) {
+  .app-shell {
+    padding:
+      max(4px, env(safe-area-inset-top))
+      max(4px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom))
+      max(4px, env(safe-area-inset-left));
+  }
+}
+
+.game-frame {
+  width: min(100%, calc((100dvh - max(42px, env(safe-area-inset-bottom)) - max(6px, env(safe-area-inset-top))) * 16 / 9));
+  height: min(100%, calc((100vw - max(8px, env(safe-area-inset-left)) - max(8px, env(safe-area-inset-right))) * 9 / 16));
+}
+
+@media (display-mode: standalone) {
+  .game-frame {
+    width: min(100%, calc((100dvh - max(8px, env(safe-area-inset-bottom)) - max(8px, env(safe-area-inset-top))) * 16 / 9));
+  }
+}
+
+.map-header,
+.management-header,
+.simple-header,
+.top-hud {
+  height: clamp(36px, 7dvh, 58px);
+  min-height: 0;
+  gap: clamp(4px, 0.55vw, 8px);
+  padding: clamp(3px, 0.7dvh, 6px) clamp(5px, 0.8vw, 10px);
+}
+
+.nav-back,
+.tab,
+.hud-square,
+.hud-speed,
+.header-stat,
+.hud-stat {
+  min-height: clamp(28px, 5.4dvh, 44px);
+  padding: clamp(3px, 0.65dvh, 7px) clamp(7px, 1.05vw, 14px);
+  border-radius: 6px;
+  font-size: clamp(11px, 1.35vw, 18px);
+}
+
+.map-title,
+.management-header h1,
+.simple-header h1 {
+  font-size: clamp(17px, 2.1vw, 28px);
+}
+
+.header-stat,
+.hud-stat {
+  min-width: clamp(80px, 11vw, 145px);
+}
+
+.action-button {
+  min-height: clamp(34px, 7dvh, 56px);
+  padding: clamp(5px, 1dvh, 9px) clamp(10px, 1.5vw, 18px);
+  font-size: clamp(15px, 2vw, 26px);
+}
+
+.title-screen {
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.title-screen::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 38%;
+  background: linear-gradient(180deg, transparent, rgba(2, 6, 8, 0.62) 68%, rgba(2, 6, 8, 0.9));
+  pointer-events: none;
+}
+
+.title-logo {
+  top: clamp(16px, 5.4dvh, 42px);
+  width: min(43%, 610px);
+  min-width: 250px;
+  padding: clamp(8px, 1.25dvh, 15px) clamp(16px, 2vw, 28px) clamp(10px, 1.6dvh, 20px);
+}
+
+.title-logo img {
+  width: clamp(34px, 4.6vw, 66px);
+  top: -16%;
+}
+
+.title-main {
+  font-size: clamp(34px, 5.15vw, 70px);
+}
+
+.title-sub {
+  font-size: clamp(17px, 2.25vw, 30px);
+}
+
+.enemy-column,
+.title-castle-flag,
+.title-top-actions,
+.account-button {
+  display: none;
+}
+
+.warden-row {
+  left: 18%;
+  right: 18%;
+  bottom: clamp(92px, 17.5dvh, 148px);
+  z-index: 1;
+  gap: clamp(4px, 0.65vw, 10px);
+  pointer-events: none;
+}
+
+.title-warden,
+.title-warden:nth-child(2),
+.title-warden:nth-child(7) {
+  height: clamp(44px, 9.2dvh, 78px);
+  border-width: 2px;
+  font-size: clamp(18px, 2.45vw, 34px);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.28);
+}
+
+.title-warden small {
+  bottom: -1.35em;
+  font-size: clamp(8px, 0.95vw, 12px);
+}
+
+.title-menu {
+  left: 8%;
+  right: 8%;
+  bottom: clamp(24px, 4.4dvh, 42px);
+  z-index: 2;
+  gap: clamp(8px, 1.4vw, 18px);
+}
+
+.version-label {
+  bottom: clamp(8px, 1.2dvh, 12px);
+  z-index: 3;
+}
+
+.map-layout {
+  height: calc(100% - clamp(36px, 7dvh, 58px));
+  grid-template-columns: minmax(0, 1fr) clamp(240px, 30vw, 340px);
+  gap: clamp(5px, 0.7vw, 10px);
+  padding: clamp(5px, 0.85dvh, 9px);
+  min-height: 0;
+}
+
+.chapter-banner {
+  width: min(30%, 250px);
+  min-width: 158px;
+  padding: clamp(7px, 1.1dvh, 12px) clamp(10px, 1.2vw, 16px) clamp(7px, 1.1dvh, 12px) clamp(42px, 4.2vw, 62px);
+}
+
+.chapter-banner img {
+  width: clamp(30px, 3.4vw, 46px);
+}
+
+.chapter-banner strong {
+  font-size: clamp(16px, 1.8vw, 24px);
+}
+
+.map-village,
+.map-castle,
+.map-creature {
+  opacity: 0.72;
+}
+
+.stage-node {
+  width: clamp(38px, 5.2vw, 60px);
+  height: clamp(44px, 7.4dvh, 70px);
+}
+
+.stage-node span {
+  width: clamp(32px, 4.2vw, 48px);
+  height: clamp(32px, 5.6dvh, 48px);
+  border-width: 2px;
+  border-radius: 50%;
+  font-size: clamp(15px, 2vw, 24px);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.34);
+}
+
+.stage-node small {
+  display: none;
+}
+
+.stage-node.locked span {
+  color: transparent;
+  position: relative;
+}
+
+.stage-node.locked span::before {
+  content: "";
+  width: 42%;
+  height: 34%;
+  border: 2px solid #e6d1a5;
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  position: absolute;
+  top: 22%;
+}
+
+.stage-node.locked span::after {
+  content: "";
+  width: 48%;
+  height: 36%;
+  border-radius: 4px;
+  background: #e6d1a5;
+  position: absolute;
+  bottom: 20%;
+}
+
+.stage-node.selected span {
+  animation: nodePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 216, 86, 0.25), 0 0 16px rgba(255, 216, 86, 0.78); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 216, 86, 0.12), 0 0 24px rgba(255, 216, 86, 0.95); }
+}
+
+.stage-info-panel {
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(8px, 1.1dvh, 12px);
+  gap: clamp(5px, 0.8dvh, 8px);
+}
+
+.stage-number {
+  font-size: clamp(16px, 1.8vw, 24px);
+}
+
+.stage-info-panel h2 {
+  font-size: clamp(18px, 2.1vw, 27px);
+  padding-bottom: 0.25em;
+}
+
+.stage-info-panel p {
+  font-size: clamp(11px, 1.13vw, 15px);
+  line-height: 1.35;
+}
+
+.enemy-type-row,
+.reward-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(4px, 0.55vw, 7px);
+}
+
+.enemy-chip,
+.reward-row div,
+.recommended-power,
+.stage-state,
+.stamina-row {
+  padding: clamp(5px, 0.8dvh, 8px);
+  font-size: clamp(10px, 1.05vw, 14px);
+}
+
+.enemy-chip i {
+  width: clamp(16px, 2vw, 27px);
+}
+
+.deploy-button {
+  position: sticky;
+  bottom: 0;
+  margin-top: clamp(4px, 0.7dvh, 8px);
+}
+
+.management-layout {
+  height: calc(100% - clamp(36px, 7dvh, 58px));
+  grid-template-columns: minmax(250px, 34%) minmax(0, 42%) minmax(150px, 24%);
+  gap: clamp(5px, 0.65vw, 9px);
+  padding: clamp(5px, 0.8dvh, 8px);
+  min-height: 0;
+}
+
+.unit-list-panel,
+.unit-profile-panel,
+.formation-panel {
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(6px, 0.9dvh, 10px);
+}
+
+.unit-list-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-title {
+  font-size: clamp(13px, 1.35vw, 18px);
+}
+
+.unit-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 0.7vw, 8px);
+  margin-top: clamp(5px, 0.8dvh, 8px);
+  padding-right: 3px;
+}
+
+.unit-card {
+  grid-template-columns: clamp(46px, 5.2vw, 64px) minmax(0, 1fr);
+  min-height: clamp(68px, 12dvh, 88px);
+  padding: clamp(5px, 0.75dvh, 7px);
+  gap: clamp(5px, 0.55vw, 7px);
+}
+
+.unit-portrait {
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+}
+
+.generated-portrait {
+  background-size: auto 200%;
+  background-position: var(--portrait-x, 0%) var(--portrait-y, 0%);
+}
+
+.unit-card-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px;
+  font-size: clamp(11px, 1.18vw, 15px);
+}
+
+.unit-card-row strong {
+  white-space: normal;
+  line-height: 1.12;
+  max-height: 2.24em;
+}
+
+.unit-class-name,
+.unit-card-sub {
+  font-size: clamp(9px, 1vw, 12px);
+}
+
+.unit-stars {
+  font-size: clamp(8px, 0.9vw, 11px);
+}
+
+.mini-bar {
+  height: clamp(7px, 1.1dvh, 10px);
+}
+
+.unit-profile-panel {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: clamp(5px, 0.8dvh, 8px);
+}
+
+.profile-top {
+  min-height: 0;
+  grid-template-columns: minmax(120px, 37%) minmax(0, 1fr);
+  gap: clamp(7px, 1vw, 12px);
+}
+
+.large-portrait {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  align-self: start;
+  max-height: clamp(170px, 39dvh, 255px);
+  font-size: clamp(42px, 6vw, 86px);
+  background-size: auto 200%;
+}
+
+.profile-stats {
+  align-content: start;
+  gap: clamp(2px, 0.45dvh, 5px);
+  font-size: clamp(11px, 1.18vw, 15px);
+  line-height: 1.25;
+  overflow: hidden;
+}
+
+.profile-stats h2 {
+  font-size: clamp(21px, 2.35vw, 31px);
+}
+
+.profile-stats h3 {
+  font-size: clamp(15px, 1.55vw, 21px);
+}
+
+.star-row {
+  font-size: clamp(14px, 1.45vw, 20px);
+}
+
+.class-tree-panel {
+  margin-top: 0;
+  max-height: clamp(88px, 20dvh, 130px);
+  overflow-y: auto;
+  padding: clamp(6px, 0.85dvh, 9px);
+}
+
+.class-tree {
+  grid-template-columns: minmax(76px, 112px) 18px minmax(0, 1fr);
+  gap: clamp(5px, 0.8vw, 10px);
+  margin: clamp(5px, 0.7dvh, 8px) 0;
+}
+
+.class-node {
+  min-height: clamp(38px, 7dvh, 55px);
+  padding: 5px;
+  font-size: clamp(10px, 1vw, 13px);
+}
+
+.class-tree-panel p {
+  margin: 3px 0;
+  font-size: clamp(10px, 1vw, 13px);
+}
+
+.formation-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) repeat(4, auto);
+  gap: clamp(5px, 0.75dvh, 8px);
+  align-content: stretch;
+}
+
+.formation-field {
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(5px, 0.75dvh, 8px);
+}
+
+.formation-grid {
+  height: 100%;
+  align-content: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(4px, 0.6vw, 7px);
+}
+
+.formation-slot {
+  height: auto;
+  aspect-ratio: 1 / 1;
+  min-height: clamp(30px, 5.7dvh, 48px);
+  max-height: clamp(38px, 7dvh, 58px);
+  justify-self: center;
+  width: min(100%, clamp(34px, 4.8vw, 54px));
+  font-size: clamp(14px, 1.7vw, 22px);
+}
+
+.formation-panel .action-button {
+  min-height: clamp(29px, 5.7dvh, 43px);
+  font-size: clamp(13px, 1.55vw, 20px);
+  padding-block: clamp(3px, 0.6dvh, 6px);
+}
+
+.encyclopedia-layout {
+  height: calc(100% - clamp(36px, 7dvh, 58px));
+  gap: clamp(6px, 0.85vw, 10px);
+  padding: clamp(6px, 0.9dvh, 10px);
+  min-height: 0;
+}
+
+.header-note {
+  font-size: clamp(10px, 1.15vw, 15px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-panel {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  padding: clamp(7px, 1dvh, 11px);
+}
+
+.book-panel h2 {
+  margin-bottom: clamp(5px, 0.8dvh, 9px);
+  font-size: clamp(19px, 2vw, 28px);
+}
+
+.book-grid {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(5px, 0.75vw, 9px);
+}
+
+.book-card {
+  min-height: clamp(74px, 13dvh, 104px);
+  padding: clamp(6px, 0.85dvh, 9px);
+  grid-template-columns: clamp(34px, 4vw, 48px) minmax(0, 1fr);
+  border-color: rgba(217, 180, 106, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 241, 200, 0.14), rgba(255, 241, 200, 0.03) 52%),
+    linear-gradient(135deg, rgba(26, 32, 36, 0.92), rgba(18, 15, 13, 0.95));
+}
+
+.book-icon,
+.book-class-icon {
+  width: clamp(34px, 4vw, 48px);
+  height: clamp(34px, 4vw, 48px);
+}
+
+.book-card strong {
+  font-size: clamp(12px, 1.25vw, 17px);
+}
+
+.book-card small,
+.book-card span {
+  font-size: clamp(10px, 1.05vw, 13px);
+  line-height: 1.22;
+}
+
+@media (max-width: 1050px) {
+  .map-title {
+    display: none;
+  }
+
+  .tab {
+    min-width: 0;
+  }
+
+  .management-layout {
+    grid-template-columns: minmax(218px, 35%) minmax(0, 42%) minmax(132px, 23%);
+  }
+
+  .management-header .header-stat {
+    min-width: auto;
+  }
+
+  .management-header h1 {
+    font-size: clamp(16px, 2vw, 24px);
+  }
+
+  .unit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .unit-card {
+    min-height: clamp(56px, 10.5dvh, 72px);
+  }
+
+  .unit-card-sub,
+  .unit-stars {
+    display: none;
+  }
+}

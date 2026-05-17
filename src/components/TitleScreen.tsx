@@ -7,7 +7,6 @@ interface TitleScreenProps {
 }
 
 export function TitleScreen({
-  hasLocalSave,
   onStart,
   onContinue,
   onOpenEncyclopedia,
@@ -17,12 +16,6 @@ export function TitleScreen({
 
   return (
     <section className="screen title-screen">
-      <div className="title-top-actions">
-        <button className="small-fantasy-button">告 お知らせ</button>
-        <button className="small-fantasy-button">贈 特典受取</button>
-      </div>
-      <div className="account-button">ローカルセーブ {hasLocalSave ? '有効' : '待機'}</div>
-
       <div className="title-landscape">
         <div className="enemy-column">
           <span className="banner-skull">!</span>

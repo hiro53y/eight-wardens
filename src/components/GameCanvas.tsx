@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { PointerEvent } from 'react';
 import { enemies } from '../data/enemies';
 import { unitClasses } from '../data/classes';
+import { classSpriteIndex, enemySheet, enemySpriteIndex, wardenSheet } from '../data/artAssets';
 import type { BattleEnemy, BattleState, Effect, PlayerState, Projectile, UnitState } from '../types/game';
 import { BATTLE_HEIGHT, BATTLE_WIDTH, distance, getUnitPosition, PATH_Y, VILLAGE_GATE_X } from '../engine/targeting';
 
@@ -26,6 +27,8 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, wi
 }
 
 let battleBackgroundImage: HTMLImageElement | null = null;
+let wardenSpriteImage: HTMLImageElement | null = null;
+let enemySpriteImage: HTMLImageElement | null = null;
 
 function getBattleBackgroundImage() {
   if (typeof window === 'undefined') {
@@ -36,6 +39,46 @@ function getBattleBackgroundImage() {
     battleBackgroundImage.src = '/assets/generated/battle-background.png';
   }
   return battleBackgroundImage;
+}
+
+function getSpriteImage(kind: 'warden' | 'enemy') {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  if (kind === 'warden') {
+    if (!wardenSpriteImage) {
+      wardenSpriteImage = new Image();
+      wardenSpriteImage.src = wardenSheet.url;
+    }
+    return wardenSpriteImage;
+  }
+  if (!enemySpriteImage) {
+    enemySpriteImage = new Image();
+    enemySpriteImage.src = enemySheet.url;
+  }
+  return enemySpriteImage;
+}
+
+function drawSpriteFromSheet(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement | null,
+  index: number,
+  columns: number,
+  rows: number,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) {
+  if (!image?.complete || image.naturalWidth <= 0) {
+    return false;
+  }
+  const sourceWidth = image.naturalWidth / columns;
+  const sourceHeight = image.naturalHeight / rows;
+  const column = index % columns;
+  const row = Math.floor(index / columns);
+  ctx.drawImage(image, column * sourceWidth, row * sourceHeight, sourceWidth, sourceHeight, x, y, width, height);
+  return true;
 }
 
 function drawBackground(ctx: CanvasRenderingContext2D) {
@@ -135,59 +178,49 @@ function drawBackground(ctx: CanvasRenderingContext2D) {
 
 function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   const def = enemies[enemy.enemyId];
-  const radius = def.type === 'boss' ? 30 : def.type === 'metal' ? 18 : 22;
+  const radius = def.type === 'boss' ? 34 : def.type === 'metal' ? 20 : 24;
   const hpRate = Math.max(0, enemy.hp / enemy.maxHp);
+  const hitShake = enemy.slowTimer > 0 ? Math.sin(performance.now() / 18) * 2.5 : 0;
 
   ctx.save();
-  ctx.translate(enemy.x, enemy.y);
+  ctx.translate(enemy.x + hitShake, enemy.y);
   if (enemy.slowTimer > 0) {
-    ctx.globalAlpha = 0.75;
+    ctx.globalAlpha = 0.88;
   }
 
-  if (def.type === 'fly') {
-    ctx.fillStyle = 'rgba(24, 16, 34, 0.65)';
-    ctx.beginPath();
-    ctx.ellipse(-24, 2, 24, 10, -0.4, 0, Math.PI * 2);
-    ctx.ellipse(24, 2, 24, 10, 0.4, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  ctx.fillStyle = def.color;
-  ctx.strokeStyle = '#231a18';
-  ctx.lineWidth = 3;
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
   ctx.beginPath();
-  if (def.type === 'rapid') {
-    ctx.ellipse(0, 0, radius * 1.2, radius * 0.8, 0, 0, Math.PI * 2);
-  } else if (def.type === 'boss') {
-    ctx.ellipse(0, 2, radius * 1.2, radius, 0, 0, Math.PI * 2);
-  } else {
+  ctx.ellipse(0, radius * 0.78, radius * 1.1, radius * 0.28, 0, 0, Math.PI * 2);
+  ctx.fill();
+  const spriteIndex = enemySpriteIndex[enemy.enemyId] ?? 0;
+  const drawn = drawSpriteFromSheet(
+    ctx,
+    getSpriteImage('enemy'),
+    spriteIndex,
+    enemySheet.columns,
+    enemySheet.rows,
+    -radius * 1.55,
+    -radius * 1.65,
+    radius * 3.1,
+    radius * 3.1,
+  );
+  if (!drawn) {
+    ctx.fillStyle = def.color;
+    ctx.strokeStyle = '#231a18';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
     ctx.arc(0, 0, radius, 0, Math.PI * 2);
-  }
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.fillStyle = '#111';
-  ctx.beginPath();
-  ctx.arc(-radius * 0.32, -radius * 0.18, 3.4, 0, Math.PI * 2);
-  ctx.arc(radius * 0.32, -radius * 0.18, 3.4, 0, Math.PI * 2);
-  ctx.fill();
-
-  if (def.type === 'metal') {
-    ctx.fillStyle = '#eef7ff';
-    ctx.beginPath();
-    ctx.arc(-6, -7, 4, 0, Math.PI * 2);
-    ctx.arc(7, -7, 4, 0, Math.PI * 2);
     ctx.fill();
+    ctx.stroke();
   }
-
   ctx.restore();
 
   ctx.fillStyle = '#15110f';
-  ctx.fillRect(enemy.x - 28, enemy.y - radius - 18, 56, 7);
+  ctx.fillRect(enemy.x - 30, enemy.y - radius - 26, 60, 8);
   ctx.fillStyle = hpRate > 0.35 ? '#87dd4a' : '#ff6961';
-  ctx.fillRect(enemy.x - 28, enemy.y - radius - 18, 56 * hpRate, 7);
+  ctx.fillRect(enemy.x - 30, enemy.y - radius - 26, 60 * hpRate, 8);
   ctx.strokeStyle = '#2a2019';
-  ctx.strokeRect(enemy.x - 28, enemy.y - radius - 18, 56, 7);
+  ctx.strokeRect(enemy.x - 30, enemy.y - radius - 26, 60, 8);
 
   ctx.fillStyle = '#f5e3af';
   ctx.font = 'bold 13px sans-serif';
@@ -198,6 +231,7 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
 function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: boolean) {
   const unitClass = unitClasses[unit.classId];
   const pos = getUnitPosition(unit.slot);
+  const hpRate = Math.max(0, Math.min(1, unit.hp / unit.maxHp));
 
   ctx.save();
   ctx.translate(pos.x, pos.y);
@@ -209,39 +243,26 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.lineWidth = selected ? 4 : 2;
   ctx.stroke();
 
-  ctx.fillStyle = unit.isResting ? '#5b6b59' : unitClass.color;
-  ctx.strokeStyle = '#121417';
-  ctx.lineWidth = 3;
-  drawRoundedRect(ctx, -24, -44, 48, 60, 12);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.fillStyle = '#f0d0a4';
-  ctx.beginPath();
-  ctx.arc(0, -48, 16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.strokeStyle = '#191414';
-  ctx.lineWidth = 5;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  if (unitClass.icon === '弓' || unitClass.icon === '遊' || unitClass.icon === '風') {
-    ctx.moveTo(20, -36);
-    ctx.quadraticCurveTo(44, -18, 20, 10);
-  } else if (unitClass.icon === '砲' || unitClass.icon === '銃' || unitClass.icon === '狙') {
-    ctx.moveTo(18, -23);
-    ctx.lineTo(48, -30);
-  } else {
-    ctx.moveTo(17, -30);
-    ctx.lineTo(42, -54);
+  const spriteIndex = classSpriteIndex[unit.classId] ?? 0;
+  const drawn = drawSpriteFromSheet(
+    ctx,
+    getSpriteImage('warden'),
+    spriteIndex,
+    wardenSheet.columns,
+    wardenSheet.rows,
+    -38,
+    -78,
+    76,
+    92,
+  );
+  if (!drawn) {
+    ctx.fillStyle = unit.isResting ? '#5b6b59' : unitClass.color;
+    ctx.strokeStyle = '#121417';
+    ctx.lineWidth = 3;
+    drawRoundedRect(ctx, -24, -44, 48, 60, 12);
+    ctx.fill();
+    ctx.stroke();
   }
-  ctx.stroke();
-
-  ctx.fillStyle = '#f4e8c2';
-  ctx.font = 'bold 20px serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(unitClass.icon, 0, -7);
 
   if (unit.isResting) {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
@@ -256,6 +277,13 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.font = 'bold 14px sans-serif';
   ctx.fillText(unitClass.name, 0, 42);
   ctx.restore();
+
+  ctx.fillStyle = '#17110e';
+  ctx.fillRect(pos.x - 30, pos.y - 92, 60, 7);
+  ctx.fillStyle = hpRate > 0.35 ? '#8ee64d' : '#ff6961';
+  ctx.fillRect(pos.x - 30, pos.y - 92, 60 * hpRate, 7);
+  ctx.strokeStyle = '#2a2019';
+  ctx.strokeRect(pos.x - 30, pos.y - 92, 60, 7);
 }
 
 function drawProjectile(ctx: CanvasRenderingContext2D, projectile: Projectile) {
@@ -263,11 +291,30 @@ function drawProjectile(ctx: CanvasRenderingContext2D, projectile: Projectile) {
   ctx.save();
   ctx.globalAlpha = 1 - progress * 0.35;
   ctx.strokeStyle = projectile.color;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = projectile.kind === 'slash' ? 8 : projectile.kind === 'cannon' ? 7 : 5;
+  ctx.shadowColor = projectile.color;
+  ctx.shadowBlur = 14;
   ctx.beginPath();
-  ctx.moveTo(projectile.fromX, projectile.fromY);
-  ctx.lineTo(projectile.toX, projectile.toY);
+  if (projectile.kind === 'slash') {
+    const x = projectile.toX;
+    const y = projectile.toY;
+    ctx.moveTo(x - 34, y + 24);
+    ctx.quadraticCurveTo(x, y - 30, x + 36, y - 18);
+  } else {
+    ctx.moveTo(projectile.fromX, projectile.fromY);
+    ctx.lineTo(projectile.toX, projectile.toY);
+  }
   ctx.stroke();
+  ctx.fillStyle = projectile.kind === 'arrow' ? '#f5e6bd' : projectile.color;
+  ctx.beginPath();
+  const burst = projectile.kind === 'cannon' ? 18 : projectile.kind === 'magic' ? 15 : 10;
+  ctx.arc(projectile.toX, projectile.toY, burst * (1 - progress) + 4, 0, Math.PI * 2);
+  ctx.fill();
+  if (projectile.kind === 'magic') {
+    ctx.strokeStyle = '#fff4cf';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
   ctx.restore();
 }
 
@@ -278,7 +325,7 @@ function drawEffect(ctx: CanvasRenderingContext2D, effect: Effect) {
   ctx.fillStyle = effect.color ?? '#fff';
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
   ctx.lineWidth = 3;
-  ctx.font = effect.type === 'gold' ? 'bold 28px serif' : 'bold 18px sans-serif';
+  ctx.font = effect.type === 'hit' ? 'bold 34px serif' : effect.type === 'gold' ? 'bold 30px serif' : 'bold 18px sans-serif';
   ctx.textAlign = 'center';
   const y = effect.y - progress * 36;
   if (effect.text) {

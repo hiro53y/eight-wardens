@@ -7,6 +7,7 @@ import { StageSelectScreen } from './components/StageSelectScreen';
 import { TitleScreen } from './components/TitleScreen';
 import { UnitManagementScreen } from './components/UnitManagementScreen';
 import { createBattleState } from './engine/gameLoop';
+import { playSceneBgm, unlockAudio } from './engine/audio';
 import { createInitialPlayerState } from './engine/progression';
 import { clearSave, hasSave, loadGame, loadSettings, saveGame, saveSettings } from './engine/save';
 import type { BattleState, PlayerState, Screen, SettingsState } from './types/game';
@@ -51,6 +52,10 @@ export default function App() {
   }, [settings]);
 
   useEffect(() => {
+    playSceneBgm(currentScreen, selectedStage, settings.bgm);
+  }, [currentScreen, selectedStage, settings.bgm]);
+
+  useEffect(() => {
     if (!sessionStarted) {
       return;
     }
@@ -65,6 +70,7 @@ export default function App() {
   const showToast = (message: string) => setToast(message);
 
   const startNewGame = () => {
+    unlockAudio();
     const newPlayer = createInitialPlayerState();
     setPlayerState(newPlayer);
     setBattleState(null);
@@ -76,6 +82,7 @@ export default function App() {
   };
 
   const continueGame = () => {
+    unlockAudio();
     const loaded = loadGame() ?? createInitialPlayerState();
     setPlayerState(loaded);
     setBattleState(null);
@@ -87,6 +94,7 @@ export default function App() {
   };
 
   const startBattle = (stageId: number) => {
+    unlockAudio();
     setSelectedStage(stageId);
     setBattleState(createBattleState(stageId, playerState.units[0].id));
     setSessionStarted(true);
@@ -143,6 +151,7 @@ export default function App() {
           onBackToMap={() => setCurrentScreen('stageSelect')}
           onOpenSettings={() => setCurrentScreen('settings')}
           onToast={showToast}
+          seEnabled={settings.se}
         />
       );
     }

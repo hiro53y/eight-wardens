@@ -1906,3 +1906,190 @@ button {
     display: none;
   }
 }
+
+.asset-sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: var(--sprite-url);
+  background-size: var(--sprite-size-x) var(--sprite-size-y);
+  background-position: var(--sprite-x) var(--sprite-y);
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.45));
+}
+
+.title-logo {
+  top: clamp(20px, 6.2dvh, 48px);
+  padding-top: clamp(14px, 2.4dvh, 26px);
+}
+
+.title-logo img {
+  top: -12%;
+  width: clamp(30px, 4vw, 58px);
+}
+
+.title-menu {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  left: 12%;
+  right: 12%;
+}
+
+.title-menu .action-button {
+  font-family: Georgia, "Yu Mincho", "Yu Gothic", serif;
+  letter-spacing: 0;
+  border-color: #e0bd74;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -16px 24px rgba(0, 0, 0, 0.38),
+    0 4px 0 #4b321a,
+    0 0 18px rgba(217, 180, 106, 0.16);
+}
+
+.warden-row {
+  display: none;
+}
+
+.action-button {
+  display: grid;
+  place-items: center;
+  line-height: 1.05;
+  text-align: center;
+}
+
+.stage-node span {
+  position: relative;
+  overflow: visible;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.stage-node .marker-sprite {
+  width: clamp(42px, 5.4vw, 62px);
+  height: clamp(42px, 7.2dvh, 62px);
+}
+
+.stage-node b {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -46%);
+  color: #fff7ce;
+  font-size: clamp(15px, 1.8vw, 24px);
+  text-shadow: 0 2px 4px #000;
+}
+
+.stage-node.locked span::before,
+.stage-node.locked span::after {
+  content: none;
+}
+
+.map-creature {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.map-creature .enemy-sprite-art,
+.map-creature .marker-sprite {
+  width: 100%;
+  height: 100%;
+}
+
+.enemy-chip i {
+  display: block;
+  width: clamp(30px, 3.4vw, 46px);
+  border: 0;
+  background: transparent;
+}
+
+.enemy-chip i .enemy-sprite-art {
+  width: 100%;
+  height: 100%;
+}
+
+.book-icon,
+.book-class-icon,
+.unit-portrait,
+.detail-portrait,
+.large-portrait,
+.formation-slot {
+  position: relative;
+  overflow: hidden;
+}
+
+.book-icon,
+.book-class-icon {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 245, 205, 0.2), transparent 45%),
+    linear-gradient(180deg, #1b2d3d, #0b1118) !important;
+}
+
+.book-icon .enemy-sprite-art,
+.book-class-icon .warden-sprite {
+  position: absolute;
+  inset: 5%;
+  width: 90%;
+  height: 90%;
+}
+
+.unit-portrait .warden-sprite,
+.detail-portrait .warden-sprite,
+.large-portrait .warden-sprite,
+.formation-slot .warden-sprite {
+  position: absolute;
+  inset: 2%;
+  width: 96%;
+  height: 96%;
+}
+
+.unit-portrait::after,
+.detail-portrait::after,
+.large-portrait::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(130deg, rgba(255, 255, 255, 0.15), transparent 34%, transparent 70%, rgba(0, 0, 0, 0.18));
+  pointer-events: none;
+}
+
+.unit-portrait i,
+.detail-portrait i {
+  display: none;
+}
+
+.large-portrait {
+  background:
+    radial-gradient(circle at 50% 26%, color-mix(in srgb, var(--unit-color) 72%, white 18%), transparent 42%),
+    linear-gradient(180deg, rgba(18, 26, 34, 0.95), rgba(6, 10, 15, 0.96));
+}
+
+.formation-slot {
+  border-radius: 18px;
+}
+
+.formation-slot .warden-sprite {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.deploy-button {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  line-height: 1;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.battle-actions .action-button {
+  min-height: clamp(30px, 5.8dvh, 46px);
+  font-size: clamp(14px, 1.75vw, 22px);
+}
+
+.unit-detail-panel {
+  flex-basis: clamp(114px, 18.2dvh, 166px);
+  grid-template-columns: 11.5% minmax(0, 1fr) 21% 28%;
+}

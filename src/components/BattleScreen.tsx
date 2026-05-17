@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { unitClasses } from '../data/classes';
 import { beginNextWave, updateBattleState } from '../engine/gameLoop';
+import { playDamageSe } from '../engine/audio';
 import { markStageCleared } from '../engine/progression';
 import { promoteUnit, tryLevelUp } from '../engine/combat';
 import type { BattleState, PlayerState } from '../types/game';
@@ -18,6 +19,7 @@ interface BattleScreenProps {
   onBackToMap: () => void;
   onOpenSettings: () => void;
   onToast: (message: string) => void;
+  seEnabled: boolean;
 }
 
 export function BattleScreen({
@@ -28,13 +30,28 @@ export function BattleScreen({
   onBackToMap,
   onOpenSettings,
   onToast,
+  seEnabled,
 }: BattleScreenProps) {
   const playerRef = useRef(playerState);
+  const seenHitEffectsRef = useRef(new Set<string>());
   const [promotionOpen, setPromotionOpen] = useState(false);
 
   useEffect(() => {
     playerRef.current = playerState;
   }, [playerState]);
+
+  useEffect(() => {
+    const newHit = battleState.effects.some((effect) => {
+      if (effect.type !== 'hit' || seenHitEffectsRef.current.has(effect.id)) {
+        return false;
+      }
+      seenHitEffectsRef.current.add(effect.id);
+      return true;
+    });
+    if (newHit) {
+      playDamageSe(seEnabled);
+    }
+  }, [battleState.effects, seEnabled]);
 
   useEffect(() => {
     let frameId = 0;

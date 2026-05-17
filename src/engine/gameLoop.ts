@@ -137,6 +137,19 @@ function addProjectile(projectiles: Projectile[], projectile: Omit<Projectile, '
   ];
 }
 
+function getProjectileKind(classId: string): Projectile['kind'] {
+  if (['swordsman', 'kensai', 'swordmaster', 'heavyKnight', 'darkKnight', 'ninja', 'assassin'].includes(classId)) {
+    return 'slash';
+  }
+  if (['archer', 'ranger', 'windArcher'].includes(classId)) {
+    return 'arrow';
+  }
+  if (['artillerist', 'gunner', 'sniper'].includes(classId)) {
+    return 'cannon';
+  }
+  return 'magic';
+}
+
 function updateRestingUnits(units: UnitState[], waveRestExp: number, isBoss: boolean, dt: number): UnitState[] {
   if (isBoss || waveRestExp <= 0) {
     return units;
@@ -271,6 +284,7 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
           toY: target.y - 12,
           duration: 0.18,
           color: unitClass.color,
+          kind: getProjectileKind(nextUnit.classId),
         });
         effects = addEffect(effects, {
           type: 'hit',

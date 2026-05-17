@@ -10,6 +10,12 @@ export const enemySheet = {
   rows: 2,
 } as const;
 
+export const markerSheet = {
+  url: '/assets/generated/map-marker-sheet.png?v=20260517-marker1',
+  columns: 4,
+  rows: 1,
+} as const;
+
 export const classSpriteIndex: Record<string, number> = {
   swordsman: 0,
   kensai: 0,

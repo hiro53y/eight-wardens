@@ -109,6 +109,7 @@ export interface Projectile {
   age: number;
   duration: number;
   color: string;
+  kind?: 'slash' | 'arrow' | 'cannon' | 'magic';
 }
 
 export interface Effect {

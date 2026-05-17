@@ -2,7 +2,7 @@ import { enemies } from '../data/enemies';
 import { waves } from '../data/waves';
 import { isStageUnlocked } from '../engine/progression';
 import type { PlayerState } from '../types/game';
-import { EnemySprite } from './AssetSprite';
+import { EnemySprite, MarkerSprite } from './AssetSprite';
 
 interface StageSelectScreenProps {
   playerState: PlayerState;
@@ -52,7 +52,6 @@ export function StageSelectScreen({
   onDeploy,
   onBack,
   onOpenUnits,
-  onOpenEncyclopedia,
   onOpenSettings,
   onToast,
 }: StageSelectScreenProps) {
@@ -80,9 +79,6 @@ export function StageSelectScreen({
         <button className="tab" onClick={onOpenUnits}>
           部隊
         </button>
-        <button className="tab" onClick={onOpenEncyclopedia}>
-          図鑑
-        </button>
         <button className="tab" onClick={() => onToast('実績は今後追加予定です')}>
           実績
         </button>
@@ -104,7 +100,7 @@ export function StageSelectScreen({
           <div className="map-castle" />
           <div className="map-creature map-creature-a"><EnemySprite enemyId="metalSlime" /></div>
           <div className="map-creature map-creature-b"><EnemySprite enemyId="smallBat" /></div>
-          <div className="map-creature map-creature-c"><EnemySprite enemyId="poisonScorpion" /></div>
+          <div className="map-creature map-creature-c"><MarkerSprite type="danger" /></div>
           {stageNodes.map((node) => {
             const nodeUnlocked = isStageUnlocked(node.id, playerState);
             const nodeCleared = playerState.clearedStages.includes(node.id);
@@ -117,7 +113,10 @@ export function StageSelectScreen({
                 style={{ left: `${node.x}%`, top: `${node.y}%` }}
                 onClick={() => handleNodeClick(node.id)}
               >
-                <span>{nodeUnlocked ? node.id : ''}</span>
+                <span>
+                  <MarkerSprite type={nodeUnlocked ? (nodeCleared ? 'cleared' : 'stage') : 'locked'} />
+                  {nodeUnlocked && <b>{node.id}</b>}
+                </span>
                 <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : 'LOCK'}</small>
               </button>
             );

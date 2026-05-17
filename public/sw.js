@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eight-wardens-shell-v5';
+const CACHE_NAME = 'eight-wardens-shell-v6';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -15,7 +15,10 @@ const APP_SHELL = [
   '/assets/generated/title-background.png',
   '/assets/generated/map-background.png',
   '/assets/generated/battle-background.png',
-  '/assets/generated/unit-portraits-sheet.png'
+  '/assets/generated/unit-portraits-sheet.png',
+  '/assets/generated/warden-chibi-sheet.png',
+  '/assets/generated/enemy-chibi-sheet.png',
+  '/assets/generated/map-marker-sheet.png'
 ];
 
 self.addEventListener('install', (event) => {

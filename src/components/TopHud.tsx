@@ -12,9 +12,9 @@ interface TopHudProps {
 export function TopHud({ battleState, playerState, onTogglePause, onSpeedChange, onOpenSettings }: TopHudProps) {
   return (
     <header className="top-hud">
-      <div className="hud-stat">剣 WAVE {battleState.waveIndex + 1}/{waves.length}</div>
-      <div className="hud-stat">金 GOLD {playerState.gold.toLocaleString('ja-JP')}</div>
-      <div className="hud-stat">砦 村耐久 {playerState.villageHp}/{playerState.maxVillageHp}</div>
+      <div className="hud-stat">WAVE {battleState.waveIndex + 1}/{waves.length}</div>
+      <div className="hud-stat">GOLD {playerState.gold.toLocaleString('ja-JP')}</div>
+      <div className="hud-stat">村耐久 {playerState.villageHp}/{playerState.maxVillageHp}</div>
       <div className="hud-spacer" />
       <button className="hud-square" onClick={onTogglePause}>
         {battleState.isPaused ? '再開' : '停止'}
@@ -29,7 +29,7 @@ export function TopHud({ battleState, playerState, onTogglePause, onSpeedChange,
         </button>
       ))}
       <button className="hud-square" onClick={onOpenSettings}>
-        歯
+        設定
       </button>
     </header>
   );

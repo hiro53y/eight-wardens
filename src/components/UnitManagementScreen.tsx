@@ -35,6 +35,46 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
     }
   };
 
+  const moveSelectedToFront = () => {
+    setPlayerState((current) => {
+      const sorted = [...current.units].sort((a, b) => a.slot - b.slot);
+      const targetIndex = sorted.findIndex((unit) => unit.id === selectedUnit.id);
+      if (targetIndex <= 0) {
+        const rotated = sorted.map((unit, index) => ({ ...unit, slot: (index + 1) % sorted.length }));
+        return { ...current, units: rotated };
+      }
+      const reordered = [sorted[targetIndex], ...sorted.slice(0, targetIndex), ...sorted.slice(targetIndex + 1)];
+      return { ...current, units: reordered.map((unit, slot) => ({ ...unit, slot })) };
+    });
+    onToast('編成位置を更新しました');
+  };
+
+  const reinforceEquipment = () => {
+    const cost = 30;
+    if (playerState.gold < cost) {
+      onToast(`装備強化にはGold ${cost}が必要です`);
+      return;
+    }
+    setPlayerState((current) => ({
+      ...current,
+      gold: current.gold - cost,
+      units: current.units.map((unit) =>
+        unit.id === selectedUnit.id
+          ? { ...unit, maxHp: unit.maxHp + 10, hp: Math.min(unit.maxHp + 10, unit.hp + 35) }
+          : unit,
+      ),
+    }));
+    onToast(`${selectedUnit.name}の装備を強化しました`);
+  };
+
+  const toggleResting = () => {
+    setPlayerState((current) => ({
+      ...current,
+      units: current.units.map((unit) => (unit.id === selectedUnit.id ? { ...unit, isResting: !unit.isResting } : unit)),
+    }));
+    onToast(`${selectedUnit.name}の休憩設定を切り替えました`);
+  };
+
   return (
     <section className="screen unit-management-screen">
       <header className="management-header">
@@ -124,13 +164,13 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
             ))}
           </div>
           </div>
-          <button className="action-button blue" onClick={() => onToast('編成位置変更は今後追加予定です')}>
+          <button className="action-button blue" onClick={moveSelectedToFront}>
             編成
           </button>
-          <button className="action-button brown" onClick={() => onToast('装備は今後追加予定です')}>
+          <button className="action-button brown" onClick={reinforceEquipment}>
             装備
           </button>
-          <button className="action-button green" onClick={() => onToast('休憩設定はバトル中に切り替えられます')}>
+          <button className="action-button green" onClick={toggleResting}>
             休憩設定
           </button>
           <button className="action-button purple" onClick={() => setPromotionOpen(true)}>

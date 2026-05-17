@@ -1,0 +1,47 @@
+{
+  "name": "Eight Wardens",
+  "short_name": "EightWardens",
+  "description": "八人の防衛隊によるファンタジー育成タワーディフェンス",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07111d",
+  "theme_color": "#081522",
+  "orientation": "landscape",
+  "categories": ["games", "entertainment"],
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "はじめる",
+      "short_name": "開始",
+      "description": "新しい防衛を開始",
+      "url": "/?action=start",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "つづきから",
+      "short_name": "続き",
+      "description": "ローカルセーブから再開",
+      "url": "/?action=continue",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -28,6 +28,14 @@ const stageNodes = [
   { id: 10, name: '毒の城塞', x: 76, y: 30 },
 ];
 
+const enemyLabels: Record<string, string> = {
+  normal: 'スライム',
+  fly: '飛行',
+  boss: 'ボス',
+  rapid: '高速',
+  metal: 'メタル',
+};
+
 export function StageSelectScreen({
   playerState,
   selectedStage,
@@ -55,7 +63,7 @@ export function StageSelectScreen({
   return (
     <section className="screen stage-screen">
       <header className="map-header">
-        <button className="nav-back" onClick={onBack}>
+        <button className="nav-back icon-back" onClick={onBack}>
           戻る
         </button>
         <div className="map-title">冒険</div>
@@ -71,7 +79,7 @@ export function StageSelectScreen({
         </button>
         <div className="header-stat">GOLD {playerState.gold.toLocaleString('ja-JP')}</div>
         <div className="header-stat">村耐久 {playerState.villageHp}/{playerState.maxVillageHp}</div>
-        <button className="nav-back" onClick={onOpenSettings}>
+        <button className="nav-back icon-settings" onClick={onOpenSettings}>
           設定
         </button>
       </header>
@@ -79,16 +87,15 @@ export function StageSelectScreen({
       <div className="map-layout">
         <div className="world-map">
           <div className="chapter-banner">
+            <img src="/assets/ui/crest.svg" alt="" />
             <span>第1章</span>
             <strong>緑風の平原</strong>
           </div>
-          <div className="map-river" />
-          <div className="dark-region" />
-          <div className="route-line route-a" />
-          <div className="route-line route-b" />
-          <div className="route-line route-c" />
           <div className="map-village">村落</div>
           <div className="map-castle" />
+          <div className="map-creature map-creature-a">ぷ</div>
+          <div className="map-creature map-creature-b">翼</div>
+          <div className="map-creature map-creature-c">魔</div>
           {stageNodes.map((node) => {
             const nodeUnlocked = isStageUnlocked(node.id, playerState);
             const nodeCleared = playerState.clearedStages.includes(node.id);
@@ -116,7 +123,10 @@ export function StageSelectScreen({
             <div className="panel-label">出現する敵</div>
             <div className="enemy-type-row">
               {enemyTypes.map((type) => (
-                <span key={type}>{type}</span>
+                <span key={type} className={`enemy-chip enemy-${type}`}>
+                  <i />
+                  {enemyLabels[type] ?? type}
+                </span>
               ))}
             </div>
           </div>
@@ -124,10 +134,11 @@ export function StageSelectScreen({
             推奨戦力 <strong>{(selectedNode.id * 820).toLocaleString('ja-JP')}</strong>
           </div>
           <div className="reward-row">
-            <div>Gold</div>
-            <div>EXP</div>
+            <div>金貨 x{selectedNode.id * 120}</div>
+            <div>宝石 x{selectedNode.id + 4}</div>
             <div>星報酬</div>
           </div>
+          <div className="stamina-row">消費スタミナ <strong>1</strong></div>
           <div className="stage-state">{cleared ? 'クリア済み' : unlocked ? '出撃可能' : 'ロック中'}</div>
           <button className="action-button red deploy-button" disabled={!unlocked} onClick={() => onDeploy(selectedNode.id)}>
             出撃

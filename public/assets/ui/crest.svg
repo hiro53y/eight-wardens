@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Eight Wardens crest">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#143251"/>
+      <stop offset="1" stop-color="#07111d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff0b7"/>
+      <stop offset=".48" stop-color="#d4a955"/>
+      <stop offset="1" stop-color="#7b5426"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="42" fill="url(#bg)"/>
+  <path d="M128 24 202 50 188 172 128 226 68 172 54 50Z" fill="#21477d" stroke="url(#gold)" stroke-width="12"/>
+  <path d="M78 76h100v18H78zm40 10h20v94h-20z" fill="url(#gold)"/>
+  <path d="M80 176h96v12H80zM102 58l26-24 26 24-26 18z" fill="#f9e9bd"/>
+  <text x="128" y="151" text-anchor="middle" font-family="Georgia, serif" font-size="86" font-weight="900" fill="#fff4ca">8</text>
+</svg>

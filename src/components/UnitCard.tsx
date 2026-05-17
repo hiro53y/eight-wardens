@@ -12,11 +12,17 @@ interface UnitCardProps {
 export function UnitCard({ unit, selected = false, compact = false, onClick }: UnitCardProps) {
   const unitClass = unitClasses[unit.classId];
   const hpRate = Math.max(0, Math.min(100, (unit.hp / unit.maxHp) * 100));
+  const portraitX = `${(unit.slot % 4) * 33.3333}%`;
+  const portraitY = unit.slot < 4 ? '0%' : '100%';
 
   return (
     <button className={`unit-card ${selected ? 'selected' : ''} ${compact ? 'compact' : ''}`} onClick={onClick}>
-      <div className="unit-portrait" style={{ '--unit-color': unitClass.color } as CSSProperties}>
+      <div
+        className="unit-portrait generated-portrait"
+        style={{ '--unit-color': unitClass.color, '--portrait-x': portraitX, '--portrait-y': portraitY } as CSSProperties}
+      >
         <span>{unitClass.icon}</span>
+        <i />
       </div>
       <div className="unit-card-info">
         <div className="unit-card-row">
@@ -24,6 +30,7 @@ export function UnitCard({ unit, selected = false, compact = false, onClick }: U
           <span>Lv.{unit.level}</span>
         </div>
         <div className="unit-class-name">{unitClass.name}</div>
+        {!compact && <div className="unit-stars">{'★'.repeat(unit.level + 1)}{'☆'.repeat(4 - unit.level)}</div>}
         <div className="mini-bar">
           <span style={{ width: `${hpRate}%` }} />
         </div>

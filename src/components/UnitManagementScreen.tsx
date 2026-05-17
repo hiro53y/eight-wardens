@@ -20,6 +20,8 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
   const selectedClass = unitClasses[selectedUnit.classId];
   const nextExp = getNextLevelRequirement(selectedUnit.level);
   const promotionCost = getPromotionCost(selectedClass);
+  const portraitX = `${(selectedUnit.slot % 4) * 33.3333}%`;
+  const portraitY = selectedUnit.slot < 4 ? '0%' : '100%';
 
   const handlePromote = (targetClassId: string) => {
     const result = promoteUnit(selectedUnit, targetClassId, playerState.gold);
@@ -37,13 +39,13 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
   return (
     <section className="screen unit-management-screen">
       <header className="management-header">
-        <button className="nav-back" onClick={onBack}>
+        <button className="nav-back icon-back" onClick={onBack}>
           戻る
         </button>
         <h1>ユニット管理</h1>
         <div className="header-stat">GOLD {playerState.gold.toLocaleString('ja-JP')}</div>
         <div className="header-stat">総戦力 {(playerState.units.length * 1570 + playerState.gold).toLocaleString('ja-JP')}</div>
-        <button className="nav-back" onClick={onBack}>
+        <button className="nav-back icon-home" onClick={onBack}>
           ホーム
         </button>
       </header>
@@ -65,8 +67,12 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
 
         <main className="unit-profile-panel">
           <div className="profile-top">
-            <div className="large-portrait" style={{ '--unit-color': selectedClass.color } as CSSProperties}>
-              {selectedClass.icon}
+            <div
+              className="large-portrait generated-portrait"
+              style={{ '--unit-color': selectedClass.color, '--portrait-x': portraitX, '--portrait-y': portraitY } as CSSProperties}
+            >
+              <span>{selectedClass.icon}</span>
+              <span className="portrait-shine" />
             </div>
             <div className="profile-stats">
               <h2>{selectedClass.name}</h2>
@@ -78,6 +84,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
               <div>攻撃力 {calculateAttack(selectedUnit, selectedClass)}</div>
               <div>射程 {formatRangeAsSquares(selectedClass.range)}</div>
               <div>攻撃間隔 {calculateCooldown(selectedUnit, selectedClass).toFixed(2)}秒</div>
+              <div>防御力 {Math.round(selectedUnit.maxHp / 8)}</div>
             </div>
           </div>
 
@@ -85,6 +92,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
             <div className="panel-title">クラスタリー</div>
             <div className="class-tree">
               <div className="class-node current">{selectedClass.name}</div>
+              <div className="tree-connector" />
               <div className="tree-branches">
                 {selectedClass.promotionTargets.length === 0 ? (
                   <div className="class-node locked">最終職</div>
@@ -108,12 +116,14 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
 
         <aside className="formation-panel">
           <div className="panel-title">編成プレビュー</div>
+          <div className="formation-field">
           <div className="formation-grid">
             {playerState.units.map((unit) => (
               <div className="formation-slot" key={unit.id} style={{ '--unit-color': unitClasses[unit.classId].color } as CSSProperties}>
                 <span>{unitClasses[unit.classId].icon}</span>
               </div>
             ))}
+          </div>
           </div>
           <button className="action-button blue" onClick={() => onToast('編成位置変更は今後追加予定です')}>
             編成

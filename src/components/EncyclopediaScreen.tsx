@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { classList } from '../data/classes';
 import { enemyList } from '../data/enemies';
 
@@ -9,7 +10,7 @@ export function EncyclopediaScreen({ onBack }: EncyclopediaScreenProps) {
   return (
     <section className="screen encyclopedia-screen">
       <header className="simple-header">
-        <button className="nav-back" onClick={onBack}>
+        <button className="nav-back icon-back" onClick={onBack}>
           戻る
         </button>
         <h1>図鑑</h1>
@@ -22,7 +23,7 @@ export function EncyclopediaScreen({ onBack }: EncyclopediaScreenProps) {
           <div className="book-grid">
             {enemyList.map((enemy) => (
               <div className="book-card" key={enemy.id}>
-                <div className="book-icon" style={{ background: enemy.color }} />
+                <div className={`book-icon enemy-icon enemy-${enemy.type}`} style={{ '--enemy-color': enemy.color } as CSSProperties} />
                 <strong>{enemy.name}</strong>
                 <span>{enemy.type}</span>
                 <small>HP {enemy.hp} / Gold {enemy.gold} / EXP {enemy.exp}</small>

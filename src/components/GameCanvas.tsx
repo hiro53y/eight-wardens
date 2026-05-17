@@ -25,20 +25,50 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, wi
   ctx.closePath();
 }
 
+let battleBackgroundImage: HTMLImageElement | null = null;
+
+function getBattleBackgroundImage() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  if (!battleBackgroundImage) {
+    battleBackgroundImage = new Image();
+    battleBackgroundImage.src = '/assets/generated/battle-background.png';
+  }
+  return battleBackgroundImage;
+}
+
 function drawBackground(ctx: CanvasRenderingContext2D) {
+  const image = getBattleBackgroundImage();
+  if (image?.complete && image.naturalWidth > 0) {
+    ctx.drawImage(image, 0, 0, BATTLE_WIDTH, BATTLE_HEIGHT);
+    ctx.fillStyle = 'rgba(8, 18, 20, 0.08)';
+    ctx.fillRect(0, 0, BATTLE_WIDTH, BATTLE_HEIGHT);
+    return;
+  }
+
   const sky = ctx.createLinearGradient(0, 0, 0, BATTLE_HEIGHT);
-  sky.addColorStop(0, '#5d8f63');
-  sky.addColorStop(0.45, '#7aa35a');
-  sky.addColorStop(1, '#4f7c3c');
+  sky.addColorStop(0, '#6f9657');
+  sky.addColorStop(0.48, '#87a95d');
+  sky.addColorStop(1, '#456f39');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, BATTLE_WIDTH, BATTLE_HEIGHT);
 
-  ctx.fillStyle = 'rgba(23, 54, 32, 0.45)';
-  for (let i = 0; i < 42; i += 1) {
+  ctx.fillStyle = 'rgba(27, 68, 40, 0.45)';
+  for (let i = 0; i < 52; i += 1) {
     const x = (i * 97) % BATTLE_WIDTH;
     const y = 20 + ((i * 43) % 130);
     ctx.beginPath();
     ctx.arc(x, y, 24 + (i % 4) * 8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.fillStyle = 'rgba(255, 245, 200, 0.18)';
+  for (let i = 0; i < 80; i += 1) {
+    const x = (i * 61) % BATTLE_WIDTH;
+    const y = 155 + ((i * 31) % 175);
+    ctx.beginPath();
+    ctx.arc(x, y, 1.5 + (i % 3), 0, Math.PI * 2);
     ctx.fill();
   }
 
@@ -63,19 +93,41 @@ function drawBackground(ctx: CanvasRenderingContext2D) {
   ctx.stroke();
   ctx.setLineDash([]);
 
+  for (let i = 0; i < 8; i += 1) {
+    const x = 150 + i * 120;
+    ctx.fillStyle = 'rgba(84, 72, 54, 0.42)';
+    ctx.beginPath();
+    ctx.ellipse(x, 310 + (i % 2) * 10, 54, 17, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#8a744a';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
   ctx.fillStyle = '#273244';
-  drawRoundedRect(ctx, VILLAGE_GATE_X, 45, 128, 230, 8);
+  drawRoundedRect(ctx, VILLAGE_GATE_X, 45, 146, 245, 8);
   ctx.fill();
   ctx.fillStyle = '#31425e';
-  drawRoundedRect(ctx, VILLAGE_GATE_X + 12, 64, 104, 190, 6);
+  drawRoundedRect(ctx, VILLAGE_GATE_X + 12, 64, 122, 206, 6);
   ctx.fill();
   ctx.fillStyle = '#b99a5e';
-  ctx.fillRect(VILLAGE_GATE_X + 48, 142, 36, 112);
+  ctx.fillRect(VILLAGE_GATE_X + 55, 150, 42, 120);
   ctx.fillStyle = '#1f2f46';
   ctx.fillRect(VILLAGE_GATE_X + 26, 84, 18, 32);
-  ctx.fillRect(VILLAGE_GATE_X + 86, 84, 18, 32);
+  ctx.fillRect(VILLAGE_GATE_X + 104, 84, 18, 32);
   ctx.fillStyle = '#244373';
-  ctx.fillRect(VILLAGE_GATE_X + 6, 50, 116, 26);
+  ctx.fillRect(VILLAGE_GATE_X + 6, 50, 134, 26);
+  ctx.fillStyle = '#d7bd78';
+  ctx.fillRect(VILLAGE_GATE_X + 137, 0, 6, 85);
+  ctx.fillStyle = '#1f5a9b';
+  ctx.beginPath();
+  ctx.moveTo(VILLAGE_GATE_X + 143, 4);
+  ctx.lineTo(VILLAGE_GATE_X + 210, 12);
+  ctx.lineTo(VILLAGE_GATE_X + 190, 34);
+  ctx.lineTo(VILLAGE_GATE_X + 210, 56);
+  ctx.lineTo(VILLAGE_GATE_X + 143, 62);
+  ctx.closePath();
+  ctx.fill();
   ctx.fillStyle = '#e7d096';
   ctx.font = 'bold 18px serif';
   ctx.fillText('村ゲート', VILLAGE_GATE_X + 28, 36);
@@ -104,9 +156,21 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   ctx.strokeStyle = '#231a18';
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  if (def.type === 'rapid') {
+    ctx.ellipse(0, 0, radius * 1.2, radius * 0.8, 0, 0, Math.PI * 2);
+  } else if (def.type === 'boss') {
+    ctx.ellipse(0, 2, radius * 1.2, radius, 0, 0, Math.PI * 2);
+  } else {
+    ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  }
   ctx.fill();
   ctx.stroke();
+
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.arc(-radius * 0.32, -radius * 0.18, 3.4, 0, Math.PI * 2);
+  ctx.arc(radius * 0.32, -radius * 0.18, 3.4, 0, Math.PI * 2);
+  ctx.fill();
 
   if (def.type === 'metal') {
     ctx.fillStyle = '#eef7ff';
@@ -148,8 +212,30 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.fillStyle = unit.isResting ? '#5b6b59' : unitClass.color;
   ctx.strokeStyle = '#121417';
   ctx.lineWidth = 3;
-  drawRoundedRect(ctx, -25, -44, 50, 62, 12);
+  drawRoundedRect(ctx, -24, -44, 48, 60, 12);
   ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#f0d0a4';
+  ctx.beginPath();
+  ctx.arc(0, -48, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.strokeStyle = '#191414';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (unitClass.icon === '弓' || unitClass.icon === '遊' || unitClass.icon === '風') {
+    ctx.moveTo(20, -36);
+    ctx.quadraticCurveTo(44, -18, 20, 10);
+  } else if (unitClass.icon === '砲' || unitClass.icon === '銃' || unitClass.icon === '狙') {
+    ctx.moveTo(18, -23);
+    ctx.lineTo(48, -30);
+  } else {
+    ctx.moveTo(17, -30);
+    ctx.lineTo(42, -54);
+  }
   ctx.stroke();
 
   ctx.fillStyle = '#f4e8c2';

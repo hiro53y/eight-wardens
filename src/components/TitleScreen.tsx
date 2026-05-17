@@ -13,33 +13,36 @@ export function TitleScreen({
   onOpenEncyclopedia,
   onOpenSettings,
 }: TitleScreenProps) {
+  const wardens = ['神官', '砲術士', '忍者', '斥候', '剣士', '弓兵', '重装', '斥候'];
+
   return (
     <section className="screen title-screen">
       <div className="title-top-actions">
-        <button className="small-fantasy-button">お知らせ</button>
-        <button className="small-fantasy-button">特典受取</button>
+        <button className="small-fantasy-button">告 お知らせ</button>
+        <button className="small-fantasy-button">贈 特典受取</button>
       </div>
-      <div className="account-button">ローカルセーブ {hasLocalSave ? '有効' : 'なし'}</div>
+      <div className="account-button">ローカルセーブ {hasLocalSave ? '有効' : '待機'}</div>
 
       <div className="title-landscape">
-        <div className="mountain mountain-left" />
-        <div className="mountain mountain-right" />
-        <div className="river" />
-        <div className="enemy-road" />
-        <div className="title-village" />
-        <div className="enemy-dot enemy-dot-a" />
-        <div className="enemy-dot enemy-dot-b" />
-        <div className="enemy-dot enemy-dot-c" />
+        <div className="enemy-column">
+          <span className="banner-skull">!</span>
+          <i className="enemy-shape bat" />
+          <i className="enemy-shape slime" />
+          <i className="enemy-shape brute" />
+        </div>
+        <div className="title-castle-flag" />
         <div className="warden-row">
-          {['神', '砲', '忍', '斥', '剣', '弓', '盾', '斥'].map((label, index) => (
+          {wardens.map((label, index) => (
             <div className="title-warden" key={`${label}-${index}`}>
-              {label}
+              <span>{label.slice(0, 1)}</span>
+              <small>{label}</small>
             </div>
           ))}
         </div>
       </div>
 
       <div className="title-logo">
+        <img src="/assets/ui/crest.svg" alt="" />
         <div className="title-main">Eight Wardens</div>
         <div className="title-sub">八人の防衛隊</div>
       </div>

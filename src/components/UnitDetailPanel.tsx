@@ -17,11 +17,17 @@ export function UnitDetailPanel({ unit, gold, onAttack, onRest, onLevelUp, onPro
   const nextExp = getNextLevelRequirement(unit.level);
   const expRate = nextExp ? Math.max(0, Math.min(100, (unit.exp / nextExp) * 100)) : 100;
   const restRate = Math.max(0, Math.min(100, unit.restGauge));
+  const portraitX = `${(unit.slot % 4) * 33.3333}%`;
+  const portraitY = unit.slot < 4 ? '0%' : '100%';
 
   return (
     <aside className="unit-detail-panel">
-      <div className="detail-portrait" style={{ '--unit-color': unitClass.color } as CSSProperties}>
+      <div
+        className="detail-portrait generated-portrait"
+        style={{ '--unit-color': unitClass.color, '--portrait-x': portraitX, '--portrait-y': portraitY } as CSSProperties}
+      >
         <span>{unitClass.icon}</span>
+        <i />
       </div>
       <div className="detail-main">
         <div className="detail-title-row">
@@ -58,6 +64,11 @@ export function UnitDetailPanel({ unit, gold, onAttack, onRest, onLevelUp, onPro
         <div>攻撃間隔 <strong>{calculateCooldown(unit, unitClass).toFixed(2)}秒</strong></div>
         <div>射程 <strong>{formatRangeAsSquares(unitClass.range)}</strong></div>
         <div>所持Gold <strong>{gold.toLocaleString('ja-JP')}</strong></div>
+        <div className="range-preview" aria-label="射程範囲図">
+          {Array.from({ length: 25 }, (_, index) => (
+            <span key={index} className={index === 12 ? 'core' : [7, 11, 13, 17, 6, 8, 16, 18].includes(index) ? 'range' : ''} />
+          ))}
+        </div>
       </div>
       <div className="battle-actions">
         <button className="action-button red" onClick={onAttack}>

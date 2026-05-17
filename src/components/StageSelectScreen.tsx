@@ -2,6 +2,7 @@ import { enemies } from '../data/enemies';
 import { waves } from '../data/waves';
 import { isStageUnlocked } from '../engine/progression';
 import type { PlayerState } from '../types/game';
+import { EnemySprite } from './AssetSprite';
 
 interface StageSelectScreenProps {
   playerState: PlayerState;
@@ -34,6 +35,14 @@ const enemyLabels: Record<string, string> = {
   boss: 'ボス',
   rapid: '高速',
   metal: 'メタル',
+};
+
+const enemyRepresentative: Record<string, string> = {
+  normal: 'grassSlime',
+  fly: 'smallBat',
+  boss: 'bigWorm',
+  rapid: 'dashBird',
+  metal: 'metalSlime',
 };
 
 export function StageSelectScreen({
@@ -93,9 +102,9 @@ export function StageSelectScreen({
           </div>
           <div className="map-village">村落</div>
           <div className="map-castle" />
-          <div className="map-creature map-creature-a">ぷ</div>
-          <div className="map-creature map-creature-b">翼</div>
-          <div className="map-creature map-creature-c">魔</div>
+          <div className="map-creature map-creature-a"><EnemySprite enemyId="metalSlime" /></div>
+          <div className="map-creature map-creature-b"><EnemySprite enemyId="smallBat" /></div>
+          <div className="map-creature map-creature-c"><EnemySprite enemyId="poisonScorpion" /></div>
           {stageNodes.map((node) => {
             const nodeUnlocked = isStageUnlocked(node.id, playerState);
             const nodeCleared = playerState.clearedStages.includes(node.id);
@@ -108,7 +117,7 @@ export function StageSelectScreen({
                 style={{ left: `${node.x}%`, top: `${node.y}%` }}
                 onClick={() => handleNodeClick(node.id)}
               >
-                <span>{nodeUnlocked ? node.id : '鍵'}</span>
+                <span>{nodeUnlocked ? node.id : ''}</span>
                 <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : 'LOCK'}</small>
               </button>
             );
@@ -124,7 +133,7 @@ export function StageSelectScreen({
             <div className="enemy-type-row">
               {enemyTypes.map((type) => (
                 <span key={type} className={`enemy-chip enemy-${type}`}>
-                  <i />
+                  <i><EnemySprite enemyId={enemyRepresentative[type] ?? 'grassSlime'} /></i>
                   {enemyLabels[type] ?? type}
                 </span>
               ))}

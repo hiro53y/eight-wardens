@@ -4,6 +4,7 @@ import { unitClasses } from '../data/classes';
 import { promoteUnit } from '../engine/combat';
 import { calculateAttack, calculateCooldown, formatRangeAsSquares, getNextLevelRequirement, getPromotionCost } from '../engine/progression';
 import type { PlayerState } from '../types/game';
+import { WardenSprite } from './AssetSprite';
 import { UnitCard } from './UnitCard';
 
 interface UnitManagementScreenProps {
@@ -20,8 +21,6 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
   const selectedClass = unitClasses[selectedUnit.classId];
   const nextExp = getNextLevelRequirement(selectedUnit.level);
   const promotionCost = getPromotionCost(selectedClass);
-  const portraitX = `${(selectedUnit.slot % 4) * 33.3333}%`;
-  const portraitY = selectedUnit.slot < 4 ? '0%' : '100%';
 
   const handlePromote = (targetClassId: string) => {
     const result = promoteUnit(selectedUnit, targetClassId, playerState.gold);
@@ -68,10 +67,10 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
         <main className="unit-profile-panel">
           <div className="profile-top">
             <div
-              className="large-portrait generated-portrait"
-              style={{ '--unit-color': selectedClass.color, '--portrait-x': portraitX, '--portrait-y': portraitY } as CSSProperties}
+              className="large-portrait"
+              style={{ '--unit-color': selectedClass.color } as CSSProperties}
             >
-              <span>{selectedClass.icon}</span>
+              <WardenSprite classId={selectedUnit.classId} />
               <span className="portrait-shine" />
             </div>
             <div className="profile-stats">
@@ -102,7 +101,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
                     return (
                       <div className="class-node" key={classId}>
                         <strong>{target.name}</strong>
-                        <span>{target.icon}</span>
+                        <WardenSprite classId={target.id} />
                       </div>
                     );
                   })
@@ -120,7 +119,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
           <div className="formation-grid">
             {playerState.units.map((unit) => (
               <div className="formation-slot" key={unit.id} style={{ '--unit-color': unitClasses[unit.classId].color } as CSSProperties}>
-                <span>{unitClasses[unit.classId].icon}</span>
+                <WardenSprite classId={unit.classId} />
               </div>
             ))}
           </div>

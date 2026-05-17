@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { classList } from '../data/classes';
 import { enemyList } from '../data/enemies';
+import { EnemySprite, WardenSprite } from './AssetSprite';
 
 interface EncyclopediaScreenProps {
   onBack: () => void;
@@ -23,7 +24,9 @@ export function EncyclopediaScreen({ onBack }: EncyclopediaScreenProps) {
           <div className="book-grid">
             {enemyList.map((enemy) => (
               <div className="book-card" key={enemy.id}>
-                <div className={`book-icon enemy-icon enemy-${enemy.type}`} style={{ '--enemy-color': enemy.color } as CSSProperties} />
+                <div className={`book-icon enemy-icon enemy-${enemy.type}`} style={{ '--enemy-color': enemy.color } as CSSProperties}>
+                  <EnemySprite enemyId={enemy.id} />
+                </div>
                 <strong>{enemy.name}</strong>
                 <span>{enemy.type}</span>
                 <small>HP {enemy.hp} / Gold {enemy.gold} / EXP {enemy.exp}</small>
@@ -38,7 +41,7 @@ export function EncyclopediaScreen({ onBack }: EncyclopediaScreenProps) {
             {classList.map((unitClass) => (
               <div className="book-card" key={unitClass.id}>
                 <div className="book-class-icon" style={{ background: unitClass.color }}>
-                  {unitClass.icon}
+                  <WardenSprite classId={unitClass.id} />
                 </div>
                 <strong>{unitClass.name}</strong>
                 <span>{unitClass.tier}</span>

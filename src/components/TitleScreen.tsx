@@ -1,3 +1,7 @@
+import { initialUnits } from '../data/initialUnits';
+import { unitClasses } from '../data/classes';
+import { WardenSprite } from './AssetSprite';
+
 interface TitleScreenProps {
   hasLocalSave: boolean;
   onStart: () => void;
@@ -12,7 +16,16 @@ export function TitleScreen({
   onOpenEncyclopedia,
   onOpenSettings,
 }: TitleScreenProps) {
-  const wardens = ['神官', '砲術士', '忍者', '斥候', '剣士', '弓兵', '重装', '斥候'];
+  const titleUnits = [
+    initialUnits[7],
+    initialUnits[5],
+    initialUnits[6],
+    initialUnits[2],
+    initialUnits[0],
+    initialUnits[1],
+    initialUnits[4],
+    initialUnits[3],
+  ];
 
   return (
     <section className="screen title-screen">
@@ -25,10 +38,10 @@ export function TitleScreen({
         </div>
         <div className="title-castle-flag" />
         <div className="warden-row">
-          {wardens.map((label, index) => (
-            <div className="title-warden" key={`${label}-${index}`}>
-              <span>{label.slice(0, 1)}</span>
-              <small>{label}</small>
+          {titleUnits.map((unit) => (
+            <div className="title-warden" key={unit.id}>
+              <WardenSprite classId={unit.classId} />
+              <small>{unitClasses[unit.classId].name}</small>
             </div>
           ))}
         </div>

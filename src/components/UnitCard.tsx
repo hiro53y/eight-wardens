@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { unitClasses } from '../data/classes';
 import type { UnitState } from '../types/game';
+import { WardenSprite } from './AssetSprite';
 
 interface UnitCardProps {
   unit: UnitState;
@@ -12,16 +13,14 @@ interface UnitCardProps {
 export function UnitCard({ unit, selected = false, compact = false, onClick }: UnitCardProps) {
   const unitClass = unitClasses[unit.classId];
   const hpRate = Math.max(0, Math.min(100, (unit.hp / unit.maxHp) * 100));
-  const portraitX = `${(unit.slot % 4) * 33.3333}%`;
-  const portraitY = unit.slot < 4 ? '0%' : '100%';
 
   return (
     <button className={`unit-card ${selected ? 'selected' : ''} ${compact ? 'compact' : ''}`} onClick={onClick}>
       <div
-        className="unit-portrait generated-portrait"
-        style={{ '--unit-color': unitClass.color, '--portrait-x': portraitX, '--portrait-y': portraitY } as CSSProperties}
+        className="unit-portrait"
+        style={{ '--unit-color': unitClass.color } as CSSProperties}
       >
-        <span>{unitClass.icon}</span>
+        <WardenSprite classId={unit.classId} />
         <i />
       </div>
       <div className="unit-card-info">

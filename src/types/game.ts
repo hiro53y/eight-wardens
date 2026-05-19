@@ -3,7 +3,6 @@ export type Screen =
   | 'stageSelect'
   | 'battle'
   | 'unitManagement'
-  | 'encyclopedia'
   | 'settings';
 
 export type EnemyType = 'normal' | 'fly' | 'rapid' | 'metal' | 'boss' | 'finalBoss';

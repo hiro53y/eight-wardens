@@ -1,8 +1,6 @@
 interface TitleScreenProps {
-  hasLocalSave: boolean;
   onStart: () => void;
   onContinue: () => void;
-  onOpenEncyclopedia: () => void;
   onOpenSettings: () => void;
 }
 

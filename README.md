@@ -83,11 +83,11 @@ public/assets/audio/se/damage.mp3
 - `public/service-worker.js` を追加し、本番登録パスを `/service-worker.js` に統一。旧 `/sw.js` も互換用に残しています。
 - ChatGPT Images 2.0で生成した `public/assets/generated/title-background.png`、`map-background.png`、`battle-background.png`、`unit-portraits-sheet.png` を追加。
 - ChatGPT Images 2.0で追加生成した `public/assets/generated/warden-chibi-sheet.png`、`enemy-chibi-sheet.png`、`map-marker-sheet.png` を組み込み、漢字1文字の丸アイコンを置き換え。
-- タイトル画面に生成背景、紋章ロゴ、8人の防衛隊表示、装飾ボタンを追加。
+- タイトル画面に生成背景、紋章ロゴ、主要3ボタンを配置。中央の職業丸アイコンや飾り導線は撤去。
 - ステージ選択画面を生成地図背景、章バナー、ステージノード、敵/報酬/スタミナ付き詳細パネルへ更新。
 - バトル画面のCanvas背景に生成背景を組み込み、村ゲート、ユニット台座、敵/味方表現、射程範囲図を強化。
 - ユニット管理画面は生成ポートレートシート、2行x4列カード、選択ユニットの大型ポートレート、クラスツリー、編成プレビューの見た目を改善。
-- 図鑑画面は敵/職業カードにアイコンと装飾を加え、スクロール前提のカードUIへ更新。
+- 図鑑導線はスマホ横画面の主要操作から撤去し、ホーム/マップの操作密度を下げました。
 
 ## 2026-05-17 スマホ横向き修正
 - Android Chromeの下部UIに隠れにくいよう、通常ブラウザ表示ではゲームフレーム下に保守的な余白を確保。standalone起動時はsafe-area中心の余白に戻ります。
@@ -107,13 +107,13 @@ public/assets/audio/se/damage.mp3
 5. manifestの `display: standalone`、`orientation: landscape`、`scope: /`、192/512/maskable iconを確認
 
 ## スマホ横向き表示の確認方法
-- Android Chromeで横向きにして、ホーム、マップ、ユニット管理、図鑑を順に確認します。
+- Android Chromeで横向きにして、ホーム、マップ、ユニット管理、戦闘、設定を順に確認します。
 - 通常ブラウザ表示では下部Chromeバーが出ても主要ボタンが隠れないことを確認します。
 - PWAインストール後のstandalone表示では余白が縮み、ゲーム画面が中央に収まることを確認します。
 
-## まだ簡易実装の箇所
+## 既知の制約
 - 個別キャラクター立ち絵は1枚の生成チビキャラスプライトシートから切り出して表示。個別PNGへの分割は未実施。
-- 実績詳細、討伐記録、ドラッグ編成は未実装。
+- 実績詳細、討伐記録、ドラッグ編成は現在の主要導線から外しています。
 - Service Workerは軽量なアプリシェルキャッシュ方式。細かいキャッシュ戦略は今後調整可能。
 - このCodex実行環境ではVite/esbuild起動が `spawn EPERM` で止まる場合があります。TypeScript確認は `npx tsc -b` で通過済みですが、最終ビルドは権限が正常な環境で確認してください。
 

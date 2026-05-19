@@ -8,7 +8,6 @@ const sceneBgm: Partial<Record<Screen, string>> = {
   title: '/assets/audio/bgm/title.mp3',
   stageSelect: '/assets/audio/bgm/map.mp3',
   unitManagement: '/assets/audio/bgm/unit-management.mp3',
-  encyclopedia: '/assets/audio/bgm/encyclopedia.mp3',
   settings: '/assets/audio/bgm/settings.mp3',
 };
 

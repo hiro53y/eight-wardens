@@ -11,7 +11,6 @@ interface StageSelectScreenProps {
   onDeploy: (stageId: number) => void;
   onBack: () => void;
   onOpenUnits: () => void;
-  onOpenEncyclopedia: () => void;
   onOpenSettings: () => void;
   onToast: (message: string) => void;
 }
@@ -49,11 +48,11 @@ export function StageSelectScreen({
   playerState,
   selectedStage,
   onSelectStage,
-  onDeploy,
-  onBack,
-  onOpenUnits,
-  onOpenSettings,
-  onToast,
+          onDeploy,
+          onBack,
+          onOpenUnits,
+          onOpenSettings,
+          onToast,
 }: StageSelectScreenProps) {
   const selectedNode = stageNodes.find((node) => node.id === selectedStage) ?? stageNodes[0];
   const unlocked = isStageUnlocked(selectedNode.id, playerState);
@@ -78,9 +77,6 @@ export function StageSelectScreen({
         <button className="tab active">マップ</button>
         <button className="tab" onClick={onOpenUnits}>
           部隊
-        </button>
-        <button className="tab" onClick={() => onToast('実績は今後追加予定です')}>
-          実績
         </button>
         <div className="header-stat">GOLD {playerState.gold.toLocaleString('ja-JP')}</div>
         <div className="header-stat">村耐久 {playerState.villageHp}/{playerState.maxVillageHp}</div>
@@ -112,12 +108,12 @@ export function StageSelectScreen({
                 }`}
                 style={{ left: `${node.x}%`, top: `${node.y}%` }}
                 onClick={() => handleNodeClick(node.id)}
-              >
+                >
                 <span>
                   <MarkerSprite type={nodeUnlocked ? (nodeCleared ? 'cleared' : 'stage') : 'locked'} />
                   {nodeUnlocked && <b>{node.id}</b>}
                 </span>
-                <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : 'LOCK'}</small>
+                <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : ''}</small>
               </button>
             );
           })}

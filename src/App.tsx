@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BattleScreen } from './components/BattleScreen';
-import { EncyclopediaScreen } from './components/EncyclopediaScreen';
 import { RotateDeviceNotice } from './components/RotateDeviceNotice';
 import { SettingsScreen } from './components/SettingsScreen';
 import { StageSelectScreen } from './components/StageSelectScreen';
@@ -116,10 +115,8 @@ export default function App() {
     if (currentScreen === 'title') {
       return (
         <TitleScreen
-          hasLocalSave={saveActive}
           onStart={startNewGame}
           onContinue={continueGame}
-          onOpenEncyclopedia={() => setCurrentScreen('encyclopedia')}
           onOpenSettings={() => setCurrentScreen('settings')}
         />
       );
@@ -134,7 +131,6 @@ export default function App() {
           onDeploy={startBattle}
           onBack={() => setCurrentScreen('title')}
           onOpenUnits={() => setCurrentScreen('unitManagement')}
-          onOpenEncyclopedia={() => setCurrentScreen('encyclopedia')}
           onOpenSettings={() => setCurrentScreen('settings')}
           onToast={showToast}
         />
@@ -165,10 +161,6 @@ export default function App() {
           onToast={showToast}
         />
       );
-    }
-
-    if (currentScreen === 'encyclopedia') {
-      return <EncyclopediaScreen onBack={() => setCurrentScreen(saveActive ? 'stageSelect' : 'title')} />;
     }
 
     return (

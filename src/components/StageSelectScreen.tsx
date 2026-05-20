@@ -110,7 +110,7 @@ export function StageSelectScreen({
                 onClick={() => handleNodeClick(node.id)}
                 >
                 <span>
-                  <MarkerSprite type={nodeUnlocked ? (nodeCleared ? 'cleared' : 'stage') : 'locked'} />
+                  {nodeUnlocked ? <MarkerSprite type={nodeCleared ? 'cleared' : 'stage'} /> : <span className="map-lock-mark" />}
                   {nodeUnlocked && <b>{node.id}</b>}
                 </span>
                 <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : ''}</small>

@@ -81,6 +81,18 @@ function drawSpriteFromSheet(
   return true;
 }
 
+function drawHpBar(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, hpRate: number, height = 10) {
+  drawRoundedRect(ctx, x, y, width, height, height / 2);
+  ctx.fillStyle = 'rgba(12, 9, 8, 0.86)';
+  ctx.fill();
+  drawRoundedRect(ctx, x + 2, y + 2, Math.max(0, (width - 4) * hpRate), height - 4, (height - 4) / 2);
+  ctx.fillStyle = hpRate > 0.35 ? '#87e24d' : '#ff6961';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 234, 166, 0.75)';
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x, y, width, height);
+}
+
 function drawBackground(ctx: CanvasRenderingContext2D) {
   const image = getBattleBackgroundImage();
   if (image?.complete && image.naturalWidth > 0) {
@@ -178,7 +190,7 @@ function drawBackground(ctx: CanvasRenderingContext2D) {
 
 function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   const def = enemies[enemy.enemyId];
-  const radius = def.type === 'boss' ? 34 : def.type === 'metal' ? 20 : 24;
+  const radius = def.type === 'boss' ? 39 : def.type === 'metal' ? 24 : 29;
   const hpRate = Math.max(0, enemy.hp / enemy.maxHp);
   const hitShake = enemy.slowTimer > 0 ? Math.sin(performance.now() / 18) * 2.5 : 0;
 
@@ -188,9 +200,9 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
     ctx.globalAlpha = 0.88;
   }
 
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.32)';
   ctx.beginPath();
-  ctx.ellipse(0, radius * 0.78, radius * 1.1, radius * 0.28, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, radius * 0.9, radius * 1.28, radius * 0.32, 0, 0, Math.PI * 2);
   ctx.fill();
   const spriteIndex = enemySpriteIndex[enemy.enemyId] ?? 0;
   const drawn = drawSpriteFromSheet(
@@ -199,10 +211,10 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
     spriteIndex,
     enemySheet.columns,
     enemySheet.rows,
-    -radius * 1.55,
+    -radius * 1.42,
     -radius * 1.65,
-    radius * 3.1,
-    radius * 3.1,
+    radius * 2.84,
+    radius * 2.84,
   );
   if (!drawn) {
     ctx.fillStyle = def.color;
@@ -215,17 +227,15 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   }
   ctx.restore();
 
-  ctx.fillStyle = '#15110f';
-  ctx.fillRect(enemy.x - 30, enemy.y - radius - 26, 60, 8);
-  ctx.fillStyle = hpRate > 0.35 ? '#87dd4a' : '#ff6961';
-  ctx.fillRect(enemy.x - 30, enemy.y - radius - 26, 60 * hpRate, 8);
-  ctx.strokeStyle = '#2a2019';
-  ctx.strokeRect(enemy.x - 30, enemy.y - radius - 26, 60, 8);
+  drawHpBar(ctx, enemy.x - 38, enemy.y - radius - 28, 76, hpRate, 10);
 
   ctx.fillStyle = '#f5e3af';
-  ctx.font = 'bold 13px sans-serif';
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.82)';
+  ctx.lineWidth = 3;
+  ctx.font = 'bold 14px sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText(def.name, enemy.x, enemy.y + radius + 18);
+  ctx.strokeText(def.name, enemy.x, enemy.y + radius + 22);
+  ctx.fillText(def.name, enemy.x, enemy.y + radius + 22);
 }
 
 function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: boolean) {
@@ -235,9 +245,17 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
 
   ctx.save();
   ctx.translate(pos.x, pos.y);
-  ctx.fillStyle = selected ? 'rgba(255, 220, 90, 0.38)' : 'rgba(27, 24, 18, 0.35)';
+  if (selected) {
+    ctx.strokeStyle = 'rgba(255, 224, 112, 0.95)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, -10, 54 + Math.sin(performance.now() / 160) * 4, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = selected ? 'rgba(255, 220, 90, 0.42)' : 'rgba(27, 24, 18, 0.35)';
   ctx.beginPath();
-  ctx.ellipse(0, 20, 56, 18, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 32, 58, 18, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = selected ? '#ffd45c' : '#8a744a';
   ctx.lineWidth = selected ? 4 : 2;
@@ -250,10 +268,10 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
     spriteIndex,
     wardenSheet.columns,
     wardenSheet.rows,
-    -38,
-    -78,
-    76,
-    92,
+    -48,
+    -88,
+    96,
+    96,
   );
   if (!drawn) {
     ctx.fillStyle = unit.isResting ? '#5b6b59' : unitClass.color;
@@ -273,17 +291,16 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
     ctx.fillText('休憩中', 0, -40);
   }
 
+  drawRoundedRect(ctx, -42, 44, 84, 22, 8);
+  ctx.fillStyle = 'rgba(7, 12, 18, 0.76)';
+  ctx.fill();
   ctx.fillStyle = '#f5e3af';
-  ctx.font = 'bold 14px sans-serif';
-  ctx.fillText(unitClass.name, 0, 42);
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(unit.isResting ? '休憩中' : unitClass.name, 0, 60);
   ctx.restore();
 
-  ctx.fillStyle = '#17110e';
-  ctx.fillRect(pos.x - 30, pos.y - 92, 60, 7);
-  ctx.fillStyle = hpRate > 0.35 ? '#8ee64d' : '#ff6961';
-  ctx.fillRect(pos.x - 30, pos.y - 92, 60 * hpRate, 7);
-  ctx.strokeStyle = '#2a2019';
-  ctx.strokeRect(pos.x - 30, pos.y - 92, 60, 7);
+  drawHpBar(ctx, pos.x - 36, pos.y - 104, 72, hpRate, 9);
 }
 
 function drawProjectile(ctx: CanvasRenderingContext2D, projectile: Projectile) {
@@ -360,18 +377,25 @@ export function GameCanvas({ battleState, playerState, onSelectUnit }: GameCanva
     if (selectedUnit) {
       const selectedClass = unitClasses[selectedUnit.classId];
       const pos = getUnitPosition(selectedUnit.slot);
-      ctx.fillStyle = 'rgba(79, 196, 115, 0.18)';
-      ctx.strokeStyle = 'rgba(255, 224, 112, 0.55)';
+      ctx.fillStyle = 'rgba(79, 196, 115, 0.12)';
+      ctx.strokeStyle = 'rgba(255, 224, 112, 0.48)';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, selectedClass.range, 0, Math.PI * 2);
       ctx.fill();
+      ctx.setLineDash([12, 10]);
       ctx.stroke();
+      ctx.setLineDash([]);
     }
 
+    playerState.units
+      .filter((unit) => getUnitPosition(unit.slot).y < PATH_Y)
+      .forEach((unit) => drawUnit(ctx, unit, unit.id === battleState.selectedUnitId));
     battleState.projectiles.forEach((projectile) => drawProjectile(ctx, projectile));
     battleState.enemies.forEach((enemy) => drawEnemy(ctx, enemy));
-    playerState.units.forEach((unit) => drawUnit(ctx, unit, unit.id === battleState.selectedUnitId));
+    playerState.units
+      .filter((unit) => getUnitPosition(unit.slot).y >= PATH_Y)
+      .forEach((unit) => drawUnit(ctx, unit, unit.id === battleState.selectedUnitId));
     battleState.effects.forEach((effect) => drawEffect(ctx, effect));
 
     ctx.fillStyle = 'rgba(14, 19, 27, 0.75)';

@@ -2,8 +2,8 @@ import { unitClasses } from '../data/classes';
 import type { BattleEnemy, UnitState } from '../types/game';
 
 export const BATTLE_WIDTH = 1280;
-export const BATTLE_HEIGHT = 430;
-export const PATH_Y = 150;
+export const BATTLE_HEIGHT = 470;
+export const PATH_Y = 214;
 export const VILLAGE_GATE_X = 1128;
 
 export interface Point {
@@ -12,14 +12,14 @@ export interface Point {
 }
 
 const UNIT_POSITIONS: Point[] = [
-  { x: 250, y: 275 },
-  { x: 430, y: 265 },
-  { x: 610, y: 275 },
-  { x: 790, y: 265 },
-  { x: 250, y: 355 },
-  { x: 430, y: 348 },
-  { x: 610, y: 355 },
-  { x: 790, y: 348 },
+  { x: 245, y: 128 },
+  { x: 430, y: 116 },
+  { x: 615, y: 128 },
+  { x: 800, y: 116 },
+  { x: 245, y: 326 },
+  { x: 430, y: 340 },
+  { x: 615, y: 326 },
+  { x: 800, y: 340 },
 ];
 
 export function getUnitPosition(slot: number): Point {

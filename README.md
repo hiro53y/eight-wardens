@@ -108,6 +108,11 @@ public/assets/audio/se/damage.mp3
 - 戦闘Canvas上の敵味方スプライト、HPバー、名前、射程円、選択強調を再調整。
 - Service Workerキャッシュ名を `eight-wardens-shell-v7` に更新し、既存PWAで古いUIが残りにくいようにした。
 
+## 2026-05-20 Cloudflare Pages修正
+- Cloudflare Pagesの `npm clean-install` が `Invalid Version:` で止まる原因だった `package-lock.json` を修正。
+- `esbuild`、`rollup`、`vite` 配下のoptional native packageで `version` が空だったエントリへ正しいメタデータを補完。
+- `npm ci --dry-run` が通ることを確認。
+
 ## PWAインストール確認方法
 1. `npm run build`
 2. `npm run preview`

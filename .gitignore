@@ -1,5 +1,9 @@
 node_modules/
 .npm-cache/
+.npm-ci-cache/
+.npm-ci-cache*/
+.npm-lock-cache/
+*.log
 dist/.vite/
 *.tsbuildinfo
 vite.config.js

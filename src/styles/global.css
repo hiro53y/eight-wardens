@@ -2410,3 +2410,152 @@ button {
     grid-template-columns: minmax(64px, 9%) minmax(0, 1fr) minmax(126px, 19%) minmax(188px, 27%);
   }
 }
+
+/* 2026-05-21 alpha sprite and map cleanup pass. */
+.stage-node.locked,
+.stage-node.locked > span {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.stage-node.locked {
+  opacity: 0.82;
+}
+
+.stage-node.locked > span {
+  width: clamp(32px, 4.3vw, 50px);
+  height: clamp(32px, 6.2dvh, 50px);
+  display: grid;
+  place-items: center;
+}
+
+.map-lock-mark {
+  display: block;
+  width: clamp(23px, 3vw, 36px);
+  height: clamp(23px, 4.8dvh, 36px);
+  border: 2px solid rgba(238, 217, 167, 0.68);
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.04),
+    0 0 12px rgba(237, 203, 126, 0.16) !important;
+}
+
+.map-lock-mark::before {
+  left: 29%;
+  top: 22%;
+  width: 42%;
+  height: 32%;
+  border-color: rgba(238, 217, 167, 0.88);
+}
+
+.map-lock-mark::after {
+  left: 26%;
+  bottom: 22%;
+  width: 48%;
+  height: 34%;
+  background: rgba(238, 217, 167, 0.88);
+}
+
+.asset-sprite {
+  background-color: transparent !important;
+}
+
+.unit-portrait,
+.detail-portrait,
+.large-portrait,
+.formation-slot,
+.book-class-icon {
+  background:
+    radial-gradient(circle at 50% 62%, rgba(0, 0, 0, 0.26), transparent 36%),
+    linear-gradient(180deg, rgba(22, 33, 42, 0.36), rgba(7, 11, 16, 0.34)) !important;
+}
+
+.unit-portrait .warden-sprite,
+.detail-portrait .warden-sprite,
+.large-portrait .warden-sprite,
+.formation-slot .warden-sprite,
+.book-class-icon .warden-sprite,
+.class-node .warden-sprite {
+  background-color: transparent !important;
+  filter: drop-shadow(0 7px 8px rgba(0, 0, 0, 0.55));
+}
+
+.unit-portrait .warden-sprite {
+  width: 98%;
+}
+
+.detail-portrait .warden-sprite {
+  width: 104%;
+}
+
+.large-portrait .warden-sprite {
+  width: min(104%, 31dvh);
+}
+
+.formation-slot .warden-sprite {
+  width: 96%;
+}
+
+.unit-profile-panel {
+  grid-template-rows: minmax(0, 0.82fr) minmax(122px, 27dvh);
+}
+
+.profile-top {
+  grid-template-columns: minmax(92px, 28%) minmax(0, 1fr);
+}
+
+.large-portrait {
+  max-height: min(100%, clamp(116px, 27dvh, 184px));
+  align-self: center;
+}
+
+.profile-stats {
+  font-size: clamp(10px, 1.05vw, 14px);
+  gap: clamp(1px, 0.25dvh, 4px) clamp(5px, 0.7vw, 9px);
+}
+
+.profile-stats h2 {
+  font-size: clamp(18px, 2vw, 27px);
+}
+
+.profile-stats h3 {
+  font-size: clamp(13px, 1.35vw, 18px);
+}
+
+.star-row {
+  font-size: clamp(12px, 1.25vw, 17px);
+}
+
+.class-tree-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  padding: clamp(5px, 0.72dvh, 8px);
+  overflow: hidden;
+}
+
+.class-tree {
+  min-height: 0;
+  grid-template-columns: minmax(72px, 96px) 16px minmax(0, 1fr);
+  gap: clamp(4px, 0.6vw, 8px);
+  margin: clamp(4px, 0.55dvh, 7px) 0;
+}
+
+.class-node {
+  min-height: clamp(32px, 5.8dvh, 44px);
+  padding: 3px 5px;
+  font-size: clamp(9px, 0.92vw, 12px);
+  line-height: 1.08;
+}
+
+.tree-branches {
+  gap: clamp(4px, 0.55vw, 7px);
+}
+
+.class-tree-panel p {
+  margin: 1px 0 0;
+  font-size: clamp(8px, 0.82vw, 11px);
+  line-height: 1.1;
+}

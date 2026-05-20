@@ -113,6 +113,13 @@ public/assets/audio/se/damage.mp3
 - `esbuild`、`rollup`、`vite` 配下のoptional native packageで `version` が空だったエントリへ正しいメタデータを補完。
 - `npm ci --dry-run` が通ることを確認。
 
+## 2026-05-21 黒背景とクラスタリー修正
+- マップマーカー、味方キャラ、敵キャラ、ポートレートの透過スプライトシートを追加。
+- 表示参照を透過版へ切り替え、キャラクター画像が黒い四角背景ではなくキャラクターだけ表示されるように修正。
+- マップのロック済みノードは黒い矩形背景を持たない鍵風バッジへ再調整。
+- ユニット管理画面のクラスタリー領域を再配分し、スクロール無しで見切れにくく修正。
+- Service Workerキャッシュ名を `eight-wardens-shell-v8` に更新。
+
 ## PWAインストール確認方法
 1. `npm run build`
 2. `npm run preview`

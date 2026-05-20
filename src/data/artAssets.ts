@@ -1,17 +1,17 @@
 export const wardenSheet = {
-  url: '/assets/generated/warden-chibi-sheet.png?v=20260517-chibi1',
+  url: '/assets/generated/warden-chibi-sheet-transparent.png?v=20260521-alpha1',
   columns: 4,
   rows: 2,
 } as const;
 
 export const enemySheet = {
-  url: '/assets/generated/enemy-chibi-sheet.png?v=20260517-chibi1',
+  url: '/assets/generated/enemy-chibi-sheet-transparent.png?v=20260521-alpha1',
   columns: 5,
   rows: 2,
 } as const;
 
 export const markerSheet = {
-  url: '/assets/generated/map-marker-sheet.png?v=20260517-marker1',
+  url: '/assets/generated/map-marker-sheet-transparent.png?v=20260521-alpha1',
   columns: 4,
   rows: 1,
 } as const;

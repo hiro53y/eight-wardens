@@ -359,7 +359,7 @@ button {
   right: 17%;
   bottom: 20.5%;
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: clamp(5px, 0.9vw, 14px);
   align-items: end;
 }
@@ -2789,7 +2789,7 @@ button {
   right: 6%;
   bottom: 15%;
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: clamp(5px, 0.8vw, 10px);
 }
 
@@ -2864,5 +2864,112 @@ button {
   .stage-clear-actions {
     left: 12%;
     right: 12%;
+  }
+}
+
+/* 2026-05-23 seven-unit visual consistency pass. */
+.asset-image-sprite.warden-sprite {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  transform: none !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+}
+
+.asset-image-sprite.warden-face {
+  background-position: center !important;
+}
+
+.asset-image-sprite.warden-portrait {
+  background-position: center bottom !important;
+}
+
+.asset-image-sprite.warden-battle {
+  background-position: center bottom !important;
+}
+
+.unit-portrait,
+.detail-portrait,
+.large-portrait,
+.formation-slot,
+.stage-clear-unit {
+  display: grid;
+  place-items: center;
+}
+
+.unit-portrait .warden-face,
+.detail-portrait .warden-face {
+  inset: 6% !important;
+  width: 88% !important;
+  height: 88% !important;
+}
+
+.large-portrait .warden-portrait {
+  inset: 3% 5% 0 !important;
+  width: 90% !important;
+  height: 97% !important;
+}
+
+.formation-slot .warden-battle {
+  inset: 6% !important;
+  width: 88% !important;
+  height: 88% !important;
+}
+
+.class-node {
+  position: relative;
+  overflow: hidden;
+}
+
+.class-node .warden-face {
+  position: relative !important;
+  display: block;
+  inset: auto !important;
+  width: clamp(28px, 3.4vw, 44px) !important;
+  height: clamp(28px, 3.4vw, 44px) !important;
+  margin: 0 auto 2px;
+}
+
+.class-node span {
+  display: block;
+  color: #d8c39a;
+  font-size: clamp(8px, 0.82vw, 11px);
+  line-height: 1.05;
+}
+
+.unit-grid {
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+}
+
+.formation-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(3, minmax(0, 1fr)) !important;
+  place-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.formation-slot {
+  width: min(100%, clamp(42px, 5.6vw, 66px));
+}
+
+.stage-clear-party {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.battle-banner {
+  top: clamp(74px, 15dvh, 118px);
+}
+
+@media (max-width: 1050px) {
+  .formation-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .stage-clear-party {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
   }
 }

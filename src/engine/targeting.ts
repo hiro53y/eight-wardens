@@ -16,10 +16,9 @@ const UNIT_POSITIONS: Point[] = [
   { x: 430, y: 116 },
   { x: 615, y: 128 },
   { x: 800, y: 116 },
-  { x: 245, y: 326 },
-  { x: 430, y: 340 },
-  { x: 615, y: 326 },
-  { x: 800, y: 340 },
+  { x: 310, y: 336 },
+  { x: 525, y: 348 },
+  { x: 740, y: 336 },
 ];
 
 export function getUnitPosition(slot: number): Point {

@@ -1,5 +1,6 @@
 import { createInitialPlayerState } from './progression';
 import type { PlayerState, SaveData, SaveUnitState, SettingsState, UnitState } from '../types/game';
+import { unitClasses } from '../data/classes';
 
 export const SAVE_KEY = 'eight-wardens-save-v1';
 export const SETTINGS_KEY = 'eight-wardens-settings-v1';
@@ -56,6 +57,7 @@ export function hasSave(): boolean {
 export function hydrateSave(data: SaveData): PlayerState {
   const initial = createInitialPlayerState();
   const unitsById = new Map(data.units.map((unit) => [unit.id, unit]));
+  const unitsByName = new Map(data.units.map((unit) => [unit.name, unit]));
 
   return {
     gold: data.gold,
@@ -64,7 +66,7 @@ export function hydrateSave(data: SaveData): PlayerState {
     currentStage: data.currentStage,
     clearedStages: data.clearedStages,
     units: initial.units.map((unit) => {
-      const saved = unitsById.get(unit.id);
+      const saved = findSavedUnit(unit, unitsById, unitsByName);
       if (!saved) {
         return unit;
       }
@@ -72,11 +74,69 @@ export function hydrateSave(data: SaveData): PlayerState {
       return {
         ...unit,
         ...saved,
+        id: unit.id,
+        name: unit.name,
+        classId: normalizeClassIdForUnit(unit.id, saved.classId),
         attackCooldown: 0,
         slot: unit.slot,
       };
     }),
   };
+}
+
+function findSavedUnit(
+  unit: UnitState,
+  unitsById: Map<string, SaveUnitState>,
+  unitsByName: Map<string, SaveUnitState>,
+): SaveUnitState | undefined {
+  const legacyIdAliases: Record<string, string[]> = {
+    'unit-1': ['unit-1'],
+    'unit-2': ['unit-2'],
+    'unit-3': ['unit-3'],
+    'unit-4': ['unit-8'],
+    'unit-5': ['unit-4'],
+    'unit-6': ['unit-5'],
+    'unit-7': ['unit-7'],
+  };
+
+  for (const id of legacyIdAliases[unit.id] ?? [unit.id]) {
+    const saved = unitsById.get(id);
+    if (saved) {
+      return saved;
+    }
+  }
+
+  return unitsByName.get(unit.name);
+}
+
+function normalizeClassIdForUnit(unitId: string, classId: string): string {
+  const legacyTier: Record<string, 'lower' | 'middle' | 'advanced'> = {
+    scout: 'lower',
+    artillerist: 'lower',
+    ranger: 'middle',
+    gunner: 'middle',
+    trapper: 'middle',
+    darkKnight: 'advanced',
+    windArcher: 'advanced',
+    binder: 'advanced',
+    saint: 'advanced',
+  };
+  const tier = unitClasses[classId]?.tier ?? legacyTier[classId] ?? 'lower';
+  const byTier: Record<string, Record<string, string>> = {
+    'unit-1': { lower: 'swordsman', middle: 'kensai', advanced: 'swordmaster' },
+    'unit-2': { lower: 'archer', middle: 'sniper', advanced: 'forestArcher' },
+    'unit-3': { lower: 'shieldSoldier', middle: 'heavyKnight', advanced: 'holyShieldKnight' },
+    'unit-4': { lower: 'priest', middle: 'cleric', advanced: 'saintess' },
+    'unit-5': { lower: 'ninja', middle: 'shadowNinja', advanced: 'assassin' },
+    'unit-6': { lower: 'hexBreaker', middle: 'mage', advanced: 'archmage' },
+    'unit-7': { lower: 'lancer', middle: 'lanceKnight', advanced: 'lanceSaint' },
+  };
+
+  if (byTier[unitId]?.[tier]) {
+    return byTier[unitId][tier];
+  }
+
+  return byTier[unitId]?.lower ?? classId;
 }
 
 export function saveSettings(settings: SettingsState): void {

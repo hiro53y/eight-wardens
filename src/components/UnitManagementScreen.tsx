@@ -91,7 +91,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
 
       <div className="management-layout">
         <aside className="unit-list-panel">
-          <div className="panel-title">防衛ユニット 8/8</div>
+          <div className="panel-title">防衛ユニット {playerState.units.length}/7</div>
           <div className="unit-grid">
             {playerState.units.map((unit) => (
               <UnitCard
@@ -128,9 +128,13 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
           </div>
 
           <div className="class-tree-panel">
-            <div className="panel-title">クラスタリー</div>
+            <div className="panel-title">昇進ツリー</div>
             <div className="class-tree">
-              <div className="class-node current">{selectedClass.name}</div>
+              <div className="class-node current">
+                <WardenSprite classId={selectedClass.id} unitId={selectedUnit.id} variant="face" />
+                <strong>{selectedClass.name}</strong>
+                <span>現在職</span>
+              </div>
               <div className="tree-connector" />
               <div className="tree-branches">
                 {selectedClass.promotionTargets.length === 0 ? (
@@ -141,15 +145,18 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
                     return (
                       <div className="class-node" key={classId}>
                         <strong>{target.name}</strong>
-                        <WardenSprite classId={target.id} variant="battle" />
+                        <WardenSprite classId={target.id} unitId={selectedUnit.id} variant="face" />
+                        <span>{target.tier === 'middle' ? '中級職' : '上級職'}</span>
                       </div>
                     );
                   })
                 )}
               </div>
             </div>
-            <p>転職すると新しい役割を得て、ステータスが大きく変化します。</p>
+            <p>現在職: {selectedClass.name}</p>
+            <p>次職: {selectedClass.promotionTargets.map((classId) => unitClasses[classId].name).join(' / ') || 'なし'}</p>
             <p>必要Gold: {promotionCost === null ? 'なし' : promotionCost.toLocaleString('ja-JP')}</p>
+            <p>役割: {selectedClass.role}</p>
           </div>
         </main>
 

@@ -146,14 +146,24 @@ function addProjectile(projectiles: Projectile[], projectile: Omit<Projectile, '
 }
 
 function getProjectileKind(classId: string): Projectile['kind'] {
-  if (['swordsman', 'kensai', 'swordmaster', 'heavyKnight', 'darkKnight', 'ninja', 'assassin'].includes(classId)) {
+  if ([
+    'swordsman',
+    'kensai',
+    'swordmaster',
+    'shieldSoldier',
+    'heavyKnight',
+    'holyShieldKnight',
+    'ninja',
+    'shadowNinja',
+    'assassin',
+    'lancer',
+    'lanceKnight',
+    'lanceSaint',
+  ].includes(classId)) {
     return 'slash';
   }
-  if (['archer', 'ranger', 'windArcher'].includes(classId)) {
+  if (['archer', 'sniper', 'forestArcher'].includes(classId)) {
     return 'arrow';
-  }
-  if (['artillerist', 'gunner', 'sniper'].includes(classId)) {
-    return 'cannon';
   }
   return 'magic';
 }
@@ -333,10 +343,10 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
           };
 
           if (reward.multiplier > 1) {
-            effects = addEffect(effects, {
-              type: 'gold',
-              x: target.x,
-              y: target.y - 58,
+          effects = addEffect(effects, {
+            type: 'gold',
+              x: target.x + 34,
+              y: target.y - 76,
               duration: 0.9,
               text: `GOLD x${reward.multiplier}`,
               color: '#ffd45c',
@@ -370,7 +380,7 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
           ? {
               type: 'victory',
               title: 'MVPクリア',
-              message: 'Wave10のボスを撃破しました。八人の防衛隊は村を守り抜きました。',
+              message: 'Wave10のボスを撃破しました。七人の防衛隊は村を守り抜きました。',
               stageId: nextBattle.stageId,
               clearTimeSec: Math.round(nextBattle.elapsedTimeSec),
               kills: nextBattle.kills,

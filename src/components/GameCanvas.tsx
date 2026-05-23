@@ -27,6 +27,15 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, wi
 }
 
 const imageCache: Record<string, HTMLImageElement> = {};
+const unitDrawTuning: Record<string, { scale: number; offsetX: number; offsetY: number }> = {
+  'unit-1': { scale: 1.02, offsetX: 0, offsetY: 0 },
+  'unit-2': { scale: 1.06, offsetX: 0, offsetY: -2 },
+  'unit-3': { scale: 1.08, offsetX: 0, offsetY: -1 },
+  'unit-4': { scale: 1.03, offsetX: 0, offsetY: -4 },
+  'unit-5': { scale: 1.04, offsetX: 0, offsetY: -1 },
+  'unit-6': { scale: 1.08, offsetX: 0, offsetY: -3 },
+  'unit-7': { scale: 1.08, offsetX: 0, offsetY: -2 },
+};
 
 function getImage(url: string) {
   if (typeof window === 'undefined') {
@@ -203,15 +212,17 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   }
   ctx.restore();
 
-  drawHpBar(ctx, enemy.x - 38, enemy.y - radius - 28, 76, hpRate, 10);
+  drawHpBar(ctx, enemy.x - 30, enemy.y - radius - 24, 60, hpRate, 7);
 
-  ctx.fillStyle = '#f5e3af';
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.82)';
-  ctx.lineWidth = 3;
-  ctx.font = 'bold 14px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.strokeText(def.name, enemy.x, enemy.y + radius + 22);
-  ctx.fillText(def.name, enemy.x, enemy.y + radius + 22);
+  if (def.type === 'boss' || def.type === 'finalBoss' || def.type === 'metal') {
+    ctx.fillStyle = '#f5e3af';
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.82)';
+    ctx.lineWidth = 3;
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.strokeText(def.name, enemy.x, enemy.y + radius + 20);
+    ctx.fillText(def.name, enemy.x, enemy.y + radius + 20);
+  }
 }
 
 function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: boolean) {
@@ -245,14 +256,19 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.lineWidth = selected ? 4 : 2;
   ctx.stroke();
 
-  const drawn = drawImageAsset(
-    ctx,
-    getImage(getUnitArt({ unitId: unit.id, classId: unit.classId }).battle),
-    -52,
-    -92,
-    104,
-    104,
-  );
+  const art = getImage(getUnitArt({ unitId: unit.id, classId: unit.classId }).battle);
+  const tuning = unitDrawTuning[unit.id] ?? { scale: 1, offsetX: 0, offsetY: 0 };
+  const spriteWidth = 104 * tuning.scale;
+  const spriteHeight = 112 * tuning.scale;
+  let drawn = false;
+  if (art?.complete && art.naturalWidth > 0) {
+    ctx.save();
+    ctx.translate(tuning.offsetX, tuning.offsetY);
+    ctx.scale(-1, 1);
+    ctx.drawImage(art, -spriteWidth / 2, -spriteHeight + 34, spriteWidth, spriteHeight);
+    ctx.restore();
+    drawn = true;
+  }
   if (!drawn) {
     ctx.fillStyle = unit.isResting ? '#5b6b59' : unitClass.color;
     ctx.strokeStyle = '#121417';

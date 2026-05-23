@@ -126,6 +126,13 @@ export interface BattleResult {
   type: BattleResultType;
   title: string;
   message: string;
+  stageId?: number;
+  clearTimeSec?: number;
+  kills?: number;
+  goldEarned?: number;
+  expEarned?: number;
+  villageHp?: number;
+  participants?: string[];
 }
 
 export interface BattleState {
@@ -141,6 +148,12 @@ export interface BattleState {
   spawnTimer: number;
   spawnedEntries: Record<number, number>;
   message: string;
+  elapsedTimeSec: number;
+  kills: number;
+  goldEarned: number;
+  expEarned: number;
+  waveBannerTimer: number;
+  warningBanner: 'wave' | 'elite' | 'boss' | null;
 }
 
 export interface SettingsState {

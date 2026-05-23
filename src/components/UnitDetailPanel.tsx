@@ -25,7 +25,7 @@ export function UnitDetailPanel({ unit, gold, onAttack, onRest, onLevelUp, onPro
         className="detail-portrait"
         style={{ '--unit-color': unitClass.color } as CSSProperties}
       >
-        <WardenSprite classId={unit.classId} />
+        <WardenSprite classId={unit.classId} unitId={unit.id} variant="face" />
         <i />
       </div>
       <div className="detail-main">

@@ -1,4 +1,5 @@
 import { enemies } from '../data/enemies';
+import { effectArt, stageBackgrounds, uiArt } from '../data/artAssets';
 import { waves } from '../data/waves';
 import { isStageUnlocked } from '../engine/progression';
 import type { PlayerState } from '../types/game';
@@ -86,7 +87,9 @@ export function StageSelectScreen({
       </header>
 
       <div className="map-layout">
-        <div className="world-map">
+        <div className="world-map upgraded-world-map" style={{ backgroundImage: `url("${stageBackgrounds.map}")` }}>
+          <img className="map-route-line map-route-line-a" src={effectArt.routeDotted} alt="" />
+          <img className="map-route-line map-route-line-b" src={effectArt.routeCurve} alt="" />
           <div className="chapter-banner">
             <img src="/assets/ui/crest.svg" alt="" />
             <span>第1章</span>
@@ -110,7 +113,7 @@ export function StageSelectScreen({
                 onClick={() => handleNodeClick(node.id)}
                 >
                 <span>
-                  {nodeUnlocked ? <MarkerSprite type={nodeCleared ? 'cleared' : 'stage'} /> : <span className="map-lock-mark" />}
+                  {nodeUnlocked ? <MarkerSprite type={nodeCleared ? 'cleared' : 'stage'} /> : <img className="map-lock-icon" src={uiArt.icons.lock} alt="" />}
                   {nodeUnlocked && <b>{node.id}</b>}
                 </span>
                 <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : ''}</small>
@@ -138,8 +141,8 @@ export function StageSelectScreen({
             推奨戦力 <strong>{(selectedNode.id * 820).toLocaleString('ja-JP')}</strong>
           </div>
           <div className="reward-row">
-            <div>金貨 x{selectedNode.id * 120}</div>
-            <div>宝石 x{selectedNode.id + 4}</div>
+            <div><img src={uiArt.icons.coin} alt="" />金貨 x{selectedNode.id * 120}</div>
+            <div><img src={uiArt.icons.gem} alt="" />宝石 x{selectedNode.id + 4}</div>
             <div>星報酬</div>
           </div>
           <div className="stamina-row">消費スタミナ <strong>1</strong></div>

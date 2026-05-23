@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eight-wardens-shell-v8';
+const CACHE_NAME = 'eight-wardens-shell-v9-game-assets';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -22,7 +22,29 @@ const APP_SHELL = [
   '/assets/generated/unit-portraits-sheet-transparent.png',
   '/assets/generated/warden-chibi-sheet-transparent.png',
   '/assets/generated/enemy-chibi-sheet-transparent.png',
-  '/assets/generated/map-marker-sheet-transparent.png'
+  '/assets/generated/map-marker-sheet-transparent.png',
+  '/assets/game/backgrounds/chapter1_world_map.png',
+  '/assets/game/backgrounds/battle_village_gate_day.png',
+  '/assets/game/backgrounds/result_stage_clear_bg.png',
+  '/assets/game/banners/banner_wave_start.png',
+  '/assets/game/banners/banner_elite_warning.png',
+  '/assets/game/banners/banner_boss_warning.png',
+  '/assets/game/banners/banner_stage_clear.png',
+  '/assets/game/banners/deco_victory_flourish_gold.png',
+  '/assets/game/banners/deco_reward_sparkle_gold.png',
+  '/assets/game/banners/deco_three_star_clear.png',
+  '/assets/game/effects/fx_slash_blue.png',
+  '/assets/game/effects/fx_hit_flash_orange.png',
+  '/assets/game/effects/fx_magic_bolt_purple.png',
+  '/assets/game/effects/fx_target_ring_red.png',
+  '/assets/game/effects/fx_route_curve_red.png',
+  '/assets/game/effects/fx_route_dotted_red.png',
+  '/assets/game/effects/fx_route_lane_warning_red.png',
+  '/assets/game/ui/icons/ui_icon_coin.png',
+  '/assets/game/ui/icons/ui_icon_gem.png',
+  '/assets/game/ui/icons/ui_icon_lock.png',
+  '/assets/game/ui/icons/ui_icon_shield.png',
+  '/assets/game/ui/icons/ui_icon_sword.png'
 ];
 
 self.addEventListener('install', (event) => {

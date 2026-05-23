@@ -110,7 +110,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
               className="large-portrait"
               style={{ '--unit-color': selectedClass.color } as CSSProperties}
             >
-              <WardenSprite classId={selectedUnit.classId} />
+              <WardenSprite classId={selectedUnit.classId} unitId={selectedUnit.id} variant="portrait" />
               <span className="portrait-shine" />
             </div>
             <div className="profile-stats">
@@ -141,7 +141,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
                     return (
                       <div className="class-node" key={classId}>
                         <strong>{target.name}</strong>
-                        <WardenSprite classId={target.id} />
+                        <WardenSprite classId={target.id} variant="battle" />
                       </div>
                     );
                   })
@@ -159,7 +159,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
           <div className="formation-grid">
             {playerState.units.map((unit) => (
               <div className="formation-slot" key={unit.id} style={{ '--unit-color': unitClasses[unit.classId].color } as CSSProperties}>
-                <WardenSprite classId={unit.classId} />
+                <WardenSprite classId={unit.classId} unitId={unit.id} variant="battle" />
               </div>
             ))}
           </div>

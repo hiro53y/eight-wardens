@@ -31,6 +31,12 @@ export function createBattleState(stageId: number, selectedUnitId: string): Batt
     spawnTimer: 0,
     spawnedEntries: {},
     message: '防衛開始',
+    elapsedTimeSec: 0,
+    kills: 0,
+    goldEarned: 0,
+    expEarned: 0,
+    waveBannerTimer: 2.2,
+    warningBanner: 'wave',
   };
 }
 
@@ -50,6 +56,8 @@ export function beginNextWave(battle: BattleState): BattleState {
     spawnTimer: 0,
     spawnedEntries: {},
     message: `Wave ${nextWaveIndex + 1} 開始`,
+    waveBannerTimer: 2.2,
+    warningBanner: waves[nextWaveIndex]?.isBoss ? 'boss' : nextWaveIndex >= 5 ? 'elite' : 'wave',
   };
 }
 
@@ -192,6 +200,9 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
     projectiles: ageProjectiles(battle.projectiles, dt),
     effects: ageEffects(battle.effects, dt),
     message: battle.message,
+    elapsedTimeSec: battle.elapsedTimeSec + dt,
+    waveBannerTimer: Math.max(0, battle.waveBannerTimer - dt),
+    warningBanner: battle.waveBannerTimer - dt > 0 ? battle.warningBanner : null,
   };
   let nextPlayer: PlayerState = {
     ...player,
@@ -314,6 +325,12 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
             text: enemyDef.name,
             color: '#fff2b9',
           });
+          nextBattle = {
+            ...nextBattle,
+            kills: nextBattle.kills + 1,
+            goldEarned: nextBattle.goldEarned + reward.gold,
+            expEarned: nextBattle.expEarned + enemyDef.exp,
+          };
 
           if (reward.multiplier > 1) {
             effects = addEffect(effects, {
@@ -354,6 +371,13 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
               type: 'victory',
               title: 'MVPクリア',
               message: 'Wave10のボスを撃破しました。八人の防衛隊は村を守り抜きました。',
+              stageId: nextBattle.stageId,
+              clearTimeSec: Math.round(nextBattle.elapsedTimeSec),
+              kills: nextBattle.kills,
+              goldEarned: nextBattle.goldEarned,
+              expEarned: nextBattle.expEarned,
+              villageHp: nextPlayer.villageHp,
+              participants: nextPlayer.units.map((unit) => unit.id),
             }
           : {
               type: 'waveClear',

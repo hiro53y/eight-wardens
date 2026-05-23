@@ -2559,3 +2559,310 @@ button {
   font-size: clamp(8px, 0.82vw, 11px);
   line-height: 1.1;
 }
+
+/* 2026-05-23 processed asset integration pass. */
+.asset-image-sprite {
+  background-image: var(--sprite-url);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.upgraded-world-map {
+  background-size: cover;
+  background-position: center;
+}
+
+.map-route-line {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.48;
+  filter: drop-shadow(0 0 12px rgba(255, 56, 56, 0.42));
+  mix-blend-mode: screen;
+}
+
+.map-route-line-a {
+  left: 12%;
+  top: 51%;
+  width: 60%;
+  height: 16%;
+  transform: rotate(-8deg);
+}
+
+.map-route-line-b {
+  left: 30%;
+  top: 30%;
+  width: 48%;
+  height: 18%;
+  transform: rotate(7deg);
+}
+
+.chapter-banner,
+.stage-node,
+.map-village,
+.map-castle,
+.map-creature {
+  z-index: 1;
+}
+
+.map-lock-icon {
+  width: clamp(24px, 3.5vw, 44px);
+  height: clamp(24px, 5.5dvh, 44px);
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 226, 158, 0.35));
+}
+
+.reward-row div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-items: center;
+  gap: 4px;
+}
+
+.reward-row img,
+.stage-clear-rewards img {
+  width: clamp(18px, 2vw, 28px);
+  height: clamp(18px, 2vw, 28px);
+  object-fit: contain;
+}
+
+.battle-banner {
+  position: absolute;
+  z-index: 8;
+  left: 50%;
+  top: 16%;
+  width: min(48%, 620px);
+  height: clamp(72px, 15dvh, 128px);
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  animation: battleBannerPop 2.2s ease-out both;
+}
+
+.battle-banner img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.55));
+}
+
+.battle-banner strong {
+  position: relative;
+  z-index: 1;
+  color: #fff3cf;
+  font-family: Georgia, "Yu Mincho", serif;
+  font-size: clamp(24px, 4vw, 58px);
+  text-shadow: 0 3px 0 #2b120c, 0 0 18px rgba(255, 224, 120, 0.55);
+  letter-spacing: 0;
+}
+
+.battle-banner-boss strong,
+.battle-banner-elite strong {
+  color: #ffe6de;
+  text-shadow: 0 3px 0 #3b0e0d, 0 0 18px rgba(255, 76, 58, 0.65);
+}
+
+@keyframes battleBannerPop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.86); }
+  16% { opacity: 1; transform: translateX(-50%) scale(1); }
+  78% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.03); }
+}
+
+.stage-clear-backdrop {
+  padding: clamp(10px, 2dvh, 20px);
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.stage-clear-screen {
+  position: relative;
+  width: min(100%, 1200px);
+  height: min(100%, 675px);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 3px solid #d9b46a;
+  background-size: cover;
+  background-position: center;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 244, 204, 0.12),
+    0 22px 55px rgba(0, 0, 0, 0.6);
+}
+
+.stage-clear-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(5, 9, 14, 0.2), rgba(5, 9, 14, 0.74)),
+    radial-gradient(circle at 50% 22%, rgba(255, 223, 121, 0.28), transparent 34%);
+}
+
+.stage-clear-flourish,
+.stage-clear-banner,
+.stage-clear-stars,
+.stage-clear-summary,
+.stage-clear-rewards,
+.stage-clear-party,
+.stage-clear-actions {
+  position: absolute;
+  z-index: 1;
+}
+
+.stage-clear-flourish {
+  left: 50%;
+  top: 5%;
+  width: 46%;
+  transform: translateX(-50%);
+  opacity: 0.82;
+}
+
+.stage-clear-banner {
+  left: 50%;
+  top: 8%;
+  width: 44%;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 14px 16px rgba(0, 0, 0, 0.52));
+}
+
+.stage-clear-stars {
+  left: 50%;
+  top: 29%;
+  width: clamp(120px, 18vw, 230px);
+  transform: translateX(-50%);
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.42));
+}
+
+.stage-clear-summary {
+  left: 6%;
+  top: 28%;
+  width: 32%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(6px, 1vw, 12px);
+}
+
+.stage-clear-summary div,
+.stage-clear-rewards div {
+  border: 1px solid rgba(239, 207, 139, 0.78);
+  background: rgba(9, 15, 23, 0.75);
+  padding: clamp(6px, 1dvh, 11px);
+  display: grid;
+  gap: 2px;
+  text-align: center;
+  font-weight: 900;
+  box-shadow: inset 0 0 0 1px rgba(255, 245, 205, 0.08);
+}
+
+.stage-clear-summary span,
+.stage-clear-rewards div {
+  color: #e8d6ad;
+  font-size: clamp(10px, 1.1vw, 15px);
+}
+
+.stage-clear-summary strong,
+.stage-clear-rewards strong {
+  color: #ffe89d;
+  font-size: clamp(18px, 2.2vw, 30px);
+}
+
+.stage-clear-rewards {
+  right: 6%;
+  top: 28%;
+  width: 32%;
+  display: grid;
+  gap: clamp(6px, 0.8dvh, 10px);
+}
+
+.stage-clear-rewards div {
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  text-align: left;
+}
+
+.stage-clear-party {
+  left: 6%;
+  right: 6%;
+  bottom: 15%;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: clamp(5px, 0.8vw, 10px);
+}
+
+.stage-clear-unit {
+  min-width: 0;
+  min-height: clamp(72px, 14dvh, 112px);
+  border: 1px solid rgba(217, 180, 106, 0.74);
+  background: rgba(8, 13, 20, 0.78);
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  justify-items: center;
+  padding: clamp(4px, 0.8dvh, 8px);
+  overflow: hidden;
+}
+
+.stage-clear-unit .warden-sprite {
+  width: 82%;
+  height: 100%;
+}
+
+.stage-clear-unit span,
+.stage-clear-unit small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage-clear-unit span {
+  color: #fff0c8;
+  font-weight: 900;
+  font-size: clamp(10px, 1.1vw, 15px);
+}
+
+.stage-clear-unit small {
+  color: #d8c39a;
+  font-size: clamp(8px, 0.9vw, 12px);
+}
+
+.stage-clear-actions {
+  left: 20%;
+  right: 20%;
+  bottom: 4%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(8px, 1.2vw, 16px);
+}
+
+.action-button.red,
+.action-button.blue,
+.action-button.green,
+.action-button.purple,
+.action-button.brown {
+  background-size: 100% 100%, auto;
+}
+
+@media (max-width: 1050px) {
+  .stage-clear-summary,
+  .stage-clear-rewards {
+    top: 30%;
+    width: 35%;
+  }
+
+  .stage-clear-party {
+    bottom: 16%;
+  }
+
+  .stage-clear-unit {
+    min-height: clamp(58px, 13dvh, 86px);
+  }
+
+  .stage-clear-actions {
+    left: 12%;
+    right: 12%;
+  }
+}

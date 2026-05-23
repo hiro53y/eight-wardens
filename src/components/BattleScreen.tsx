@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import { unitClasses } from '../data/classes';
-import { beginNextWave, updateBattleState } from '../engine/gameLoop';
+import { bannerArt } from '../data/artAssets';
+import { beginNextWave, createBattleState, updateBattleState } from '../engine/gameLoop';
 import { playDamageSe } from '../engine/audio';
 import { markStageCleared } from '../engine/progression';
 import { promoteUnit, tryLevelUp } from '../engine/combat';
@@ -156,6 +157,27 @@ export function BattleScreen({
         onOpenSettings={onOpenSettings}
       />
       <div className="battle-message">{battleState.message}</div>
+      {battleState.waveBannerTimer > 0 && (
+        <div className={`battle-banner battle-banner-${battleState.warningBanner ?? 'wave'}`}>
+          <img
+            src={
+              battleState.warningBanner === 'boss'
+                ? bannerArt.bossWarning
+                : battleState.warningBanner === 'elite'
+                  ? bannerArt.eliteWarning
+                  : bannerArt.waveStart
+            }
+            alt=""
+          />
+          <strong>
+            {battleState.warningBanner === 'boss'
+              ? 'BOSS WARNING'
+              : battleState.warningBanner === 'elite'
+                ? 'ELITE WARNING'
+                : `WAVE ${battleState.waveIndex + 1}`}
+          </strong>
+        </div>
+      )}
       <GameCanvas
         battleState={battleState}
         playerState={playerState}
@@ -206,6 +228,8 @@ export function BattleScreen({
               : undefined
           }
           onBackToMap={handleResultBack}
+          onRetry={() => setBattleState(createBattleState(battleState.stageId, battleState.selectedUnitId))}
+          playerState={playerState}
         />
       )}
     </section>

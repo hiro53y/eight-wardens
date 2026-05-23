@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import type { PointerEvent } from 'react';
 import { enemies } from '../data/enemies';
 import { unitClasses } from '../data/classes';
-import { classSpriteIndex, enemySheet, enemySpriteIndex, wardenSheet } from '../data/artAssets';
+import { effectArt, enemyArtByEnemyId, getUnitArt, stageBackgrounds } from '../data/artAssets';
 import type { BattleEnemy, BattleState, Effect, PlayerState, Projectile, UnitState } from '../types/game';
 import { BATTLE_HEIGHT, BATTLE_WIDTH, distance, getUnitPosition, PATH_Y, VILLAGE_GATE_X } from '../engine/targeting';
 
@@ -26,45 +26,22 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, wi
   ctx.closePath();
 }
 
-let battleBackgroundImage: HTMLImageElement | null = null;
-let wardenSpriteImage: HTMLImageElement | null = null;
-let enemySpriteImage: HTMLImageElement | null = null;
+const imageCache: Record<string, HTMLImageElement> = {};
 
-function getBattleBackgroundImage() {
+function getImage(url: string) {
   if (typeof window === 'undefined') {
     return null;
   }
-  if (!battleBackgroundImage) {
-    battleBackgroundImage = new Image();
-    battleBackgroundImage.src = '/assets/generated/battle-background.png';
+  if (!imageCache[url]) {
+    imageCache[url] = new Image();
+    imageCache[url].src = url;
   }
-  return battleBackgroundImage;
+  return imageCache[url];
 }
 
-function getSpriteImage(kind: 'warden' | 'enemy') {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-  if (kind === 'warden') {
-    if (!wardenSpriteImage) {
-      wardenSpriteImage = new Image();
-      wardenSpriteImage.src = wardenSheet.url;
-    }
-    return wardenSpriteImage;
-  }
-  if (!enemySpriteImage) {
-    enemySpriteImage = new Image();
-    enemySpriteImage.src = enemySheet.url;
-  }
-  return enemySpriteImage;
-}
-
-function drawSpriteFromSheet(
+function drawImageAsset(
   ctx: CanvasRenderingContext2D,
   image: HTMLImageElement | null,
-  index: number,
-  columns: number,
-  rows: number,
   x: number,
   y: number,
   width: number,
@@ -73,11 +50,7 @@ function drawSpriteFromSheet(
   if (!image?.complete || image.naturalWidth <= 0) {
     return false;
   }
-  const sourceWidth = image.naturalWidth / columns;
-  const sourceHeight = image.naturalHeight / rows;
-  const column = index % columns;
-  const row = Math.floor(index / columns);
-  ctx.drawImage(image, column * sourceWidth, row * sourceHeight, sourceWidth, sourceHeight, x, y, width, height);
+  ctx.drawImage(image, x, y, width, height);
   return true;
 }
 
@@ -94,11 +67,18 @@ function drawHpBar(ctx: CanvasRenderingContext2D, x: number, y: number, width: n
 }
 
 function drawBackground(ctx: CanvasRenderingContext2D) {
-  const image = getBattleBackgroundImage();
+  const image = getImage(stageBackgrounds.battle);
   if (image?.complete && image.naturalWidth > 0) {
     ctx.drawImage(image, 0, 0, BATTLE_WIDTH, BATTLE_HEIGHT);
     ctx.fillStyle = 'rgba(8, 18, 20, 0.08)';
     ctx.fillRect(0, 0, BATTLE_WIDTH, BATTLE_HEIGHT);
+    const route = getImage(effectArt.routeWarning);
+    if (route?.complete && route.naturalWidth > 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.42;
+      ctx.drawImage(route, 14, PATH_Y - 82, BATTLE_WIDTH - 68, 128);
+      ctx.restore();
+    }
     return;
   }
 
@@ -204,13 +184,9 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   ctx.beginPath();
   ctx.ellipse(0, radius * 0.9, radius * 1.28, radius * 0.32, 0, 0, Math.PI * 2);
   ctx.fill();
-  const spriteIndex = enemySpriteIndex[enemy.enemyId] ?? 0;
-  const drawn = drawSpriteFromSheet(
+  const drawn = drawImageAsset(
     ctx,
-    getSpriteImage('enemy'),
-    spriteIndex,
-    enemySheet.columns,
-    enemySheet.rows,
+    getImage(enemyArtByEnemyId[enemy.enemyId] ?? enemyArtByEnemyId.grassSlime),
     -radius * 1.42,
     -radius * 1.65,
     radius * 2.84,
@@ -246,11 +222,19 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.save();
   ctx.translate(pos.x, pos.y);
   if (selected) {
-    ctx.strokeStyle = 'rgba(255, 224, 112, 0.95)';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(0, -10, 54 + Math.sin(performance.now() / 160) * 4, 0, Math.PI * 2);
-    ctx.stroke();
+    const targetRing = getImage(effectArt.target);
+    if (targetRing?.complete && targetRing.naturalWidth > 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.72;
+      ctx.drawImage(targetRing, -62, -20, 124, 84);
+      ctx.restore();
+    } else {
+      ctx.strokeStyle = 'rgba(255, 224, 112, 0.95)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(0, -10, 54 + Math.sin(performance.now() / 160) * 4, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   }
 
   ctx.fillStyle = selected ? 'rgba(255, 220, 90, 0.42)' : 'rgba(27, 24, 18, 0.35)';
@@ -261,17 +245,13 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.lineWidth = selected ? 4 : 2;
   ctx.stroke();
 
-  const spriteIndex = classSpriteIndex[unit.classId] ?? 0;
-  const drawn = drawSpriteFromSheet(
+  const drawn = drawImageAsset(
     ctx,
-    getSpriteImage('warden'),
-    spriteIndex,
-    wardenSheet.columns,
-    wardenSheet.rows,
-    -48,
-    -88,
-    96,
-    96,
+    getImage(getUnitArt({ unitId: unit.id, classId: unit.classId }).battle),
+    -52,
+    -92,
+    104,
+    104,
   );
   if (!drawn) {
     ctx.fillStyle = unit.isResting ? '#5b6b59' : unitClass.color;
@@ -307,6 +287,26 @@ function drawProjectile(ctx: CanvasRenderingContext2D, projectile: Projectile) {
   const progress = Math.min(1, projectile.age / projectile.duration);
   ctx.save();
   ctx.globalAlpha = 1 - progress * 0.35;
+  if (projectile.kind === 'slash') {
+    const slash = getImage(effectArt.slash);
+    if (slash?.complete && slash.naturalWidth > 0) {
+      ctx.translate(projectile.toX, projectile.toY);
+      ctx.rotate(-0.22);
+      ctx.drawImage(slash, -62, -54, 124, 86);
+      ctx.restore();
+      return;
+    }
+  }
+  if (projectile.kind === 'magic') {
+    const magic = getImage(effectArt.magic);
+    if (magic?.complete && magic.naturalWidth > 0) {
+      const x = projectile.fromX + (projectile.toX - projectile.fromX) * progress;
+      const y = projectile.fromY + (projectile.toY - projectile.fromY) * progress;
+      ctx.drawImage(magic, x - 48, y - 20, 96, 40);
+      ctx.restore();
+      return;
+    }
+  }
   ctx.strokeStyle = projectile.color;
   ctx.lineWidth = projectile.kind === 'slash' ? 8 : projectile.kind === 'cannon' ? 7 : 5;
   ctx.shadowColor = projectile.color;
@@ -339,6 +339,13 @@ function drawEffect(ctx: CanvasRenderingContext2D, effect: Effect) {
   const progress = effect.age / effect.duration;
   ctx.save();
   ctx.globalAlpha = Math.max(0, 1 - progress);
+  if (effect.type === 'hit') {
+    const hit = getImage(effectArt.hit);
+    if (hit?.complete && hit.naturalWidth > 0) {
+      const scale = 1 + progress * 0.35;
+      ctx.drawImage(hit, effect.x - 48 * scale, effect.y - 50 * scale, 96 * scale, 76 * scale);
+    }
+  }
   ctx.fillStyle = effect.color ?? '#fff';
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
   ctx.lineWidth = 3;

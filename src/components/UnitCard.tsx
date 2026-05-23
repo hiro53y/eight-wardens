@@ -20,7 +20,7 @@ export function UnitCard({ unit, selected = false, compact = false, onClick }: U
         className="unit-portrait"
         style={{ '--unit-color': unitClass.color } as CSSProperties}
       >
-        <WardenSprite classId={unit.classId} />
+        <WardenSprite classId={unit.classId} unitId={unit.id} variant="face" />
         <i />
       </div>
       <div className="unit-card-info">

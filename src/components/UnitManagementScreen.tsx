@@ -89,7 +89,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
         </button>
       </header>
 
-      <div className="management-layout">
+      <div className="management-layout management-layout-balanced">
         <aside className="unit-list-panel">
           <div className="panel-title">防衛ユニット {playerState.units.length}/7</div>
           <div className="unit-grid">
@@ -104,7 +104,7 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
           </div>
         </aside>
 
-        <main className="unit-profile-panel">
+        <main className="unit-profile-panel unit-profile-panel-balanced">
           <div className="profile-top">
             <div
               className="large-portrait"
@@ -113,30 +113,35 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
               <WardenSprite classId={selectedUnit.classId} unitId={selectedUnit.id} variant="portrait" />
               <span className="portrait-shine" />
             </div>
-            <div className="profile-stats">
-              <h2>{selectedClass.name}</h2>
-              <h3>{selectedUnit.name}</h3>
-              <div className="star-row">{'★'.repeat(selectedUnit.level + 1)}{'☆'.repeat(4 - selectedUnit.level)}</div>
-              <div>Lv.{selectedUnit.level} / 3</div>
-              <div>EXP {nextExp ? `${selectedUnit.exp}/${nextExp}` : 'MAX'}</div>
-              <div>HP {selectedUnit.hp}/{selectedUnit.maxHp}</div>
-              <div>攻撃力 {calculateAttack(selectedUnit, selectedClass)}</div>
-              <div>射程 {formatRangeAsSquares(selectedClass.range)}</div>
-              <div>攻撃間隔 {calculateCooldown(selectedUnit, selectedClass).toFixed(2)}秒</div>
-              <div>防御力 {Math.round(selectedUnit.maxHp / 8)}</div>
+            <div className="profile-stats profile-stats-balanced">
+              <div className="profile-heading">
+                <h2>{selectedUnit.name}</h2>
+                <h3>{selectedClass.name}</h3>
+                <div className="star-row">{'★'.repeat(selectedUnit.level + 1)}{'☆'.repeat(4 - selectedUnit.level)}</div>
+              </div>
+              <div className="profile-stat-grid">
+                <div>Lv <strong>{selectedUnit.level} / 3</strong></div>
+                <div>EXP <strong>{nextExp ? `${selectedUnit.exp}/${nextExp}` : 'MAX'}</strong></div>
+                <div>HP <strong>{selectedUnit.hp}/{selectedUnit.maxHp}</strong></div>
+                <div>攻撃力 <strong>{calculateAttack(selectedUnit, selectedClass)}</strong></div>
+                <div>防御力 <strong>{Math.round(selectedUnit.maxHp / 8)}</strong></div>
+                <div>射程 <strong>{formatRangeAsSquares(selectedClass.range)}</strong></div>
+                <div>攻撃間隔 <strong>{calculateCooldown(selectedUnit, selectedClass).toFixed(2)}秒</strong></div>
+                <div>役割 <strong>{selectedClass.icon}</strong></div>
+              </div>
             </div>
           </div>
 
           <div className="class-tree-panel">
             <div className="panel-title">昇進ツリー</div>
-            <div className="class-tree">
+            <div className="class-tree class-tree-flow">
               <div className="class-node current">
                 <WardenSprite classId={selectedClass.id} unitId={selectedUnit.id} variant="face" />
                 <strong>{selectedClass.name}</strong>
                 <span>現在職</span>
               </div>
               <div className="tree-connector" />
-              <div className="tree-branches">
+              <div className="tree-branches tree-branches-flow">
                 {selectedClass.promotionTargets.length === 0 ? (
                   <div className="class-node locked">最終職</div>
                 ) : (
@@ -153,36 +158,42 @@ export function UnitManagementScreen({ playerState, setPlayerState, onBack, onTo
                 )}
               </div>
             </div>
-            <p>現在職: {selectedClass.name}</p>
-            <p>次職: {selectedClass.promotionTargets.map((classId) => unitClasses[classId].name).join(' / ') || 'なし'}</p>
-            <p>必要Gold: {promotionCost === null ? 'なし' : promotionCost.toLocaleString('ja-JP')}</p>
-            <p>役割: {selectedClass.role}</p>
+            <div className="promotion-summary">
+              <div><span>現在職</span><strong>{selectedClass.name}</strong></div>
+              <div><span>次職</span><strong>{selectedClass.promotionTargets.map((classId) => unitClasses[classId].name).join(' / ') || 'なし'}</strong></div>
+              <div><span>必要Gold</span><strong>{promotionCost === null ? 'なし' : promotionCost.toLocaleString('ja-JP')}</strong></div>
+              <p>{selectedClass.role}</p>
+            </div>
           </div>
         </main>
 
-        <aside className="formation-panel">
-          <div className="panel-title">編成プレビュー</div>
-          <div className="formation-field">
-          <div className="formation-grid">
-            {playerState.units.map((unit) => (
-              <div className="formation-slot" key={unit.id} style={{ '--unit-color': unitClasses[unit.classId].color } as CSSProperties}>
-                <WardenSprite classId={unit.classId} unitId={unit.id} variant="battle" />
+        <aside className="formation-panel formation-panel-balanced">
+          <div className="formation-preview-block">
+            <div className="panel-title">編成プレビュー</div>
+            <div className="formation-field">
+              <div className="formation-grid">
+                {playerState.units.map((unit) => (
+                  <div className="formation-slot" key={unit.id} style={{ '--unit-color': unitClasses[unit.classId].color } as CSSProperties}>
+                    <WardenSprite classId={unit.classId} unitId={unit.id} variant="battle" />
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
+          <div className="formation-actions">
+            <button className="action-button blue" onClick={moveSelectedToFront}>
+              編成
+            </button>
+            <button className="action-button brown" onClick={reinforceEquipment}>
+              装備
+            </button>
+            <button className="action-button green" onClick={toggleResting}>
+              休憩設定
+            </button>
+            <button className="action-button purple" onClick={() => setPromotionOpen(true)}>
+              転職する
+            </button>
           </div>
-          <button className="action-button blue" onClick={moveSelectedToFront}>
-            編成
-          </button>
-          <button className="action-button brown" onClick={reinforceEquipment}>
-            装備
-          </button>
-          <button className="action-button green" onClick={toggleResting}>
-            休憩設定
-          </button>
-          <button className="action-button purple" onClick={() => setPromotionOpen(true)}>
-            転職する
-          </button>
         </aside>
       </div>
 

@@ -36,6 +36,18 @@ const unitDrawTuning: Record<string, { scale: number; offsetX: number; offsetY: 
   'unit-6': { scale: 1.08, offsetX: 0, offsetY: -3 },
   'unit-7': { scale: 1.08, offsetX: 0, offsetY: -2 },
 };
+const enemyDrawTuning: Record<string, { scale: number; offsetX: number; offsetY: number; flipX: boolean }> = {
+  grassSlime: { scale: 1, offsetX: 0, offsetY: 0, flipX: true },
+  runningChick: { scale: 1.02, offsetX: 0, offsetY: 0, flipX: true },
+  smallBat: { scale: 1.06, offsetX: 0, offsetY: -1, flipX: true },
+  blueSlime: { scale: 1, offsetX: 0, offsetY: 0, flipX: true },
+  bigWorm: { scale: 1.1, offsetX: 0, offsetY: -2, flipX: true },
+  bigSlime: { scale: 1.05, offsetX: 0, offsetY: 0, flipX: true },
+  dashBird: { scale: 1.04, offsetX: 0, offsetY: 0, flipX: true },
+  batSwarm: { scale: 1.08, offsetX: 0, offsetY: -1, flipX: true },
+  metalSlime: { scale: 1.06, offsetX: 0, offsetY: 0, flipX: true },
+  poisonScorpion: { scale: 1.12, offsetX: 0, offsetY: -2, flipX: true },
+};
 
 function getImage(url: string) {
   if (typeof window === 'undefined') {
@@ -193,14 +205,20 @@ function drawEnemy(ctx: CanvasRenderingContext2D, enemy: BattleEnemy) {
   ctx.beginPath();
   ctx.ellipse(0, radius * 0.9, radius * 1.28, radius * 0.32, 0, 0, Math.PI * 2);
   ctx.fill();
-  const drawn = drawImageAsset(
-    ctx,
-    getImage(enemyArtByEnemyId[enemy.enemyId] ?? enemyArtByEnemyId.grassSlime),
-    -radius * 1.42,
-    -radius * 1.65,
-    radius * 2.84,
-    radius * 2.84,
-  );
+  const enemyArt = getImage(enemyArtByEnemyId[enemy.enemyId] ?? enemyArtByEnemyId.grassSlime);
+  const tuning = enemyDrawTuning[enemy.enemyId] ?? { scale: 1, offsetX: 0, offsetY: 0, flipX: true };
+  const enemySize = radius * 2.84 * tuning.scale;
+  let drawn = false;
+  if (enemyArt?.complete && enemyArt.naturalWidth > 0) {
+    ctx.save();
+    ctx.translate(tuning.offsetX, tuning.offsetY);
+    if (tuning.flipX) {
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(enemyArt, -enemySize / 2, -enemySize * 0.58, enemySize, enemySize);
+    ctx.restore();
+    drawn = true;
+  }
   if (!drawn) {
     ctx.fillStyle = def.color;
     ctx.strokeStyle = '#231a18';

@@ -36,6 +36,7 @@ Android Chromeで配信URLを開き、インストール候補が「アプリ」
 ## 操作方法
 - タイトル画面: 「はじめる」または「つづきから」でステージ選択へ進む。
 - ステージ選択: 解放済みステージを選び「出撃」を押す。
+- 訓練場: マップ左側の「訓」ノードから挑戦できる。何度でも挑戦でき、クリア時にGoldと全員EXPを得る。
 - バトル: ユニットをタップ/クリックして選択し、「攻撃」「休憩」「LvUp」「転職」を操作する。
 - 休憩: 休憩中は攻撃しない代わりに、通常Wave中だけ休憩ゲージが進み、100でEXPを得る。
 - 転職: Goldを消費して転職する。下級→中級は100 Gold、中級→上級は800 Gold。
@@ -49,12 +50,15 @@ public/assets/audio/bgm/title.mp3
 public/assets/audio/bgm/map.mp3
 public/assets/audio/bgm/unit-management.mp3
 public/assets/audio/bgm/settings.mp3
+public/assets/audio/bgm/training.mp3
 public/assets/audio/bgm/stage-1.mp3
 public/assets/audio/bgm/stage-2.mp3
 ...
 public/assets/audio/bgm/stage-10.mp3
 public/assets/audio/se/damage.mp3
 ```
+
+GitHubにアップロードしている完成版では、`deliverables/eight-wardens/public/assets/audio/bgm/` に上記ファイル名でmp3を置いてください。訓練場のBGMは `training.mp3`、通常ステージ戦闘BGMは `stage-1.mp3` から `stage-10.mp3` です。
 
 ファイルがない場合は無音のまま動作します。通常の差し替えではコード変更は不要です。
 
@@ -64,6 +68,7 @@ public/assets/audio/se/damage.mp3
 - 初期ユニットは剣士、弓兵、盾兵、神官、忍者、破術士、槍兵の7人固定。
 - 敵は左から右へ進み、村ゲート到達時に村耐久を減らす。村耐久0でゲームオーバー。
 - 味方は射程内で最も村に近い敵を自動攻撃する。
+- 訓練場は常時開放。クリアしてもメインステージ進行は進まず、クリア時に240 Goldと全員25 EXPを得る。
 - 斥候系職業がとどめを刺すとGold報酬が3倍になる。
 - Wave10のボス撃破でMVPクリア。
 - セーブキーは `eight-wardens-save-v1`。設定値は `eight-wardens-settings-v1`。

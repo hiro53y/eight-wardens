@@ -18,6 +18,7 @@ function formatTime(totalSec = 0) {
 }
 
 export function ResultModal({ result, onNextWave, onBackToMap, onRetry, playerState }: ResultModalProps) {
+  const isTrainingStage = result.stageId === 0;
   if (result.type !== 'victory') {
     return (
       <div className="modal-backdrop">
@@ -52,7 +53,7 @@ export function ResultModal({ result, onNextWave, onBackToMap, onRetry, playerSt
         <div className="stage-clear-summary">
           <div>
             <span>ステージ</span>
-            <strong>{result.stageId ?? '-'}</strong>
+            <strong>{isTrainingStage ? '訓練' : result.stageId ?? '-'}</strong>
           </div>
           <div>
             <span>クリアタイム</span>
@@ -70,7 +71,7 @@ export function ResultModal({ result, onNextWave, onBackToMap, onRetry, playerSt
 
         <div className="stage-clear-rewards">
           <div><img src={uiArt.icons.coin} alt="" />獲得Gold <strong>{(result.goldEarned ?? 0).toLocaleString('ja-JP')}</strong></div>
-          <div><img src={uiArt.icons.gem} alt="" />獲得宝石 <strong>{Math.max(1, result.stageId ?? 1)}</strong></div>
+          <div><img src={uiArt.icons.gem} alt="" />獲得宝石 <strong>{isTrainingStage ? 0 : Math.max(1, result.stageId ?? 1)}</strong></div>
           <div><img src={bannerArt.rewardSparkle} alt="" />獲得EXP <strong>{(result.expEarned ?? 0).toLocaleString('ja-JP')}</strong></div>
         </div>
 

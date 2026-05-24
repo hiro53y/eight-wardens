@@ -27,14 +27,14 @@ function drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, wi
 }
 
 const imageCache: Record<string, HTMLImageElement> = {};
-const unitDrawTuning: Record<string, { scale: number; offsetX: number; offsetY: number }> = {
-  'unit-1': { scale: 1.02, offsetX: 0, offsetY: 0 },
-  'unit-2': { scale: 1.06, offsetX: 0, offsetY: -2 },
-  'unit-3': { scale: 1.08, offsetX: 0, offsetY: -1 },
-  'unit-4': { scale: 1.03, offsetX: 0, offsetY: -4 },
-  'unit-5': { scale: 1.04, offsetX: 0, offsetY: -1 },
-  'unit-6': { scale: 1.08, offsetX: 0, offsetY: -3 },
-  'unit-7': { scale: 1.08, offsetX: 0, offsetY: -2 },
+const unitDrawTuning: Record<string, { scale: number; offsetX: number; offsetY: number; flipX: boolean }> = {
+  'unit-1': { scale: 1.02, offsetX: 0, offsetY: 0, flipX: true },
+  'unit-2': { scale: 1.06, offsetX: 0, offsetY: -2, flipX: true },
+  'unit-3': { scale: 1.08, offsetX: 0, offsetY: -1, flipX: true },
+  'unit-4': { scale: 1.03, offsetX: 0, offsetY: -4, flipX: false },
+  'unit-5': { scale: 1.04, offsetX: 0, offsetY: -1, flipX: true },
+  'unit-6': { scale: 1.08, offsetX: 0, offsetY: -3, flipX: true },
+  'unit-7': { scale: 1.08, offsetX: 0, offsetY: -2, flipX: true },
 };
 const enemyDrawTuning: Record<string, { scale: number; offsetX: number; offsetY: number; flipX: boolean }> = {
   grassSlime: { scale: 1, offsetX: 0, offsetY: 0, flipX: true },
@@ -275,14 +275,16 @@ function drawUnit(ctx: CanvasRenderingContext2D, unit: UnitState, selected: bool
   ctx.stroke();
 
   const art = getImage(getUnitArt({ unitId: unit.id, classId: unit.classId }).battle);
-  const tuning = unitDrawTuning[unit.id] ?? { scale: 1, offsetX: 0, offsetY: 0 };
+  const tuning = unitDrawTuning[unit.id] ?? { scale: 1, offsetX: 0, offsetY: 0, flipX: true };
   const spriteWidth = 104 * tuning.scale;
   const spriteHeight = 112 * tuning.scale;
   let drawn = false;
   if (art?.complete && art.naturalWidth > 0) {
     ctx.save();
     ctx.translate(tuning.offsetX, tuning.offsetY);
-    ctx.scale(-1, 1);
+    if (tuning.flipX) {
+      ctx.scale(-1, 1);
+    }
     ctx.drawImage(art, -spriteWidth / 2, -spriteHeight + 34, spriteWidth, spriteHeight);
     ctx.restore();
     drawn = true;

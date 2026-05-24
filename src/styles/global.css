@@ -624,6 +624,15 @@ button {
   box-shadow: 0 0 0 5px rgba(255, 216, 86, 0.35), 0 0 22px rgba(255, 216, 86, 0.85);
 }
 
+.stage-node.training span {
+  filter: drop-shadow(0 0 10px rgba(111, 219, 147, 0.9));
+}
+
+.stage-node.training b {
+  color: #d8ffe2;
+  text-shadow: 0 2px 4px #10311c;
+}
+
 .stage-node.locked span {
   background: linear-gradient(180deg, #555, #222);
   border-color: #6c6c6c;

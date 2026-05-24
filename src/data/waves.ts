@@ -74,3 +74,34 @@ export const waves: WaveDefinition[] = [
     isBoss: true,
   },
 ];
+
+export const trainingWaves: WaveDefinition[] = [
+  {
+    id: 1,
+    title: '訓練用スライム',
+    entries: [{ enemyId: 'grassSlime', count: 6 }],
+    spawnInterval: 0.95,
+    restExp: 6,
+  },
+  {
+    id: 2,
+    title: '走行訓練',
+    entries: [{ enemyId: 'runningChick', count: 5 }],
+    spawnInterval: 0.9,
+    restExp: 8,
+  },
+  {
+    id: 3,
+    title: '仕上げ演習',
+    entries: [
+      { enemyId: 'grassSlime', count: 6 },
+      { enemyId: 'smallBat', count: 3 },
+    ],
+    spawnInterval: 0.78,
+    restExp: 10,
+  },
+];
+
+export function getWavesForStage(stageId: number): WaveDefinition[] {
+  return stageId === 0 ? trainingWaves : waves;
+}

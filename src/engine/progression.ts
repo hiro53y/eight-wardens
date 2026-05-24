@@ -50,10 +50,20 @@ export function getPromotionCost(unitClass: UnitClass): number | null {
 }
 
 export function isStageUnlocked(stageId: number, player: PlayerState): boolean {
+  if (stageId === 0) {
+    return true;
+  }
   return stageId <= Math.min(10, player.currentStage + 1);
 }
 
 export function markStageCleared(player: PlayerState, stageId: number): PlayerState {
+  if (stageId === 0) {
+    return {
+      ...player,
+      villageHp: player.maxVillageHp,
+    };
+  }
+
   const clearedStages = player.clearedStages.includes(stageId)
     ? player.clearedStages
     : [...player.clearedStages, stageId].sort((a, b) => a - b);

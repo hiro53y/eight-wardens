@@ -1,6 +1,6 @@
 import { enemies } from '../data/enemies';
 import { effectArt, stageBackgrounds, uiArt } from '../data/artAssets';
-import { waves } from '../data/waves';
+import { getWavesForStage } from '../data/waves';
 import { isStageUnlocked } from '../engine/progression';
 import type { PlayerState } from '../types/game';
 import { EnemySprite, MarkerSprite } from './AssetSprite';
@@ -16,7 +16,10 @@ interface StageSelectScreenProps {
   onToast: (message: string) => void;
 }
 
+const TRAINING_STAGE_ID = 0;
+
 const stageNodes = [
+  { id: TRAINING_STAGE_ID, name: '訓練場', x: 10, y: 54, training: true },
   { id: 1, name: '村落の入口', x: 15, y: 78 },
   { id: 2, name: '川辺の橋', x: 26, y: 62 },
   { id: 3, name: '緑風の丘', x: 18, y: 42 },
@@ -56,9 +59,11 @@ export function StageSelectScreen({
           onToast,
 }: StageSelectScreenProps) {
   const selectedNode = stageNodes.find((node) => node.id === selectedStage) ?? stageNodes[0];
+  const isTrainingStage = selectedNode.id === TRAINING_STAGE_ID;
   const unlocked = isStageUnlocked(selectedNode.id, playerState);
   const cleared = playerState.clearedStages.includes(selectedNode.id);
-  const enemyTypes = Array.from(new Set(waves.flatMap((wave) => wave.entries.map((entry) => enemies[entry.enemyId].type))));
+  const selectedWaves = getWavesForStage(selectedNode.id);
+  const enemyTypes = Array.from(new Set(selectedWaves.flatMap((wave) => wave.entries.map((entry) => enemies[entry.enemyId].type))));
 
   const handleNodeClick = (stageId: number) => {
     if (!isStageUnlocked(stageId, playerState)) {
@@ -106,7 +111,7 @@ export function StageSelectScreen({
             return (
               <button
                 key={node.id}
-                className={`stage-node ${selectedStage === node.id ? 'selected' : ''} ${nodeCleared ? 'cleared' : ''} ${
+                className={`stage-node ${node.training ? 'training' : ''} ${selectedStage === node.id ? 'selected' : ''} ${nodeCleared ? 'cleared' : ''} ${
                   nodeUnlocked ? '' : 'locked'
                 }`}
                 style={{ left: `${node.x}%`, top: `${node.y}%` }}
@@ -114,18 +119,24 @@ export function StageSelectScreen({
                 >
                 <span>
                   {nodeUnlocked ? <MarkerSprite type={nodeCleared ? 'cleared' : 'stage'} /> : <img className="map-lock-icon" src={uiArt.icons.lock} alt="" />}
-                  {nodeUnlocked && <b>{node.id}</b>}
+                  {nodeUnlocked && <b>{node.training ? '訓' : node.id}</b>}
                 </span>
-                <small>{nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : ''}</small>
+                <small>{node.training ? '周回' : nodeCleared ? '★★★' : nodeUnlocked ? '☆☆☆' : ''}</small>
               </button>
             );
           })}
         </div>
 
         <aside className="stage-info-panel">
-          <div className="stage-number">STAGE {selectedNode.id}</div>
+          <div className="stage-number">{isTrainingStage ? 'TRAINING' : `STAGE ${selectedNode.id}`}</div>
           <h2>{selectedNode.name}</h2>
-          <p>{selectedNode.id <= 7 ? '緑の谷に続く防衛線。敵の増援を村へ通さない。' : '闇が濃くなる高難度地帯。育成した隊員で挑む。'}</p>
+          <p>
+            {isTrainingStage
+              ? 'Goldと全員EXPを稼ぐための反復訓練。クリアしてもメイン進行は進まず、何度でも挑戦できる。'
+              : selectedNode.id <= 7
+                ? '緑の谷に続く防衛線。敵の増援を村へ通さない。'
+                : '闇が濃くなる高難度地帯。育成した隊員で挑む。'}
+          </p>
           <div className="stage-enemies">
             <div className="panel-label">出現する敵</div>
             <div className="enemy-type-row">
@@ -138,17 +149,17 @@ export function StageSelectScreen({
             </div>
           </div>
           <div className="recommended-power">
-            推奨戦力 <strong>{(selectedNode.id * 820).toLocaleString('ja-JP')}</strong>
+            推奨戦力 <strong>{isTrainingStage ? '基礎訓練' : (selectedNode.id * 820).toLocaleString('ja-JP')}</strong>
           </div>
           <div className="reward-row">
-            <div><img src={uiArt.icons.coin} alt="" />金貨 x{selectedNode.id * 120}</div>
-            <div><img src={uiArt.icons.gem} alt="" />宝石 x{selectedNode.id + 4}</div>
-            <div>星報酬</div>
+            <div><img src={uiArt.icons.coin} alt="" />金貨 x{isTrainingStage ? 240 : selectedNode.id * 120}</div>
+            <div><img src={uiArt.icons.gem} alt="" />{isTrainingStage ? '全員EXP x25' : `宝石 x${selectedNode.id + 4}`}</div>
+            <div>{isTrainingStage ? '周回可' : '星報酬'}</div>
           </div>
-          <div className="stamina-row">消費スタミナ <strong>1</strong></div>
-          <div className="stage-state">{cleared ? 'クリア済み' : unlocked ? '出撃可能' : 'ロック中'}</div>
+          <div className="stamina-row">消費スタミナ <strong>{isTrainingStage ? 0 : 1}</strong></div>
+          <div className="stage-state">{isTrainingStage ? '何度でも挑戦可能' : cleared ? 'クリア済み' : unlocked ? '出撃可能' : 'ロック中'}</div>
           <button className="action-button red deploy-button" disabled={!unlocked} onClick={() => onDeploy(selectedNode.id)}>
-            出撃
+            {isTrainingStage ? '訓練開始' : '出撃'}
           </button>
         </aside>
       </div>

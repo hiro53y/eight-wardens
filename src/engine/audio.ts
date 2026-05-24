@@ -11,6 +11,8 @@ const sceneBgm: Partial<Record<Screen, string>> = {
   settings: '/assets/audio/bgm/settings.mp3',
 };
 
+const trainingBgm = '/assets/audio/bgm/training.mp3';
+
 export function unlockAudio() {
   unlocked = true;
 }
@@ -20,7 +22,7 @@ export function playSceneBgm(screen: Screen, stageId: number, enabled: boolean) 
     return;
   }
 
-  const src = screen === 'battle' ? `/assets/audio/bgm/stage-${stageId}.mp3` : sceneBgm[screen];
+  const src = screen === 'battle' ? (stageId === 0 ? trainingBgm : `/assets/audio/bgm/stage-${stageId}.mp3`) : sceneBgm[screen];
   if (!src || src === currentBgmSrc) {
     return;
   }

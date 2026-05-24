@@ -1,6 +1,6 @@
 import { enemies } from '../data/enemies';
 import { unitClasses } from '../data/classes';
-import { waves } from '../data/waves';
+import { getWavesForStage } from '../data/waves';
 import type { BattleEnemy, BattleState, Effect, PlayerState, Projectile, UnitState } from '../types/game';
 import { calculateDamage, getKillGold } from './combat';
 import { calculateCooldown } from './progression';
@@ -9,6 +9,9 @@ import { findTargetForUnit, getUnitPosition, PATH_Y, VILLAGE_GATE_X } from './ta
 const ENEMY_START_X = -64;
 const ENEMY_SPEED_SCALE = 24;
 const REST_RATE = 18;
+const TRAINING_STAGE_ID = 0;
+const TRAINING_CLEAR_GOLD = 240;
+const TRAINING_CLEAR_EXP_PER_UNIT = 25;
 
 let instanceSeq = 0;
 
@@ -41,11 +44,12 @@ export function createBattleState(stageId: number, selectedUnitId: string): Batt
 }
 
 export function getCurrentWave(battle: BattleState) {
-  return waves[battle.waveIndex];
+  return getWavesForStage(battle.stageId)[battle.waveIndex];
 }
 
 export function beginNextWave(battle: BattleState): BattleState {
-  const nextWaveIndex = Math.min(battle.waveIndex + 1, waves.length - 1);
+  const stageWaves = getWavesForStage(battle.stageId);
+  const nextWaveIndex = Math.min(battle.waveIndex + 1, stageWaves.length - 1);
   return {
     ...battle,
     waveIndex: nextWaveIndex,
@@ -57,7 +61,7 @@ export function beginNextWave(battle: BattleState): BattleState {
     spawnedEntries: {},
     message: `Wave ${nextWaveIndex + 1} 開始`,
     waveBannerTimer: 2.2,
-    warningBanner: waves[nextWaveIndex]?.isBoss ? 'boss' : nextWaveIndex >= 5 ? 'elite' : 'wave',
+    warningBanner: stageWaves[nextWaveIndex]?.isBoss ? 'boss' : nextWaveIndex >= 5 ? 'elite' : 'wave',
   };
 }
 
@@ -372,15 +376,34 @@ export function updateBattleState(battle: BattleState, player: PlayerState, rawD
   };
 
   if (hasSpawnedAll(nextBattle) && nextBattle.enemies.length === 0) {
-    const isFinalWave = nextBattle.waveIndex >= waves.length - 1;
+    const stageWaves = getWavesForStage(nextBattle.stageId);
+    const isFinalWave = nextBattle.waveIndex >= stageWaves.length - 1;
+    const isTrainingStage = nextBattle.stageId === TRAINING_STAGE_ID;
+    if (isFinalWave && isTrainingStage) {
+      nextPlayer = {
+        ...nextPlayer,
+        gold: nextPlayer.gold + TRAINING_CLEAR_GOLD,
+        units: nextPlayer.units.map((unit) => ({
+          ...unit,
+          exp: unit.exp + TRAINING_CLEAR_EXP_PER_UNIT,
+        })),
+      };
+      nextBattle = {
+        ...nextBattle,
+        goldEarned: nextBattle.goldEarned + TRAINING_CLEAR_GOLD,
+        expEarned: nextBattle.expEarned + TRAINING_CLEAR_EXP_PER_UNIT * nextPlayer.units.length,
+      };
+    }
     return {
       battle: {
         ...nextBattle,
         result: isFinalWave
           ? {
               type: 'victory',
-              title: 'MVPクリア',
-              message: 'Wave10のボスを撃破しました。七人の防衛隊は村を守り抜きました。',
+              title: isTrainingStage ? '訓練完了' : 'MVPクリア',
+              message: isTrainingStage
+                ? '訓練ステージを完了しました。Goldと全員EXPを獲得しました。'
+                : 'Wave10のボスを撃破しました。七人の防衛隊は村を守り抜きました。',
               stageId: nextBattle.stageId,
               clearTimeSec: Math.round(nextBattle.elapsedTimeSec),
               kills: nextBattle.kills,

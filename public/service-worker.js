@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eight-wardens-shell-v10-remake';
+const CACHE_NAME = 'eight-wardens-shell-v11-plus';
 // 遊ぶのに要る物だけ先に入れる（絵は WebP の軽量版。BGM は流す時に読む）
 const APP_SHELL = [
   '/',

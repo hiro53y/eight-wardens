@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { playSe } from '../audio/sound';
 import type { Settings } from '../game/types';
 
-export const VERSION = '2.0.0';
+export const VERSION = '3.0.0';
 
 export function Modal({ title, onClose, children, wide, className }: { title?: ReactNode; onClose?: () => void; children: ReactNode; wide?: boolean; className?: string }) {
   return (
@@ -53,6 +53,30 @@ export function Help({ onClose }: { onClose: () => void }) {
           <h3>盗賊の系統</h3>
           <p>盗賊・忍者・暗殺者が止めを刺すと金貨が3倍。海賊は当てるたびに金貨、錬金術師は休憩中に金貨を作ります。</p>
         </section>
+        <section>
+          <h3>必殺技</h3>
+          <p>攻撃するとゲージ（足元の輪・札の下の線）がたまり、満タンで<b>札の「技」</b>か<b>仲間を素早く2回タップ</b>で撃てます。職ごとに回転斬り・矢の雨・煙玉などが違います。設定で自動にもできます。</p>
+        </section>
+        <section>
+          <h3>連携（隣り合わせ）</h3>
+          <p>上下左右の台座が隣。同じ系統が隣だと攻撃+8%（3人まで）。剣の隣の狩は射程+15%、盗の隣の剣は速さ+10%、狩と盗が隣なら会心+5%。光る線で見えます。</p>
+        </section>
+        <section>
+          <h3>早呼び・会心・連撃</h3>
+          <p>左下の「呼ぶ」で次の群れを今すぐ呼ぶと、縮めた秒数ぶん金貨。攻撃は時々<b>会心</b>（2倍）。続けて倒すと連撃になり、10連撃で<b>フィーバー</b>（金貨×1.5・EXP×1.2）。</p>
+        </section>
+        <section>
+          <h3>技を持つ敵とボス</h3>
+          <p>分裂・盾・回復・姿を消す・途中で降りる・怒ると速い、などの敵が出ます。ボスは体力が減ると怒り、手下を呼ぶ・突進・咆哮（守り手がすくむ）・潜る・再生をしてきます。</p>
+        </section>
+        <section>
+          <h3>装備・店・村</h3>
+          <p>強い敵は宝箱を落とし、結果の画面で開きます。武器は同じ系統の仲間だけ、お守りは誰でも。店ではクリアのたびに品が変わります。村の施設（柵・訓練所・鍛冶屋・市場・見張り台）は金貨で育ちます。</p>
+        </section>
+        <section>
+          <h3>無限の塔・毎日の挑戦</h3>
+          <p>最初のボスを倒すと開きます。塔は階ごとに恩恵を選んで、どこまで登れるかの勝負。毎日の挑戦は日替わりの条件で、その日初めて勝つと宝箱が2つ。</p>
+        </section>
       </div>
     </Modal>
   );
@@ -77,6 +101,10 @@ export function SettingsPanel({ settings, onSettings, onClose, onWipe }: { setti
         <label className="row">
           <span>ダメージの数字</span>
           <button className={`toggle ${settings.numbers ? 'on' : ''}`} onClick={() => set({ numbers: !settings.numbers })}>{settings.numbers ? '出す' : '出さない'}</button>
+        </label>
+        <label className="row">
+          <span>技を自動で撃つ</span>
+          <button className={`toggle ${settings.autoSkill ? 'on' : ''}`} onClick={() => set({ autoSkill: !settings.autoSkill })}>{settings.autoSkill ? 'する' : 'しない'}</button>
         </label>
         <div className="row">
           <span>はじめの速さ</span>

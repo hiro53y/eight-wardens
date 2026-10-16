@@ -2,6 +2,8 @@
 import { job, levelCost, maxLv, limitCost, MAX_LIMIT } from '../src/game/jobs';
 import { applyResult, clone, levelUp, limitBreak, newProgress, promote, setRest, type StageResult } from '../src/game/progress';
 import { advance, canTarget, createBattle, startFight, type Battle } from '../src/game/sim';
+import { autoEquip, openChests } from '../src/game/items';
+import { FACILITIES, build, facilityCost } from '../src/game/village';
 import { STAGE_COUNT } from '../src/game/stages';
 import type { Mode, Progress, Warden } from '../src/game/types';
 
@@ -30,8 +32,13 @@ export function botTrain(p: Progress) {
       .sort((a, b) => a.c.exp + a.c.coins - (b.c.exp + b.c.coins));
     for (const { w } of cand) if (levelUp(p, w)) { did = true; break; }
     if (!did) {
-      const lb = p.wardens.filter((w) => w.limit < MAX_LIMIT).sort((a, b) => limitCost(a.limit) - limitCost(b.limit))[0];
-      if (lb && limitBreak(p, lb)) did = true;
+      // 上限突破と村の施設の安い方
+      const lb = p.wardens.filter((w) => w.limit < MAX_LIMIT && w.lv >= maxLv(job(w.job), p.mode) && job(w.job).tier === 3).sort((a, b) => limitCost(a.limit) - limitCost(b.limit))[0];
+      const fac = FACILITIES.filter((f) => (p.village[f.id] ?? 0) < 5).sort((a, b) => facilityCost(a.id, p.village[a.id]) - facilityCost(b.id, p.village[b.id]))[0];
+      const lbCost = lb ? limitCost(lb.limit) : Infinity;
+      const facCost = fac ? facilityCost(fac.id, p.village[fac.id]) : Infinity;
+      if (facCost <= lbCost && fac && build(p, fac.id)) did = true;
+      else if (lb && limitBreak(p, lb)) did = true;
     }
     if (!did) break;
   }
@@ -47,10 +54,12 @@ export function botTactics(b: Battle, p: Progress) {
   }
 }
 
-export interface PlayOpts { tactics?: boolean; train?: boolean }
+export interface PlayOpts { tactics?: boolean; train?: boolean; skills?: boolean }
 
 export function playStage(p: Progress, id: number, seed: number, o: PlayOpts = {}): StageResult {
   const b = createBattle(p, id, seed);
+  b.autoSkill = o.skills !== false;
+  for (const w of p.wardens) w.sp = 0;
   startFight(b);
   let guard = 0;
   while (b.phase === 'fight' && guard++ < 20000) {
@@ -60,6 +69,7 @@ export function playStage(p: Progress, id: number, seed: number, o: PlayOpts = {
     advance(b, p, 0.1);
   }
   for (const w of p.wardens) { setRest(w, false); w.rest = 0; }
+  if (b.chests > 0 && o.train !== false) { openChests(p, b.chests, id, seed); autoEquip(p); }
   return applyResult(p, { win: b.phase === 'won', stage: id, kills: b.kills, lost: b.lost, exp: b.exp, coins: b.coins, restExp: b.restExp, time: b.t });
 }
 

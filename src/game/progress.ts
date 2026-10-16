@@ -1,10 +1,12 @@
 // 育成と進み：共有の EXP・金貨、LvUp・転職・上限突破、休憩の切り替え、配置換え、ステージの結果
 import { MAX_LIMIT, job, levelCost, limitCost, maxLv, promoteCost } from './jobs';
 import { PEDESTALS } from './field';
+import { refreshShop } from './items';
 import { STAGE_COUNT, stage, stageScale } from './stages';
-import type { Mode, Progress, Warden } from './types';
+import { emptyVillage } from './village';
+import type { Mode, Progress, StageDef, Warden } from './types';
 
-export const PROGRESS_VERSION = 2;
+export const PROGRESS_VERSION = 3;
 
 /** 8人の守り手（見た目は1枚絵の0〜7） */
 const ROSTER: { name: string; sprite: number; job: string; pedestal: number }[] = [
@@ -20,12 +22,36 @@ const ROSTER: { name: string; sprite: number; job: string; pedestal: number }[] 
 
 export function newProgress(mode: Mode, seed: number): Progress {
   const lives = mode === 'pro' ? 8 : 10;
-  return {
+  const p: Progress = {
     v: PROGRESS_VERSION, seed: seed | 0, mode, unlocked: 1, stars: {}, exp: 0, coins: mode === 'pro' ? 80 : 120,
     villagers: lives, maxVillagers: lives, bosses: 0, score: 0,
-    wardens: ROSTER.map((r, i): Warden => ({ id: `w${i}`, name: r.name, sprite: r.sprite, job: r.job, lv: 0, limit: 0, pedestal: r.pedestal, resting: false, rest: 0, kills: 0 })),
+    wardens: ROSTER.map((r, i): Warden => ({ id: `w${i}`, name: r.name, sprite: r.sprite, job: r.job, lv: 0, limit: 0, pedestal: r.pedestal, resting: false, rest: 0, kills: 0, sp: 0, equip: { weapon: null, charm: null } })),
     stats: { kills: 0, lost: 0, battles: 0, restExp: 0 },
+    items: [], nextItemId: 1, shop: [], village: emptyVillage(),
+    tower: { best: 0, score: 0, runs: 0, run: null },
+    daily: { date: '', cleared: false, best: 0 },
+    tips: [],
   };
+  refreshShop(p);
+  return p;
+}
+
+/** v2 の保存を v3 にする（足りない項目を初期値で埋める） */
+export function migrate(p: Progress): Progress {
+  const q = p as Progress & { v: number };
+  if (q.v === 2) {
+    q.items = [];
+    q.nextItemId = 1;
+    q.shop = [];
+    q.village = emptyVillage();
+    q.tower = { best: 0, score: 0, runs: 0, run: null };
+    q.daily = { date: '', cleared: false, best: 0 };
+    q.tips = ['lv', 'rest', 'job'];
+    for (const w of q.wardens) { w.sp = 0; w.equip = { weapon: null, charm: null }; }
+    q.v = PROGRESS_VERSION;
+    refreshShop(q);
+  }
+  return q;
 }
 
 // ── 育成 ──
@@ -99,7 +125,11 @@ export function canPlay(p: Progress, id: number): boolean {
 }
 
 export function restExpOf(p: Progress, id: number): number {
-  return Math.round(stage(id).restExp * (1 + p.bosses * 0.25) * (p.mode === 'pro' ? 0.85 : 1));
+  return restExpOfDef(p, stage(id));
+}
+
+export function restExpOfDef(p: Progress, s: StageDef): number {
+  return Math.round(s.restExp * (1 + p.bosses * 0.25) * (p.mode === 'pro' ? 0.85 : 1));
 }
 
 export interface StageResult {
@@ -134,6 +164,7 @@ export function applyResult(p: Progress, r: Omit<StageResult, 'stars' | 'score' 
     if (s.boss && firstClear) p.bosses += 1;
     if (r.stage === STAGE_COUNT) p.cleared = true;
     p.score += score;
+    refreshShop(p);
   }
   return { ...r, stars, score, firstClear };
 }

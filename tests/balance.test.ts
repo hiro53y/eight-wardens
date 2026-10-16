@@ -12,7 +12,7 @@ describe.runIf(N > 0)('難しさの集計', () => {
         const r = playRun(mode, 100 + i * 17, Number(process.env.MAX_BATTLES ?? 300));
         const p = r.p;
         console.log(JSON.stringify({
-          mode, seed: 100 + i * 17, cleared: r.cleared, reached: r.reached, battles: p.stats.battles, retries: r.retries, rebuilds: r.rebuilds,
+          mode, seed: 100 + i * 17, cleared: r.cleared, reached: p.unlocked, battles: p.stats.battles, retries: r.retries, grinds: r.grinds, firstTry: r.firstTry, village: p.village, items: p.items.length,
           villagers: p.villagers, exp: p.exp, coins: p.coins, restExp: p.stats.restExp, kills: p.stats.kills,
           party: p.wardens.map((w) => `${job(w.job).name}${w.lv}${w.limit ? `+${w.limit}` : ''}`).join(','),
         }));

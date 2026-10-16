@@ -1,7 +1,8 @@
 // 保存：進み（ステージの始めごと）・やり直し用の写し・設定。壊れたデータは読まない（旧 v1 も読まない・消さない）
 import { JOBS } from './jobs';
 import { PEDESTALS } from './field';
-import { PROGRESS_VERSION } from './progress';
+import { MAX_ITEMS } from './items';
+import { PROGRESS_VERSION, migrate } from './progress';
 import { STAGE_COUNT } from './stages';
 import { DEFAULT_SETTINGS, type Progress, type Settings } from './types';
 
@@ -27,7 +28,7 @@ const num = (n: unknown) => typeof n === 'number' && Number.isFinite(n);
 
 export function validProgress(v: unknown): v is Progress {
   const p = v as Progress;
-  if (!p || p.v !== PROGRESS_VERSION) return false;
+  if (!p || (p.v !== PROGRESS_VERSION && p.v !== 2)) return false;
   if (p.mode !== 'normal' && p.mode !== 'pro') return false;
   if (![p.exp, p.coins, p.villagers, p.maxVillagers, p.unlocked, p.bosses, p.score].every(num)) return false;
   if (p.exp < 0 || p.coins < 0 || p.unlocked < 1 || p.unlocked > STAGE_COUNT) return false;
@@ -38,6 +39,11 @@ export function validProgress(v: unknown): v is Progress {
     peds.add(w.pedestal);
   }
   if (peds.size !== 8) return false;
+  if (p.v === PROGRESS_VERSION) {
+    if (!Array.isArray(p.items) || p.items.length > MAX_ITEMS || !Array.isArray(p.shop) || !p.village || !p.tower || !p.daily || !Array.isArray(p.tips)) return false;
+    if (!num(p.nextItemId)) return false;
+    for (const w of p.wardens) if (!w.equip || !num(w.sp)) return false;
+  }
   return !!p.stars && !!p.stats;
 }
 
@@ -45,7 +51,7 @@ export function parseProgress(text: string | null): Progress | null {
   if (!text) return null;
   try {
     const p = JSON.parse(text) as Progress;
-    return validProgress(p) ? p : null;
+    return validProgress(p) ? migrate(p) : null;
   } catch {
     return null;
   }

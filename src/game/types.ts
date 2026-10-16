@@ -8,6 +8,12 @@ export type Grade = 'SSS' | 'SS' | 'S' | 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 
 
 export type Mode = 'normal' | 'pro';
 
+/** 必殺技 */
+export type SkillId =
+  | 'whirl' | 'issen' | 'seal' | 'darkwave' | 'dragonfall'
+  | 'arrowRain' | 'snipe' | 'bigCannon' | 'armorCrush'
+  | 'smoke' | 'shadow' | 'plunder' | 'net' | 'goldRain';
+
 export interface JobDef {
   id: string;
   name: string;
@@ -49,6 +55,8 @@ export interface JobDef {
   /** 3段目でレベルを金貨で上げる（盗の系統） */
   coinLevel?: boolean;
   next: string[];
+  /** 必殺技 */
+  skill: SkillId;
   /** 演出の種類 */
   fx: 'slash' | 'spear' | 'arrow' | 'bullet' | 'cannon' | 'shuriken' | 'magic' | 'chain' | 'potion' | 'dragon';
   desc: string;
@@ -70,6 +78,10 @@ export interface Warden {
   rest: number;
   /** 暗黒騎士の伸び（倒した数） */
   kills: number;
+  /** 必殺技のゲージ（0〜1） */
+  sp: number;
+  /** 装備（持ち物の id） */
+  equip: { weapon: number | null; charm: number | null };
 }
 
 export type EnemyKind = 'normal' | 'fly' | 'metal';
@@ -95,7 +107,31 @@ export interface EnemyDef {
   /** 地面から浮かせる高さ（飛行） */
   hover?: number;
   desc: string;
+  /** 色違い（絵の色相をずらす度数） */
+  hue?: number;
+  /** 印（盾・回復・狂化・降下・分裂） */
+  badge?: 'shield' | 'heal' | 'rage' | 'dive' | 'split';
+  /** 倒すと分かれる先の敵 */
+  split?: string;
+  /** 打撃が半分（鎧はがし・守り下げで解ける） */
+  shield?: boolean;
+  /** 周りの敵を回復 */
+  healer?: boolean;
+  /** 近くか、当てられてからしか狙えない */
+  stealth?: boolean;
+  /** 飛行のまま途中で地上に降りる（飛ぶ道の割合） */
+  dive?: number;
+  /** 体力が半分を切ると速くなる */
+  rage?: boolean;
+  /** ボスの技 */
+  bossSkills?: BossSkill[];
+  /** 呼ぶ手下 */
+  summon?: string;
+  /** 描く大きさの倍率（分裂した小さい敵） */
+  scale?: number;
 }
+
+export type BossSkill = 'summon' | 'charge' | 'roar' | 'regen' | 'burrow' | 'dive';
 
 /** ステージの群れ */
 export interface Group {
@@ -112,6 +148,7 @@ export interface Group {
 }
 
 export interface StageDef {
+  /** 本編は 1〜35、塔は 1000+階、毎日の挑戦は 2000 */
   id: number;
   chapter: number;
   name: string;
@@ -121,6 +158,62 @@ export interface StageDef {
   scale: number;
   /** 休憩の EXP の基本 */
   restExp: number;
+  /** 硬さの倍率（塔・毎日の挑戦。本編は stageScale） */
+  hpScale?: number;
+  /** 報酬の倍率（塔・毎日の挑戦） */
+  rewardScale?: number;
+  /** 宝箱の品の強さ（ステージ相当） */
+  tier?: number;
+}
+
+/** 合戦の決まりの変化（塔の恩恵・毎日の挑戦の条件） */
+export interface BattleMods {
+  atkMul?: number;
+  critAdd?: number;
+  rangeAdd?: number;
+  spAdd?: number;
+  coinMul?: number;
+  noRest?: boolean;
+  enemySpeedMul?: number;
+}
+
+export type ItemKind = 'weapon' | 'charm';
+export type CharmStat = 'rest' | 'crit' | 'fly' | 'metal' | 'speed' | 'sp';
+
+/** 装備品（持ち物） */
+export interface Item {
+  id: number;
+  kind: ItemKind;
+  /** 武器の系統 */
+  line?: Line;
+  /** 品質：1 並・2 良・3 極 */
+  q: 1 | 2 | 3;
+  name: string;
+  /** 攻撃 +割合 */
+  atk: number;
+  crit: number;
+  speed: number;
+  range: number;
+  rest: number;
+  fly: number;
+  metal: number;
+  sp: number;
+  price: number;
+}
+
+export type FacilityId = 'fence' | 'training' | 'smith' | 'market' | 'watch';
+
+/** 塔の恩恵 */
+export type BuffId = 'atk' | 'crit' | 'lives' | 'sp' | 'coin' | 'range' | 'heal';
+
+export interface TowerRun {
+  floor: number;
+  buffs: BuffId[];
+  villagers: number;
+  maxVillagers: number;
+  seed: number;
+  /** 恩恵を選ぶ途中（3つの候補） */
+  choosing: BuffId[] | null;
 }
 
 export interface Progress {
@@ -142,7 +235,20 @@ export interface Progress {
   /** 最後のボスを倒した */
   cleared?: boolean;
   stats: { kills: number; lost: number; battles: number; restExp: number };
+  /** 持ち物 */
+  items: Item[];
+  nextItemId: number;
+  /** 店の品 */
+  shop: Item[];
+  /** 村の施設のレベル */
+  village: Record<FacilityId, number>;
+  /** 塔 */
+  tower: { best: number; score: number; runs: number; run: TowerRun | null };
+  /** 毎日の挑戦 */
+  daily: { date: string; cleared: boolean; best: number };
+  /** 見た案内 */
+  tips: string[];
 }
 
-export interface Settings { bgm: number; se: number; speed: 1 | 2 | 3; numbers: boolean }
-export const DEFAULT_SETTINGS: Settings = { bgm: 0.5, se: 0.7, speed: 1, numbers: true };
+export interface Settings { bgm: number; se: number; speed: 1 | 2 | 3; numbers: boolean; autoSkill: boolean }
+export const DEFAULT_SETTINGS: Settings = { bgm: 0.5, se: 0.7, speed: 1, numbers: true, autoSkill: false };

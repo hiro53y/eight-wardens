@@ -1,4 +1,4 @@
-# Eight Wardens：八人の防衛隊 2.0
+# Eight Wardens：八人の防衛隊 3.0
 
 スマホ横向き専用の育成タワーディフェンス PWA です（公開先 https://eight-wardens.pages.dev/ ）。
 2.0 で、名作フリーゲーム「Eight Defender's」（Nes 作）の仕組み（共有の EXP・休憩・Lv3 で2択の転職・飛行／メタル）に沿って一から作り直しました。元作品の名前・絵は使っていません。
@@ -11,6 +11,15 @@
 - 敵：通常・飛行（道を無視して城門へ）・メタル（ふつうは1しか通らない）。全35ステージ（5章×7、各章の7番目がボス）。
 - 難しさ：ふつう／玄人。負けても得た EXP・金貨は残る。
 
+### 3.0 で増えたこと
+- 必殺技：攻撃でゲージがたまり、札の「技」か仲間を2回タップで撃つ（職ごとに14種。設定で自動も）。撃つとカットイン・ヒットストップ。
+- 敵の特性：分裂・盾・回復・隠密・降下・狂化。ボスは体力66%・33%で怒り、手下を呼ぶ・突進・咆哮（守り手がすくむ）・潜る・再生。
+- 早呼び（次の群れを今すぐ呼ぶと金貨）・会心（2倍）・連撃（10連撃でフィーバー：金貨×1.5・EXP×1.2）。
+- 隣り合わせの連携（同じ系統で攻撃+8%、剣×狩で射程、剣×盗で速さ、狩×盗で会心）。戦場に線で表示。
+- 装備と宝箱（武器は系統ごと・お守りは誰でも、品質は並・良・極）、店（クリアごとに入れ替わる）、村の施設（柵・訓練所・鍛冶屋・市場・見張り台）。
+- 無限の塔（階ごとに恩恵を選ぶ。最初のボスを越えると開く）と毎日の挑戦（日替わりの条件、初勝利で宝箱×2）。
+- 初めての人への案内（ステージ1〜4）、長押しで配置換え。
+
 ## 起動・確認
 ```bash
 npm install
@@ -18,20 +27,20 @@ npm run dev
 npm run test
 npm run build
 ```
-- `npm run test`：ゲームの仕組みの単体テスト・総当たり・ボットによる全35ステージ通し（Vitest）。
-- `BALANCE=1 npm run test`：ボットで難しさを集計（ふつう・玄人）。`CALIBRATE=1`：ステージごとの硬さ（`HP_CALIB`）を探し直す。
-- 確かめ用の口：開発中か `?dbg=1` の時だけ `window.__ew`（`run(秒)` で早送り、`start()` で出撃）。
+- `npm run test`：ゲームの仕組みの単体テスト・総当たり・ボットによる全35ステージ通し（Vitest、43件）。
+- `BALANCE=1 npm run test`：ボットで難しさを集計（ふつう・玄人）。`CALIBRATE=1`：ステージごとの硬さ（`HP_CALIB`）を探し直す（出た値の8割を使い、1・2は手で下げる）。`TOWER=1`：塔の何階まで登れるか。
+- 確かめ用の口：開発中か `?dbg=1` の時だけ `window.__ew`（`run(秒)` で早送り、`start()` で出撃、`skill(i)`・`call()`）。`?rafshim=1` で描画をタイマーで回す（画面が見えていない時の確認用）。
 
 ## 構成
-- `src/game/`：ゲームの仕組み（DOM に依存しない純粋な TS・固定の刻み・seed 付き乱数）。職業 `jobs.ts`、敵 `enemies.ts`、ステージ `stages.ts`、戦場の形 `field.ts`、進行 `sim.ts`、育成と結果 `progress.ts`、保存 `save.ts`。
+- `src/game/`：ゲームの仕組み（DOM に依存しない純粋な TS・固定の刻み・seed 付き乱数）。職業 `jobs.ts`、敵 `enemies.ts`、ステージ `stages.ts`、戦場の形 `field.ts`、進行と技 `sim.ts`、育成と結果 `progress.ts`、保存 `save.ts`、能力の集計 `stats.ts`、連携 `synergy.ts`、装備と店 `items.ts`、施設 `village.ts`、塔と毎日の挑戦 `tower.ts`、技の名前 `skills.ts`。
 - `src/view/`：Canvas の描画（`renderer.ts`）と演出（`effects.ts`）、絵の切り出し（`assets.ts`）。
 - `src/ui/`：画面（タイトル・地図・戦闘・守り手の小窓・遊び方・設定）。
 - `src/audio/`：BGM（mp3、章ごとに通常とボスの2曲）と効果音（Web Audio の合成音）。
 - `public/assets/v2/`：使う絵の WebP 軽量版（元の PNG から `python scripts/make-webp.py` で作る。Pillow が要る）。
-- 保存キー：`eight-wardens-v2:progress`・`eight-wardens-v2:settings`（旧 v1 の保存は読まない・消さない）。
+- 保存キー：`eight-wardens-v2:progress`・`eight-wardens-v2:settings`（中身の版は 3。2.0 の保存は読み込み時に 3 へ移す。旧 v1 は読まない・消さない）。
 
 ## PWA
-- `public/service-worker.js`（`/service-worker.js` に登録）と互換の `public/sw.js` は同じ内容。キャッシュ名 `eight-wardens-shell-v10-remake`。
+- `public/service-worker.js`（`/service-worker.js` に登録）と互換の `public/sw.js` は同じ内容。キャッシュ名 `eight-wardens-shell-v11-plus`。
 - 先に入れるのは画面の枠と WebP の絵だけ。BGM は流す時に読み、キャッシュには入れない。
 - manifest の `start_url "/"`・`orientation: landscape` は変えていない。
 

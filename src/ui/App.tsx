@@ -6,11 +6,12 @@ import { newProgress } from '../game/progress';
 import { loadProgress, loadSettings, saveProgress, saveSettings, wipe } from '../game/save';
 import type { Mode, Progress, Settings } from '../game/types';
 import { loadImages } from '../view/assets';
-import { BattleScreen } from './BattleScreen';
+import { BattleScreen, type BattleMode } from './BattleScreen';
+import { startTower } from '../game/tower';
 import { MapScreen } from './MapScreen';
 import { Title } from './Title';
 
-type Screen = { k: 'title' } | { k: 'map' } | { k: 'battle'; stage: number; key: number };
+type Screen = { k: 'title' } | { k: 'map' } | { k: 'battle'; mode: BattleMode; key: number };
 
 export function App() {
   const [screen, setScreen] = useState<Screen>({ k: 'title' });
@@ -47,6 +48,17 @@ export function App() {
     setScreen({ k: 'map' });
   };
 
+  /** 合戦へ（塔は挑戦中でなければ始める） */
+  const play = (mode: BattleMode) => {
+    if (!p) return;
+    if (mode.kind === 'tower') {
+      if (!p.tower.run) startTower(p);
+      else if (p.tower.run.choosing) { setScreen({ k: 'map' }); return; }
+      saveProgress(p);
+    }
+    setScreen({ k: 'battle', mode, key: Date.now() });
+  };
+
   const onWipe = () => {
     wipe();
     setP(null);
@@ -73,7 +85,9 @@ export function App() {
         settings={settings}
         onSettings={setSettings}
         onChange={touch}
-        onPlay={(id) => setScreen({ k: 'battle', stage: id, key: Date.now() })}
+        onPlay={(id) => play({ kind: 'stage', stage: id })}
+        onTower={() => play({ kind: 'tower' })}
+        onDaily={() => play({ kind: 'daily' })}
         onTitle={() => setScreen({ k: 'title' })}
         onWipe={onWipe}
       />
@@ -83,12 +97,12 @@ export function App() {
     <BattleScreen
       key={screen.key}
       p={p}
-      stageId={screen.stage}
+      mode={screen.mode}
       settings={settings}
       onSettings={setSettings}
       onChange={touch}
       onMap={() => setScreen({ k: 'map' })}
-      onPlay={(id) => setScreen({ k: 'battle', stage: id, key: Date.now() })}
+      onPlay={play}
     />
   );
 }

@@ -5,7 +5,9 @@ import { ENEMIES, enemy, enemyHp } from '../src/game/enemies';
 import { GATE, PEDESTALS, pathOf, pointAt } from '../src/game/field';
 import { STAGES, STAGE_COUNT, stage } from '../src/game/stages';
 import { applyResult, clone, levelUp, levelUpError, limitBreak, moveTo, newProgress, promote, promoteError, restExpOf, setRest, starsOf } from '../src/game/progress';
-import { REST_TIME, advance, canTarget, createBattle, damageOf, pickTarget, startFight, step, type Battle, type SimEnemy } from '../src/game/sim';
+import { REST_TIME, advance, callNext, canTarget, createBattle, damageOf, pickTarget, refreshStats, startFight, step, useSkill, type Battle, type SimEnemy } from '../src/game/sim';
+import { build } from '../src/game/village';
+import { autoEquip, openChests } from '../src/game/items';
 import { parseProgress, loadSettings, saveSettings, type KV } from '../src/game/save';
 import type { Progress, Warden } from '../src/game/types';
 import { playRun, playStage } from './bot';
@@ -26,10 +28,18 @@ function put(b: Battle, defId: string, x: number, y: number, o: Partial<SimEnemy
   return e;
 }
 
+/** 能力を計算し直してから打撃を出す（職を差し替えたテスト用） */
+function dmg(b: Battle, p: Progress, w: Warden, e: SimEnemy) {
+  refreshStats(b, p);
+  return damageOf(b, p, w, e);
+}
+
 function onlyOne(p: Progress, jobId: string, lv = 0): Warden {
   const w = p.wardens[0];
   w.job = jobId; w.lv = lv; w.pedestal = 4;
-  p.wardens.forEach((x, i) => { if (i) { x.resting = true; } });
+  // 他は隣にいない台座へ（連携が効かないように）
+  const away = [0, 2, 6, 8, 9, 10, 11];
+  p.wardens.forEach((x, i) => { if (i) { x.resting = true; x.pedestal = away[i - 1]; } });
   return w;
 }
 
@@ -146,12 +156,12 @@ describe('敵と戦場', () => {
     const w = onlyOne(p, 'swordsman', 3);
     const b = createBattle(p, 1, 1);
     const e = put(b, 'metalSlime', 790, 548);
-    expect(damageOf(b, w, e).n).toBe(1);
+    expect(dmg(b, p, w, e).n).toBe(1);
     w.job = 'samurai'; w.lv = 0;
-    expect(damageOf(b, w, e).n).toBe(Math.floor(1200 * 0.6));
+    expect(dmg(b, p, w, e).n).toBe(Math.floor(1200 * 0.6));
     w.job = 'swordsman'; w.lv = 3;
     e.armorUntil = 10;
-    expect(damageOf(b, w, e).n).toBe(100);
+    expect(dmg(b, p, w, e).n).toBe(100);
   });
 
   it('飛行：剣は半分、狩人は2倍。竜騎士は飛行だけをどこでも狙い、地上は狙えない', () => {
@@ -159,9 +169,9 @@ describe('敵と戦場', () => {
     const w = onlyOne(p, 'swordsman', 3);
     const b = createBattle(p, 1, 1);
     const bat = put(b, 'bat', 800, 470);
-    expect(damageOf(b, w, bat).n).toBe(50);
+    expect(dmg(b, p, w, bat).n).toBe(50);
     w.job = 'hunter';
-    expect(damageOf(b, w, bat).n).toBe(160);
+    expect(dmg(b, p, w, bat).n).toBe(160);
     w.job = 'dragonKnight'; w.lv = 0;
     const far = put(b, 'bat', 100, 300);
     const ground = put(b, 'slime', 800, 548);
@@ -276,13 +286,13 @@ describe('保存', () => {
     const kv = memKV();
     kv.setItem('eight-wardens-v2:settings', JSON.stringify({ speed: 9 }));
     expect(loadSettings(kv).speed).toBe(1);
-    saveSettings({ bgm: 0.1, se: 0.2, speed: 3, numbers: false }, kv);
-    expect(loadSettings(kv)).toEqual({ bgm: 0.1, se: 0.2, speed: 3, numbers: false });
+    saveSettings({ bgm: 0.1, se: 0.2, speed: 3, numbers: false, autoSkill: true }, kv);
+    expect(loadSettings(kv)).toEqual({ bgm: 0.1, se: 0.2, speed: 3, numbers: false, autoSkill: true });
   });
 });
 
 describe('総当たりと再現', () => {
-  it('でたらめな操作（配置・LvUp・転職・休憩）を混ぜても、数が壊れず必ず終わる', () => {
+  it('でたらめな操作（配置・LvUp・転職・休憩・技・早呼び・施設・装備）を混ぜても、数が壊れず必ず終わる', () => {
     for (let seed = 1; seed <= 60; seed++) {
       const p = newProgress(seed % 2 ? 'normal' : 'pro', seed);
       p.exp = 1e6; p.coins = 1e6;
@@ -298,7 +308,10 @@ describe('総当たりと再現', () => {
           if (r < 0.25) levelUp(p, w);
           else if (r < 0.4) { const j = job(w.job); if (j.next.length) promote(p, w, j.next[Math.floor(rnd() * 2)]); }
           else if (r < 0.6) setRest(w, !w.resting);
-          else if (r < 0.75) moveTo(p, w, Math.floor(rnd() * 12));
+          else if (r < 0.7) moveTo(p, w, Math.floor(rnd() * 12));
+          else if (r < 0.78) { w.sp = 1; useSkill(b, p, w); }
+          else if (r < 0.84) callNext(b, p);
+          else if (r < 0.9) { build(p, (['fence', 'training', 'smith', 'market', 'watch'] as const)[Math.floor(rnd() * 5)]); openChests(p, 1, id, seed); autoEquip(p); }
           else limitBreak(p, w);
         }
         step(b, p);

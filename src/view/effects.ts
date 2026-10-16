@@ -3,16 +3,21 @@ import { playSe } from '../audio/sound';
 import { GATE } from '../game/field';
 import { job } from '../game/jobs';
 import { enemy } from '../game/enemies';
+import { SKILLS } from '../game/skills';
 import type { Battle, SimEvent } from '../game/sim';
 import { wardenPos } from '../game/sim';
-import type { JobDef, Progress } from '../game/types';
+import type { BossSkill, JobDef, Progress, SkillId } from '../game/types';
 import type { ImgKey } from './assets';
 
-export interface Projectile { fx: JobDef['fx']; from: [number, number]; to: [number, number]; uid: number; t0: number; dur: number }
-export interface Flash { k: ImgKey; x: number; y: number; t0: number; dur: number; size: number; rot: number; tint?: string }
+export interface Projectile { fx: JobDef['fx'] | 'rain'; from: [number, number]; to: [number, number]; uid: number; t0: number; dur: number }
+export interface Flash { k: ImgKey; x: number; y: number; t0: number; dur: number; size: number; rot: number }
 export interface FloatText { text: string; x: number; y: number; t0: number; dur: number; color: string; size: number; rise: number }
 export interface Particle { x: number; y: number; vx: number; vy: number; t0: number; dur: number; color: string; r: number; g: number }
-export interface Banner { k: ImgKey; t0: number; dur: number; sub?: string }
+export interface Banner { k: ImgKey | null; t0: number; dur: number; sub?: string; title?: string; color?: string }
+export interface Ring { x: number; y: number; r: number; t0: number; dur: number; color: string }
+export interface Death { def: string; x: number; y: number; t0: number }
+export interface CoinFly { x: number; y: number; t0: number }
+export interface CutIn { sprite: number; name: string; color: string; t0: number }
 
 export interface Fx {
   /** 演出の時計（秒）。一時停止で止まる */
@@ -22,12 +27,21 @@ export interface Fx {
   texts: FloatText[];
   particles: Particle[];
   banners: Banner[];
+  rings: Ring[];
+  deaths: Death[];
+  coins: CoinFly[];
+  cutin: CutIn | null;
+  /** 画面の白い光の終わり */
+  flashUntil: number;
+  flashColor: string;
+  /** 一瞬止める（ヒットストップ）残り秒 */
+  freeze: number;
   /** 敵の白い点滅の終わり */
   hitUntil: Map<number, number>;
   /** 守り手の踏み込み（始めと向き） */
   lunge: Map<string, { t0: number; dx: number; dy: number }>;
   /** 守り手の光（LvUp・転職） */
-  glow: Map<string, { t0: number; kind: 'lv' | 'job' | 'rest' }>;
+  glow: Map<string, { t0: number; kind: 'lv' | 'job' | 'rest' | 'skill' }>;
   /** 最後に見えた敵の位置（消えた後の演出用） */
   last: Map<number, { x: number; y: number; def: string }>;
   shakeUntil: number;
@@ -36,13 +50,16 @@ export interface Fx {
   numbers: boolean;
   /** 速さ（飛ぶ物の時間を合わせる） */
   speed: number;
+  /** 連撃の表示（最後に増えた時と数） */
+  combo: { n: number; t0: number };
 }
 
 export function newFx(): Fx {
   return {
-    now: 0, projectiles: [], flashes: [], texts: [], particles: [], banners: [],
+    now: 0, projectiles: [], flashes: [], texts: [], particles: [], banners: [], rings: [], deaths: [], coins: [], cutin: null,
+    flashUntil: 0, flashColor: '#fff', freeze: 0,
     hitUntil: new Map(), lunge: new Map(), glow: new Map(), last: new Map(),
-    shakeUntil: 0, shakeMag: 0, eliteShown: false, numbers: true, speed: 1,
+    shakeUntil: 0, shakeMag: 0, eliteShown: false, numbers: true, speed: 1, combo: { n: 0, t0: -9 },
   };
 }
 
@@ -72,9 +89,16 @@ const IMPACT: Record<JobDef['fx'], { k: ImgKey; size: number }> = {
   dragon: { k: 'fx_slash', size: 170 },
 };
 
+const SKILL_SE: Record<SkillId, string> = {
+  whirl: 'slash', issen: 'slash', seal: 'magic', darkwave: 'magic', dragonfall: 'thunder', arrowRain: 'arrow', snipe: 'gun', bigCannon: 'boom',
+  armorCrush: 'break', smoke: 'trap', shadow: 'magic', plunder: 'coin', net: 'trap', goldRain: 'coin',
+};
+
+const BOSS_TEXT: Record<BossSkill, string> = { summon: '手下を呼んだ！', charge: '突進！', roar: '咆哮！ 守り手がすくむ', regen: '傷が治っていく…', burrow: '地中に潜った！', dive: '地上に降りた！' };
+
 export function shake(fx: Fx, mag: number, dur: number) {
   fx.shakeUntil = Math.max(fx.shakeUntil, fx.now + dur);
-  fx.shakeMag = Math.max(fx.shakeMag * (fx.now < fx.shakeUntil ? 1 : 0), mag);
+  fx.shakeMag = Math.max(fx.now < fx.shakeUntil ? fx.shakeMag : 0, mag);
 }
 
 export function text(fx: Fx, s: string, x: number, y: number, color = '#fff', size = 30, dur = 0.9, rise = 60) {
@@ -88,12 +112,16 @@ function burst(fx: Fx, x: number, y: number, n: number, color: string, spd = 220
     const v = spd * (0.4 + Math.random() * 0.8);
     fx.particles.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - spd * 0.4, t0: fx.now, dur: 0.45 + Math.random() * 0.4, color, r: r * (0.6 + Math.random() * 0.8), g });
   }
-  if (fx.particles.length > 400) fx.particles.splice(0, fx.particles.length - 400);
+  if (fx.particles.length > 500) fx.particles.splice(0, fx.particles.length - 500);
 }
 
-export function banner(fx: Fx, k: ImgKey, dur = 1.8, sub?: string) {
+function ring(fx: Fx, x: number, y: number, r: number, color: string, dur = 0.6) {
+  fx.rings.push({ x, y, r, t0: fx.now, dur, color });
+}
+
+export function banner(fx: Fx, k: ImgKey | null, dur = 1.8, sub?: string, title?: string, color?: string) {
   fx.banners = fx.banners.filter((b) => fx.now - b.t0 < b.dur * 0.5);
-  fx.banners.push({ k, t0: fx.now, dur, sub });
+  fx.banners.push({ k, t0: fx.now, dur, sub, title, color });
 }
 
 /** 育成の光（画面から呼ぶ） */
@@ -114,6 +142,79 @@ export function glowWarden(fx: Fx, p: Progress, wid: string, kind: 'lv' | 'job',
     burst(fx, x, y - 60, 26, '#fff6c8', 220, 6, -120);
     se('revive', 0);
   }
+}
+
+function skillFx(fx: Fx, p: Progress, b: Battle, ev: Extract<SimEvent, { k: 'skill' }>) {
+  const w = p.wardens.find((x) => x.id === ev.wid);
+  const meta = SKILLS[ev.skill];
+  if (w) {
+    fx.cutin = { sprite: w.sprite, name: meta.name, color: meta.color, t0: fx.now };
+    fx.glow.set(w.id, { t0: fx.now, kind: 'skill' });
+  }
+  fx.freeze = Math.max(fx.freeze, 0.22);
+  fx.flashUntil = fx.now + 0.18;
+  fx.flashColor = meta.color;
+  const [wx, wy] = w ? wardenPos(w) : [ev.x, ev.y];
+  const { x, y } = ev;
+  switch (ev.skill) {
+    case 'whirl':
+      ring(fx, wx, wy - 20, ev.r, meta.color, 0.5);
+      for (let i = 0; i < 6; i++) fx.flashes.push({ k: 'fx_slash', x: wx + Math.cos(i) * ev.r * 0.5, y: wy - 30 + Math.sin(i) * ev.r * 0.35, t0: fx.now + i * 0.03, dur: 0.4, size: 200, rot: i });
+      shake(fx, 10, 0.3);
+      break;
+    case 'issen':
+      fx.flashes.push({ k: 'fx_slash', x: 700, y: y - 30, t0: fx.now, dur: 0.5, size: 1500, rot: 0 });
+      shake(fx, 14, 0.35);
+      break;
+    case 'seal': case 'darkwave':
+      ring(fx, ev.skill === 'seal' ? x : wx, ev.skill === 'seal' ? y : wy - 20, ev.r, meta.color, 0.8);
+      fx.flashes.push({ k: 'fx_magic', x: ev.skill === 'seal' ? x : wx, y: (ev.skill === 'seal' ? y : wy) - 30, t0: fx.now, dur: 0.7, size: 420, rot: 0 });
+      break;
+    case 'dragonfall':
+      for (let i = 0; i < 10; i++) fx.projectiles.push({ fx: 'dragon', from: [200 + i * 130, -200], to: [200 + i * 130 + 120, 380], uid: -1, t0: fx.now + i * 0.04, dur: 0.35 });
+      shake(fx, 12, 0.4);
+      break;
+    case 'arrowRain':
+      for (let i = 0; i < 26; i++) {
+        const tx = x + (Math.random() - 0.5) * ev.r * 1.6, ty = y + (Math.random() - 0.5) * ev.r;
+        fx.projectiles.push({ fx: 'rain', from: [tx - 120, ty - 520], to: [tx, ty], uid: -1, t0: fx.now + Math.random() * 0.35, dur: 0.3 });
+      }
+      ring(fx, x, y, ev.r, meta.color, 0.7);
+      break;
+    case 'snipe':
+      fx.projectiles.push({ fx: 'bullet', from: [wx, wy - 60], to: [x, y - 30], uid: -1, t0: fx.now, dur: 0.08 });
+      fx.flashes.push({ k: 'fx_target', x, y: y - 30, t0: fx.now, dur: 0.8, size: 260, rot: 0 });
+      break;
+    case 'bigCannon':
+      fx.flashes.push({ k: 'fx_hit', x, y: y - 20, t0: fx.now, dur: 0.6, size: 460, rot: 0 });
+      burst(fx, x, y, 30, '#ffb04a', 420, 9);
+      shake(fx, 20, 0.5);
+      break;
+    case 'armorCrush':
+      ring(fx, wx, wy - 20, ev.r, meta.color, 0.7);
+      burst(fx, wx, wy - 40, 20, '#cfe8ff', 360, 6);
+      break;
+    case 'smoke':
+      for (let i = 0; i < 40; i++) fx.particles.push({ x: wx + (Math.random() - 0.5) * ev.r * 1.6, y: wy - 20 + (Math.random() - 0.5) * ev.r, vx: (Math.random() - 0.5) * 40, vy: -20 - Math.random() * 30, t0: fx.now, dur: 1.4 + Math.random(), color: 'rgba(220,220,230,0.85)', r: 18 + Math.random() * 24, g: 0 });
+      break;
+    case 'shadow':
+      ring(fx, wx, wy - 20, 700, meta.color, 0.6);
+      fx.flashUntil = fx.now + 0.35; fx.flashColor = '#2a0040';
+      break;
+    case 'plunder':
+      ring(fx, wx, wy - 20, ev.r, meta.color, 0.5);
+      burst(fx, wx, wy - 40, 24, '#ffd23f', 300, 6, 500);
+      break;
+    case 'net':
+      for (let i = 0; i < 12; i++) fx.projectiles.push({ fx: 'chain', from: [wx, wy - 50], to: [150 + i * 100, 420 + (i % 3) * 110], uid: -1, t0: fx.now + i * 0.02, dur: 0.35 });
+      break;
+    case 'goldRain':
+      for (let i = 0; i < 60; i++) fx.particles.push({ x: 100 + Math.random() * 1450, y: 200 + Math.random() * 100, vx: 0, vy: 50 + Math.random() * 80, t0: fx.now + Math.random() * 0.4, dur: 1.4, color: '#ffd23f', r: 6, g: 420 });
+      break;
+  }
+  void b;
+  se(SKILL_SE[ev.skill], 0);
+  se('lvup', 0);
 }
 
 /** 合戦の出来事を演出にする */
@@ -162,12 +263,18 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         const fxk = w ? job(w.job).fx : 'arrow';
         const imp = IMPACT[fxk];
         const y = pos.y - 34;
-        fx.flashes.push({ k: imp.k, x: pos.x + (Math.random() - 0.5) * 16, y, t0: fx.now, dur: fxk === 'cannon' ? 0.45 : 0.28, size: imp.size, rot: fxk === 'slash' || fxk === 'dragon' ? (Math.random() - 0.5) * 1.6 : Math.random() * 6.28 });
+        if (!ev.skill || Math.random() < 0.5) fx.flashes.push({ k: imp.k, x: pos.x + (Math.random() - 0.5) * 16, y, t0: fx.now, dur: fxk === 'cannon' ? 0.45 : 0.28, size: imp.size * (ev.crit ? 1.5 : 1), rot: fxk === 'slash' || fxk === 'dragon' ? (Math.random() - 0.5) * 1.6 : Math.random() * 6.28 });
         fx.hitUntil.set(ev.uid, fx.now + 0.09);
         if (fxk === 'cannon') { burst(fx, pos.x, y, 10, '#ffb04a', 260, 7); shake(fx, 5, 0.18); }
-        if (fx.numbers) {
+        if (ev.crit) {
+          fx.freeze = Math.max(fx.freeze, 0.05);
+          text(fx, `${fmt(ev.n)}`, pos.x + (Math.random() - 0.5) * 20, y - 26, '#ffd23f', 42, 0.85, 70);
+          text(fx, '会心!', pos.x, y - 70, '#fff3a0', 24, 0.6, 30);
+          burst(fx, pos.x, y, 6, '#fff3a0', 220, 4);
+          se('crit', 60);
+        } else if (fx.numbers) {
           const big = ev.n >= 1000;
-          text(fx, ev.metal ? `${ev.n}` : fmt(ev.n), pos.x + (Math.random() - 0.5) * 30, y - 20, ev.metal ? '#c9d2dc' : ev.weak ? '#b8c4d8' : big ? '#ffd45a' : '#ffffff', ev.metal ? 24 : big ? 34 : 28, 0.7, 55);
+          text(fx, fmt(ev.n), pos.x + (Math.random() - 0.5) * 30, y - 20, ev.metal ? '#c9d2dc' : ev.weak ? '#b8c4d8' : ev.skill ? '#9fe7ff' : big ? '#ffd45a' : '#ffffff', ev.metal ? 24 : ev.skill ? 34 : big ? 34 : 28, 0.7, 55);
         }
         se(ev.metal ? 'bump' : 'hit', 55);
         break;
@@ -181,13 +288,22 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         break;
       }
       case 'kill': {
-        const def = enemy(fx.last.get(ev.uid)?.def ?? 'slime');
+        const last = fx.last.get(ev.uid);
+        const def = enemy(last?.def ?? 'slime');
         const y = ev.y - def.size * 0.35;
-        burst(fx, ev.x, y, def.boss ? 40 : 12, '#e8e2d4', def.boss ? 360 : 200, def.boss ? 12 : 7, 120);
-        burst(fx, ev.x, y, ev.triple ? 9 : 4, '#ffd23f', 240, 5, 500);
+        fx.deaths.push({ def: def.id, x: ev.x, y: ev.y, t0: fx.now });
+        if (fx.deaths.length > 40) fx.deaths.shift();
+        burst(fx, ev.x, y, def.boss ? 40 : 10, '#e8e2d4', def.boss ? 360 : 200, def.boss ? 12 : 7, 120);
+        const coinN = Math.min(8, 1 + Math.floor(Math.log10(ev.coins + 1) * 2) + (ev.triple ? 3 : 0));
+        for (let i = 0; i < coinN; i++) fx.coins.push({ x: ev.x + (Math.random() - 0.5) * 40, y: y + (Math.random() - 0.5) * 30, t0: fx.now + i * 0.04 });
+        if (fx.coins.length > 120) fx.coins.splice(0, fx.coins.length - 120);
         if (ev.triple) text(fx, `金貨×3 +${fmt(ev.coins)}`, ev.x, y - 50, '#ffd23f', 28, 1.1);
-        if (def.boss) { shake(fx, 22, 1.2); se('clear', 0); fx.flashes.push({ k: 'fx_sparkle', x: ev.x, y, t0: fx.now, dur: 1.2, size: 420, rot: 0 }); }
-        else if (def.kind === 'metal') { text(fx, 'メタル撃破！', ev.x, y - 80, '#e6eef8', 30, 1.2); se('coin', 0); }
+        if (def.boss) {
+          shake(fx, 22, 1.2); se('clear', 0);
+          fx.flashes.push({ k: 'fx_sparkle', x: ev.x, y, t0: fx.now, dur: 1.2, size: 420, rot: 0 });
+          fx.freeze = Math.max(fx.freeze, 0.5);
+          fx.flashUntil = fx.now + 0.3; fx.flashColor = '#fff';
+        } else if (def.kind === 'metal') { text(fx, 'メタル撃破！', ev.x, y - 80, '#e6eef8', 30, 1.2); se('coin', 0); }
         se(ev.triple ? 'coin' : 'death', 80);
         break;
       }
@@ -195,6 +311,7 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         text(fx, `村人 -${ev.lives}`, GATE[0] - 20, GATE[1] - 60, '#ff6b5e', 38, 1.3, 70);
         fx.flashes.push({ k: 'fx_target', x: GATE[0], y: GATE[1], t0: fx.now, dur: 0.6, size: 200, rot: 0 });
         shake(fx, ev.lives >= 3 ? 18 : 9, 0.4);
+        fx.flashUntil = fx.now + 0.15; fx.flashColor = '#ff3020';
         se('hurt', 0);
         break;
       }
@@ -214,6 +331,58 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         const [x, y] = wardenPos(w);
         text(fx, `+${fmt(ev.n)}G`, x, y - 110, '#ffd96a', 22, 0.9);
         se('coin', 160);
+        break;
+      }
+      case 'skill': skillFx(fx, p, b, ev); break;
+      case 'boss': {
+        banner(fx, null, 1.6, undefined, BOSS_TEXT[ev.s], '#ff8a6a');
+        if (ev.s === 'roar') { shake(fx, 16, 0.6); se('roar', 0); ring(fx, ev.x, ev.y, 420, '#ff6050', 0.6); }
+        else if (ev.s === 'summon') { ring(fx, ev.x, ev.y, 200, '#c58cff', 0.6); se('magic', 0); }
+        else if (ev.s === 'charge') { se('step', 0); shake(fx, 8, 0.5); }
+        else if (ev.s === 'regen') { fx.flashes.push({ k: 'fx_heal', x: ev.x, y: ev.y - 60, t0: fx.now, dur: 0.9, size: 300, rot: 0 }); se('pickup', 0); }
+        else if (ev.s === 'burrow') { burst(fx, ev.x, ev.y, 24, '#8a6a40', 260, 9); se('dig', 0); }
+        else { burst(fx, ev.x, ev.y, 18, '#d9c3a0', 220, 8); se('bump', 0); }
+        break;
+      }
+      case 'phase': {
+        fx.flashUntil = fx.now + 0.4; fx.flashColor = '#ffffff';
+        fx.freeze = Math.max(fx.freeze, 0.35);
+        shake(fx, 18, 0.7);
+        banner(fx, null, 1.6, undefined, ev.phase === 2 ? 'ボスが本気になった！' : 'ボスが怒った！', '#ff6050');
+        se('roar', 0);
+        break;
+      }
+      case 'combo': fx.combo = { n: ev.n, t0: fx.now }; break;
+      case 'fever': {
+        banner(fx, null, 1.8, '金貨×1.5・EXP×1.2（8秒）', 'FEVER!', '#ffd23f');
+        fx.flashUntil = fx.now + 0.25; fx.flashColor = '#ffd23f';
+        se('clear', 0);
+        break;
+      }
+      case 'chest': {
+        text(fx, '宝箱！', ev.x, ev.y - 90, '#ffd970', 30, 1.2, 80);
+        fx.flashes.push({ k: 'fx_sparkle', x: ev.x, y: ev.y - 40, t0: fx.now, dur: 0.9, size: 200, rot: 0 });
+        se('equip', 0);
+        break;
+      }
+      case 'call': {
+        text(fx, `早呼び +${fmt(ev.coins)}G`, 280, 470, '#ffd23f', 34, 1.3, 60);
+        se('coin', 0);
+        break;
+      }
+      case 'heal': {
+        const pos = b.enemies.find((x) => x.uid === ev.uid);
+        if (pos && fx.numbers) text(fx, `+${fmt(ev.n)}`, pos.x, pos.y - 70, '#7dea8c', 22, 0.7, 40);
+        break;
+      }
+      case 'stun': {
+        const w = p.wardens.find((x) => x.id === ev.wid);
+        if (w) { const [x, y] = wardenPos(w); text(fx, 'すくみ！', x, y - 130, '#ff8a6a', 24, 1.0, 30); }
+        break;
+      }
+      case 'land': {
+        const pos = b.enemies.find((x) => x.uid === ev.uid);
+        if (pos) { burst(fx, pos.x, pos.y, 14, '#d9c3a0', 220, 7); text(fx, '着地！', pos.x, pos.y - 80, '#ffd0a0', 22, 0.8); }
         break;
       }
       case 'end': {
@@ -238,7 +407,11 @@ export function tickFx(fx: Fx, dt: number) {
   fx.flashes = fx.flashes.filter((x) => n - x.t0 < x.dur);
   fx.texts = fx.texts.filter((x) => n - x.t0 < x.dur);
   fx.banners = fx.banners.filter((x) => n - x.t0 < x.dur);
-  for (const pt of fx.particles) { pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vy += pt.g * dt; pt.vx *= 0.98; }
+  fx.rings = fx.rings.filter((x) => n - x.t0 < x.dur);
+  fx.deaths = fx.deaths.filter((x) => n - x.t0 < 0.4);
+  fx.coins = fx.coins.filter((x) => n - x.t0 < 0.75);
+  if (fx.cutin && n - fx.cutin.t0 > 1.1) fx.cutin = null;
+  for (const pt of fx.particles) { if (n < pt.t0) continue; pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vy += pt.g * dt; pt.vx *= 0.98; }
   fx.particles = fx.particles.filter((x) => n - x.t0 < x.dur);
 }
 

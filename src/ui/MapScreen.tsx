@@ -8,7 +8,9 @@ import { CHAPTERS, PER_CHAPTER, STAGE_COUNT, chapterOf, stage, stageEnemies, sta
 import type { Progress, Settings } from '../game/types';
 import { enemyStyle, faceStyle, imgUrl } from '../view/assets';
 import { Help, Modal, SettingsPanel, fmtNum } from './common';
+import { DailyModal, ItemsModal, ShopModal, TowerModal, VillageModal } from './Hub';
 import { UnitPanel } from './UnitPanel';
+import { dateKey, towerOpen } from '../game/tower';
 
 const MAP_W = 1672, MAP_H = 941;
 const ROWS = [800, 655, 510, 365, 225];
@@ -29,15 +31,17 @@ interface Props {
   onSettings: (s: Settings) => void;
   onChange: () => void;
   onPlay: (id: number) => void;
+  onTower: () => void;
+  onDaily: () => void;
   onTitle: () => void;
   onWipe: () => void;
 }
 
-export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTitle, onWipe }: Props) {
+export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTower, onDaily, onTitle, onWipe }: Props) {
   const box = useRef<HTMLDivElement>(null);
   const [view, setView] = useState({ s: 0.5, ox: 0, oy: 0 });
   const [pick, setPick] = useState<number | null>(null);
-  const [modal, setModal] = useState<'' | 'units' | 'help' | 'settings'>('');
+  const [modal, setModal] = useState<'' | 'units' | 'help' | 'settings' | 'village' | 'shop' | 'items' | 'tower' | 'daily'>('');
   const [unit, setUnit] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -106,12 +110,19 @@ export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTitle, 
         <span className="chip exp">EXP <b>{fmtNum(p.exp)}</b></span>
         <span className="chip coin">金貨 <b>{fmtNum(p.coins)}</b></span>
         <span className="chip">★ <b>{totalStars}</b>/{STAGE_COUNT * 3}</span>
-        <span className="chip">点 <b>{fmtNum(p.score)}</b></span>
+        <span className="chip score">点 <b>{fmtNum(p.score)}</b></span>
         <span className="grow" />
+      
+        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('village'); }}><i>村</i><span>施設</span></button>
+        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('shop'); }}><i>店</i><span>{p.shop.length}品</span></button>
+        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('items'); }}><i>袋</i><span>{p.items.length}</span></button>
+        <button className={`btn small hubbtn ${towerOpen(p) ? 'hot' : 'off'}`} onClick={() => { playSe('menu'); setModal('tower'); }}><i>塔</i><span>{p.tower.best ? `${p.tower.best}階` : towerOpen(p) ? '挑む' : '未'}</span></button>
+        <button className={`btn small hubbtn ${towerOpen(p) && !(p.daily.date === dateKey() && p.daily.cleared) ? 'hot' : ''} ${towerOpen(p) ? '' : 'off'}`} onClick={() => { playSe('menu'); setModal('daily'); }}><i>日</i><span>毎日</span></button>
         <button className={`btn small gold ${ready ? 'pulse' : ''}`} onClick={() => { playSe('menu'); setModal('units'); }}>部隊{ready ? ' ▲' : ''}</button>
         <button className="btn small" onClick={() => { playSe('menu'); setModal('help'); }}>?</button>
         <button className="btn small" onClick={() => { playSe('menu'); setModal('settings'); }}>設定</button>
       </div>
+
 
       {p.cleared && <div className="cleared-flag">全35ステージ制覇！ 点 {fmtNum(p.score)}</div>}
 
@@ -143,6 +154,13 @@ export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTitle, 
       )}
       {modal === 'help' && <Help onClose={() => setModal('')} />}
       {modal === 'settings' && <SettingsPanel settings={settings} onSettings={onSettings} onClose={() => setModal('')} onWipe={onWipe} />}
+      {modal === 'village' && <VillageModal p={p} onChange={onChange} onClose={() => setModal('')} />}
+      {modal === 'shop' && <ShopModal p={p} onChange={onChange} onClose={() => setModal('')} />}
+      {modal === 'items' && <ItemsModal p={p} onClose={() => setModal('')} />}
+      {modal === 'tower' && <TowerModal p={p} onStart={onTower} onChange={onChange} onClose={() => setModal('')} />}
+      {modal === 'daily' && (towerOpen(p)
+        ? <DailyModal p={p} onStart={onDaily} onClose={() => setModal('')} />
+        : <Modal title="毎日の挑戦" onClose={() => setModal('')}><p className="warn">ステージ7（最初のボス）を越えると挑める。</p></Modal>)}
     </div>
   );
 }

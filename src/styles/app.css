@@ -319,3 +319,111 @@ i.up { position: absolute; top: 2px; right: 4px; font-style: normal; font-size: 
   .modal-body { padding: 8px 12px 10px; }
   .title-menu > .btn { min-width: 200px; }
 }
+
+/* ── 3.0：地図の右の札 ── */
+.dock { position: absolute; z-index: 5; right: calc(6px + var(--sr)); top: calc(44px + var(--st)); display: flex; flex-direction: column; gap: 5px; }
+.dock-btn { width: 52px; height: 46px; border-radius: 12px; border: 1.5px solid var(--line); background: linear-gradient(#24344f, #142037); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0; box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45); }
+.dock-btn i { font-style: normal; font-size: 18px; font-weight: 900; color: var(--gold); line-height: 1.1; }
+.dock-btn span { font-size: 9.5px; color: var(--muted); white-space: nowrap; }
+.dock-btn.hot { border-color: #ffe39a; animation: pulse 1.4s infinite; }
+.dock-btn.off { opacity: 0.55; }
+@media (max-height: 380px) { .dock { gap: 3px; } .dock-btn { height: 42px; width: 48px; } }
+
+/* 品 */
+.qtag { font-style: normal; font-size: 10px; font-weight: 900; padding: 0 5px; border-radius: 5px; margin-left: 5px; background: #4a5568; color: #fff; vertical-align: middle; }
+.qtag.q2 { background: #2f7bbf; }
+.qtag.q3 { background: linear-gradient(#f6d77a, #c8952e); color: #2a1a05; }
+.item-list { display: flex; flex-direction: column; gap: 5px; }
+.item-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 10px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); }
+.item-row.q2 { border-color: rgba(90, 166, 232, 0.5); }
+.item-row.q3 { border-color: rgba(240, 200, 96, 0.8); background: rgba(240, 200, 96, 0.1); }
+.item-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.item-main b { font-size: 13.5px; }
+.item-main small { font-size: 11px; color: var(--muted); }
+.tabs { align-self: flex-start; margin-bottom: 8px; display: inline-flex; }
+.equip-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 8px; }
+.equip-summary > div { display: flex; flex-direction: column; padding: 4px 6px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); font-size: 11px; min-width: 0; }
+.equip-summary small { color: var(--muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 760px) { .equip-summary { grid-template-columns: repeat(2, 1fr); } }
+
+/* 小窓の装備・技 */
+.slot { display: flex; align-items: center; gap: 6px; padding: 4px 0; }
+.slot-k { width: 42px; flex: none; font-size: 11px; color: var(--muted); }
+.slot-item { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 12px; }
+.slot-item b { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slot-item small { font-size: 10.5px; color: #9fd0ff; }
+.slot-item.q3 b { color: var(--gold); }
+.pick-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; max-height: 180px; overflow-y: auto; }
+.pick { text-align: left; padding: 5px 8px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; }
+.pick b { font-size: 12.5px; }
+.pick small { font-size: 10.5px; color: var(--muted); }
+.pick.q3 { border-color: rgba(240, 200, 96, 0.7); }
+.skill-box { margin-top: 7px; padding: 6px 8px; border-radius: 10px; border: 1.5px solid; background: rgba(255, 255, 255, 0.04); }
+.skill-box .btn { width: 100%; margin-top: 5px; }
+.skill-head { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+.sp-bar { flex: 1; height: 6px; border-radius: 3px; background: rgba(0, 0, 0, 0.5); overflow: hidden; }
+.sp-bar i { display: block; height: 100%; background: linear-gradient(90deg, #5aa6e8, #ffe08a); }
+.up-stats > div { min-width: 0; }
+
+/* 村 */
+.village-modal .modal-body { padding: 0; }
+.village { background-size: cover; background-position: center; padding: 10px; position: relative; }
+.village::before { content: ""; position: absolute; inset: 0; background: rgba(8, 14, 26, 0.55); }
+.fac-grid { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.fac { display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; border-radius: 12px; background: rgba(12, 22, 38, 0.88); border: 1px solid var(--line); }
+.fac-head { display: flex; align-items: center; justify-content: space-between; }
+.fac-head b { font-size: 15px; color: var(--gold); }
+.fac-lv { font-size: 11px; letter-spacing: 1px; color: #ffd970; }
+.fac p { margin: 0; font-size: 12px; color: #d9dde6; }
+.fac em { font-style: normal; color: #9ff0aa; }
+
+/* 塔・毎日 */
+.tower-info { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.tower-info p { margin: 0; font-size: 12.5px; line-height: 1.5; color: #d9dde6; }
+.tower-info > .btn { align-self: center; min-width: 200px; }
+.run-box { padding: 6px 10px; border-radius: 10px; background: rgba(240, 200, 96, 0.1); border: 1px solid rgba(240, 200, 96, 0.4); font-size: 13px; }
+.daily-rule { display: flex; flex-direction: column; padding: 8px 10px; border-radius: 10px; background: rgba(90, 166, 232, 0.12); border: 1px solid rgba(90, 166, 232, 0.4); }
+.daily-rule b { font-size: 17px; color: var(--gold); }
+.daily-rule span { font-size: 12.5px; color: #d9dde6; }
+.buffs { width: 100%; }
+.buff-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.buff { display: flex; flex-direction: column; gap: 2px; padding: 8px; border-radius: 12px; border: 1.5px solid var(--gold); background: linear-gradient(#3a2e14, #1e170a); text-align: left; animation: pop 0.25s ease-out; }
+.buff b { font-size: 16px; color: var(--gold); }
+.buff span { font-size: 11.5px; color: #f1ecdf; }
+
+/* 戦闘：呼ぶ・連撃・フィーバー・案内・技 */
+.call-btn { position: absolute; z-index: 6; left: calc(8px + var(--sl)); bottom: 8px; display: flex; flex-direction: column; align-items: flex-start; padding: 4px 10px; border-radius: 10px; border: 1.5px solid #ffd23f; background: rgba(40, 28, 6, 0.85); color: #fff; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5); }
+.call-btn span { font-size: 10.5px; color: #ffe9b0; }
+.call-btn b { font-size: 13px; color: #ffd23f; }
+.combo { position: absolute; z-index: 6; left: 50%; top: 8px; transform: translateX(-50%); display: flex; align-items: baseline; gap: 4px; pointer-events: none; animation: comboPop 0.25s ease-out; text-shadow: 0 2px 0 #000, 0 0 10px rgba(255, 140, 40, 0.8); }
+.combo b { font-size: 34px; font-weight: 900; color: #ffd23f; font-style: italic; }
+.combo span { font-size: 15px; font-weight: 900; color: #fff; }
+@keyframes comboPop { from { transform: translateX(-50%) scale(1.6); } }
+.fever { position: absolute; z-index: 6; right: calc(8px + var(--sr)); top: 8px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-weight: 900; font-style: italic; font-size: 18px; color: #ffd23f; text-shadow: 0 2px 0 #000; pointer-events: none; animation: pulse 0.5s infinite; }
+.fever > i { width: 80px; height: 5px; border-radius: 3px; background: rgba(0, 0, 0, 0.5); overflow: hidden; }
+.fever > i > i { display: block; height: 100%; background: #ffd23f; }
+.tip { position: absolute; z-index: 9; left: 50%; bottom: 8px; transform: translateX(-50%); width: min(560px, calc(100% - 140px)); display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 12px; background: rgba(8, 14, 26, 0.92); border: 1.5px solid #7fd0ff; font-size: 12.5px; line-height: 1.4; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5); animation: pop 0.25s ease-out; }
+.tip span { flex: 1; }
+.skill-btn { position: absolute; top: 2px; right: 2px; width: 26px; height: 22px; padding: 0; border-radius: 7px; border: 2px solid; background: linear-gradient(#f6d77a, #c8952e); color: #2a1a05; font-size: 12px; font-weight: 900; animation: pulse 0.8s infinite; }
+.rcard.ready { box-shadow: inset 0 0 0 1px rgba(255, 220, 120, 0.6), 0 0 10px rgba(255, 220, 120, 0.35); }
+.spgauge { position: absolute; left: 3px; right: 3px; bottom: 1px; height: 3px; border-radius: 2px; background: rgba(0, 0, 0, 0.45); overflow: hidden; }
+.spgauge i { display: block; height: 100%; background: linear-gradient(90deg, #5aa6e8, #ffe08a); }
+.rcard .gauge { bottom: 5px; }
+.chip.chest b { color: #ffd970; }
+
+/* 結果：宝箱 */
+.chest-list { width: min(420px, 100%); display: flex; flex-direction: column; gap: 4px; }
+.chest-open { animation: chestIn 0.45s ease-out both; }
+@keyframes chestIn { from { transform: rotateX(90deg) scale(0.6); opacity: 0; } }
+.result-box { max-height: calc(100dvh - 30px); overflow-y: auto; }
+.result-box .sec { text-align: center; }
+
+/* 地図の上の帯の施設ボタン */
+.btn.hubbtn { flex-direction: row; gap: 3px; min-width: 0; padding: 2px 7px; }
+.btn.hubbtn i { font-style: normal; color: var(--gold); font-weight: 900; }
+.btn.hubbtn span { font-size: 10px; color: var(--muted); font-weight: 600; }
+.btn.hubbtn.hot { border-color: #ffe39a; animation: pulse 1.4s infinite; }
+.btn.hubbtn.off { opacity: 0.55; }
+@media (max-width: 900px) { .map-hud .chip.score, .btn.hubbtn span { display: none; } }
+
+.res-rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; width: min(440px, 100%); }

@@ -1,50 +1,35 @@
-const CACHE_NAME = 'eight-wardens-shell-v9-game-assets';
+const CACHE_NAME = 'eight-wardens-shell-v10-remake';
+// 遊ぶのに要る物だけ先に入れる（絵は WebP の軽量版。BGM は流す時に読む）
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/service-worker.js',
-  '/sw.js',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/icon-maskable-512.png',
-  '/assets/backgrounds/title-vista.svg',
-  '/assets/backgrounds/world-map.svg',
-  '/assets/backgrounds/field-line.svg',
-  '/assets/ui/crest.svg',
-  '/assets/generated/title-background.png',
-  '/assets/generated/map-background.png',
-  '/assets/generated/battle-background.png',
-  '/assets/generated/unit-portraits-sheet.png',
-  '/assets/generated/warden-chibi-sheet.png',
-  '/assets/generated/enemy-chibi-sheet.png',
-  '/assets/generated/map-marker-sheet.png',
-  '/assets/generated/unit-portraits-sheet-transparent.png',
-  '/assets/generated/warden-chibi-sheet-transparent.png',
-  '/assets/generated/enemy-chibi-sheet-transparent.png',
-  '/assets/generated/map-marker-sheet-transparent.png',
-  '/assets/game/backgrounds/chapter1_world_map.png',
-  '/assets/game/backgrounds/battle_village_gate_day.png',
-  '/assets/game/backgrounds/result_stage_clear_bg.png',
-  '/assets/game/banners/banner_wave_start.png',
-  '/assets/game/banners/banner_elite_warning.png',
-  '/assets/game/banners/banner_boss_warning.png',
-  '/assets/game/banners/banner_stage_clear.png',
-  '/assets/game/banners/deco_victory_flourish_gold.png',
-  '/assets/game/banners/deco_reward_sparkle_gold.png',
-  '/assets/game/banners/deco_three_star_clear.png',
-  '/assets/game/effects/fx_slash_blue.png',
-  '/assets/game/effects/fx_hit_flash_orange.png',
-  '/assets/game/effects/fx_magic_bolt_purple.png',
-  '/assets/game/effects/fx_target_ring_red.png',
-  '/assets/game/effects/fx_route_curve_red.png',
-  '/assets/game/effects/fx_route_dotted_red.png',
-  '/assets/game/effects/fx_route_lane_warning_red.png',
-  '/assets/game/ui/icons/ui_icon_coin.png',
-  '/assets/game/ui/icons/ui_icon_gem.png',
-  '/assets/game/ui/icons/ui_icon_lock.png',
-  '/assets/game/ui/icons/ui_icon_shield.png',
-  '/assets/game/ui/icons/ui_icon_sword.png'
+  '/assets/v2/battle.webp',
+  '/assets/v2/map.webp',
+  '/assets/v2/title.webp',
+  '/assets/v2/result.webp',
+  '/assets/v2/wardens.webp',
+  '/assets/v2/enemies.webp',
+  '/assets/v2/portraits.webp',
+  '/assets/v2/enemy_goblin.webp',
+  '/assets/v2/enemy_orc.webp',
+  '/assets/v2/enemy_wolf_elite.webp',
+  '/assets/v2/enemy_wingbat.webp',
+  '/assets/v2/banner_wave.webp',
+  '/assets/v2/banner_boss.webp',
+  '/assets/v2/banner_elite.webp',
+  '/assets/v2/banner_clear.webp',
+  '/assets/v2/deco_stars.webp',
+  '/assets/v2/fx_slash.webp',
+  '/assets/v2/fx_hit.webp',
+  '/assets/v2/fx_magic.webp',
+  '/assets/v2/fx_buff.webp',
+  '/assets/v2/fx_heal.webp',
+  '/assets/v2/fx_sparkle.webp',
+  '/assets/v2/fx_target.webp',
 ];
 
 self.addEventListener('install', (event) => {
@@ -71,6 +56,10 @@ self.addEventListener('fetch', (event) => {
   }
 
   const requestUrl = new URL(event.request.url);
+  // 音（範囲の読み込み）はキャッシュに入れない
+  if (event.request.headers.has('range') || /\.mp3$/.test(requestUrl.pathname)) {
+    return;
+  }
   const isSameOrigin = requestUrl.origin === self.location.origin;
   const isNavigation = event.request.mode === 'navigate';
   const isHashedBuildAsset = requestUrl.pathname.startsWith('/assets/') && /\.[a-f0-9]{8,}\./.test(requestUrl.pathname);

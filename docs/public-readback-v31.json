@@ -1,0 +1,110 @@
+[
+  {
+    "path": "/assets/index-BuLtAREf.js",
+    "equal": true,
+    "bytes": 282468,
+    "sha256": "5c44f5d45350e49735530818d417e60e7a3a6bfe6f3e184f2c8f530404b6379b"
+  },
+  {
+    "path": "/assets/index-7GPQXfa9.css",
+    "equal": true,
+    "bytes": 27937,
+    "sha256": "efa210d908e4b26336244e96315d855c08686a5704d19030e3c05fd0a189ddc7"
+  },
+  {
+    "path": "/service-worker.js",
+    "equal": true,
+    "bytes": 3198,
+    "sha256": "0715ecccbdbebe2963267000a436031f15905d034e3d4c9a17400b54160603ee"
+  },
+  {
+    "path": "/sw.js",
+    "equal": true,
+    "bytes": 3198,
+    "sha256": "0715ecccbdbebe2963267000a436031f15905d034e3d4c9a17400b54160603ee"
+  },
+  {
+    "path": "/manifest.webmanifest",
+    "equal": true,
+    "bytes": 1215,
+    "sha256": "69aa269bb98971758556d4704493a9834ef3e57600e3f67dcac43dba98f879b5"
+  },
+  {
+    "path": "/icons/icon-192.png",
+    "equal": true,
+    "bytes": 6304,
+    "sha256": "7921b29f5787fcb6cc1f71cb82c0b00fb43d8e74b6e5aa1208e138a7ff78c676"
+  },
+  {
+    "path": "/icons/icon-512.png",
+    "equal": true,
+    "bytes": 25330,
+    "sha256": "5adba1f65aa51fccc6a6ccf97faf60e6b834fbf9feaaf9c355e9eae1fd2b2929"
+  },
+  {
+    "path": "/assets/v31/battle_abyss.webp",
+    "equal": true,
+    "bytes": 435518,
+    "sha256": "4339223d5fda8da7a1adc24c7d4a02872ca63a63d453c21f83434523f1ae4875"
+  },
+  {
+    "path": "/assets/v31/battle_canyon.webp",
+    "equal": true,
+    "bytes": 423040,
+    "sha256": "524622e10a6ca93485b0c513d7443824baade570364f4d05fcbba14201d8318b"
+  },
+  {
+    "path": "/assets/v31/battle_desert.webp",
+    "equal": true,
+    "bytes": 318868,
+    "sha256": "e48e9b3b8f8b431646f900ac433e260ebc74e88d82c6965125b2ec6ccf3a76b5"
+  },
+  {
+    "path": "/assets/v31/battle_forest.webp",
+    "equal": true,
+    "bytes": 566302,
+    "sha256": "e3564db2dcd77599e5b0f37d2d34a5a965414709cdb2b588d7c833b526138133"
+  },
+  {
+    "path": "/assets/v31/iris.webp",
+    "equal": true,
+    "bytes": 158488,
+    "sha256": "f8218b4443b283c9c3b22148012f0fdae5fe81922bd950e557429372f4ccb1f4"
+  },
+  {
+    "path": "/assets/v31/orc_lord.webp",
+    "equal": true,
+    "bytes": 234150,
+    "sha256": "f438624149b7ca13fcb2b3a8c1b8959c29db3c44592288e19ee6f7705f054107"
+  },
+  {
+    "path": "/assets/v31/portraits.webp",
+    "equal": true,
+    "bytes": 411028,
+    "sha256": "82c9bd4f1a09adc5ab38067be4a96b162e207382cc314b5e43b49f659f6ea044"
+  },
+  {
+    "path": "/assets/v31/sena.webp",
+    "equal": true,
+    "bytes": 126846,
+    "sha256": "4450479542a0ab953c1481f780ccc0b1ec77880629083f355805badd8c96e345"
+  },
+  {
+    "path": "/assets/v31/shaman.webp",
+    "equal": true,
+    "bytes": 143728,
+    "sha256": "dd9d1e43064f811449e7a49a27cca506a0eed1be80efbc795bab0832bd3e2061"
+  },
+  {
+    "path": "/assets/v31/shield_goblin.webp",
+    "equal": true,
+    "bytes": 131240,
+    "sha256": "cd4bc9fd7b18c7621d02adf1bf64fbffd8689e1073fcaac1a7e16464860dea7e"
+  },
+  {
+    "path": "/assets/v31/worm_king.webp",
+    "equal": true,
+    "bytes": 221432,
+    "sha256": "fa16fa647183394a2f6f59f8a166b8ec4a5144ac7f91609e1b48625d572399f8"
+  }
+]

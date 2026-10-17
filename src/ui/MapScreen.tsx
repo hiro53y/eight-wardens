@@ -7,7 +7,7 @@ import { job, maxLv } from '../game/jobs';
 import { canPlay, levelUpError, restExpOf } from '../game/progress';
 import { CHAPTERS, PER_CHAPTER, STAGE_COUNT, chapterOf, stage, stageEnemies, stageEnemyCount } from '../game/stages';
 import type { Progress, Settings } from '../game/types';
-import { enemyStyle, faceStyle, imgUrl } from '../view/assets';
+import { enemyStyle, faceStyle, imgUrl, mapIconStyle } from '../view/assets';
 import { Help, Modal, SettingsPanel, fmtNum } from './common';
 import { DailyModal, ItemsModal, ShopModal, TowerModal, VillageModal } from './Hub';
 import { UnitPanel } from './UnitPanel';
@@ -95,9 +95,13 @@ export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTower, 
                 style={{ left: x, top: y }}
                 disabled={!open}
                 onClick={() => { playSe('menu'); setPick(id); }}
-                aria-label={`ステージ${id}`}
+                aria-label={`ステージ${id}`} title={`${s.name}${s.boss?'・ボス拠点':''}${!open?'・未開放':''}`}
               >
-                <span className="num">{s.boss ? '★' : id}</span>
+                <span className="landmark" style={mapIconStyle(s.chapter,s.boss?3:(id-1)%3,s.boss?150:128)}/>
+                <span className="num">{id}</span>
+                {cur&&<span className="journey-flag" aria-hidden="true">⚑</span>}
+                {!open&&<span className="node-lock" aria-hidden="true">🔒</span>}
+                {!!st&&<span className="taken-flag" aria-hidden="true">⚑</span>}
                 {st > 0 && <span className="stars">{'★'.repeat(st)}{'☆'.repeat(3 - st)}</span>}
               </button>
             );

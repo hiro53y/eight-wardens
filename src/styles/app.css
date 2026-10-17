@@ -431,3 +431,22 @@ i.up { position: absolute; top: 2px; right: 4px; font-style: normal; font-size: 
 /* v3.1: visible names and a single paused inspection panel */
 .enemy-profile{display:flex;gap:14px;align-items:center}.enemy-details{font-size:13px;line-height:1.5}.enemy-details h3{font-size:14px;margin:12px 0 5px}.enemy-details ul{padding-left:20px}.boss-advice{background:#232f45;border:1px solid #697c9b;border-radius:8px;padding:10px}.boss-countdown{font-size:10px;display:block;font-weight:500}.boss-bar{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;width:min(52vw,450px)}.boss-bar>i{width:100%;height:7px}.boss-bar span{white-space:normal}.btn.hubbtn i{font-size:11px}.map-hud{flex-wrap:wrap;align-content:flex-start}.enemy-chip{color:inherit;text-align:left;cursor:pointer}.enemy-chip:hover{border-color:#e3bd62}
 @media(max-width:900px){.map-hud .chip.mode,.map-hud .chip.score{display:none}.map-hud{gap:3px;padding:4px}.map-hud .chip{font-size:10px;padding:3px 5px}.map-hud .btn{font-size:10px;min-height:28px;padding:3px 6px}.map-hud .grow{display:none}.map-hud .btn.hubbtn{padding:3px 5px}.map-hud .btn.hubbtn i{font-size:10px}}
+
+/* v3.2: buildings, not round menu buttons */
+.node,.node.done,.node.locked,.node.boss,.node.boss.done{width:128px;height:128px;margin:-76px 0 0 -64px;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;animation:none;isolation:isolate}
+.node.boss{width:150px;height:150px;margin:-94px 0 0 -75px}
+.node .landmark{position:absolute;inset:0;background-repeat:no-repeat;filter:drop-shadow(0 6px 3px #0008);transition:filter .2s}
+.node.locked .landmark{filter:saturate(.28) brightness(.72) drop-shadow(0 5px 3px #0007)}
+.node .num,.node.boss .num{position:absolute;right:4px;bottom:3px;min-width:36px;padding:3px 6px;border-radius:6px;border:2px solid #c8ae70;background:#17283ee8;color:#fff6d5;font-size:24px;line-height:1;text-align:center;z-index:2}
+.node.cur:before{content:'';position:absolute;left:8px;right:8px;bottom:0;height:28px;border-radius:50%;box-shadow:0 0 22px 8px #ffdc7599;background:#ffd66c55;z-index:-1;animation:journeyGlow 1.7s ease-in-out infinite}
+.node:focus-visible{outline:4px solid #fff2ad;outline-offset:5px}
+.node:hover .landmark{filter:brightness(1.15) drop-shadow(0 4px 7px #fff0a577)}
+.node .stars{bottom:-22px;font-size:21px;z-index:2;letter-spacing:1px}
+.journey-flag,.taken-flag{position:absolute;left:-4px;top:0;font:900 47px Georgia;color:#ffdc79;text-shadow:0 2px 4px #000;z-index:2}.taken-flag{color:#8fe7ac;font-size:35px;left:1px}
+.node-lock{position:absolute;left:3px;bottom:8px;font-size:21px;filter:grayscale(.7);z-index:2}
+@keyframes journeyGlow{50%{opacity:.55}}
+
+/* Deployment guidance stays above the soldiers, compact enough for short screens. */
+.setup-card{padding:4px 6px 4px 10px;gap:7px}.setup-card .setup-guide{display:none}.setup-card .btn.big{min-height:34px;padding:4px 16px;font-size:14px}.setup-enemies .eicon{width:26px;height:26px}
+
+.setup{left:auto;right:5px;width:146px;top:7px;padding:0;justify-content:flex-end}.setup-card{flex-direction:column;padding:5px;gap:4px}.setup-title,.setup-enemies{display:none}.setup-card .setup-note{font-size:10px;max-width:134px}.setup-card .btn.big{min-height:36px;min-width:112px}

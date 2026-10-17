@@ -1,7 +1,7 @@
 // 3.0 の機能の単体テスト：能力の集計・連携・装備と宝箱・村の施設・必殺技・敵の特性・ボスの技・早呼び・会心・連撃・塔・毎日の挑戦・保存の移行
 import { describe, expect, it } from 'vitest';
 import { enemy } from '../src/game/enemies';
-import { pathOf } from '../src/game/field';
+import { PEDESTALS,pathOf } from '../src/game/field';
 import { MAX_ITEMS, addItem, autoEquip, buy, buyError, canEquip, equip, makeItem, openChests, refreshShop, sell, sellPrice } from '../src/game/items';
 import { job } from '../src/game/jobs';
 import { clone, newProgress } from '../src/game/progress';
@@ -31,7 +31,8 @@ function solo(p: Progress, jobId: string, lv = 0, ped = 4): Warden {
   const other = p.wardens.find((x) => x !== w && x.pedestal === ped);
   if (other) other.pedestal = w.pedestal;
   w.job = jobId; w.lv = lv; w.pedestal = ped;
-  p.wardens.forEach((x, i) => { if (i) x.resting = true; });
+  const away=PEDESTALS.map((_,i)=>i).filter(i=>i!==ped&&!NEIGHBORS[ped].includes(i));
+  p.wardens.forEach((x,i)=>{if(i){x.resting=true;x.pedestal=away[i-1];}});
   return w;
 }
 
@@ -44,31 +45,19 @@ function fight(p: Progress, id = 1, seed = 1): Battle {
 }
 
 describe('能力の集計と連携', () => {
-  it('台座は上下左右が隣', () => {
-    expect(NEIGHBORS[4].sort()).toEqual([1, 3, 5, 7]);
-    expect(NEIGHBORS[0].sort()).toEqual([1, 3]);
-    expect(NEIGHBORS[11].sort()).toEqual([10, 8].sort());
+  it('新しい防衛地点は近隣350px以内の相互接続、最大3本',()=>{
+    expect(NEIGHBORS).toHaveLength(12);
+    for(let i=0;i<12;i++){expect(NEIGHBORS[i].length).toBeGreaterThan(0);expect(NEIGHBORS[i].length).toBeLessThanOrEqual(3);for(const j of NEIGHBORS[i]){expect(NEIGHBORS[j]).toContain(i);expect(Math.hypot(PEDESTALS[i][0]-PEDESTALS[j][0],PEDESTALS[i][1]-PEDESTALS[j][1])).toBeLessThanOrEqual(350);}}
   });
-
-  it('同じ系統が隣で攻撃+8%（3人まで）、剣の隣の狩は射程+15%、盗の隣の剣は速さ+10%、狩と盗で会心+5%', () => {
-    const p = newProgress('normal', 1);
-    const [a, b, c] = p.wardens;
-    a.job = 'swordsman'; a.pedestal = 4;
-    b.job = 'swordsman'; b.pedestal = 1;
-    c.job = 'hunter'; c.pedestal = 5;
-    // 他は隣にいない所へ
-    const rest = [0, 2, 9, 10, 11];
-    p.wardens.slice(3).forEach((w, i) => { w.pedestal = rest[i]; w.job = 'thief'; });
-    // 0・2 は 1 の隣だが、盗がいる → 剣(1)は速さ+10%
-    const sa = synergyOf(p, a);
-    expect(sa.same).toBe(1);
-    expect(sa.atk).toBeCloseTo(0.08);
-    const sc = synergyOf(p, c);
-    expect(sc.range).toBeCloseTo(0.15);
-    const sb = synergyOf(p, b);
-    expect(sb.speed).toBeCloseTo(0.1);
-    const st = wardenStats(p, c);
-    expect(st.range).toBeCloseTo(job('hunter').range * 1.15);
+  it('同系統の攻撃と異系統の射程・速度・会心の連携倍率を維持',()=>{
+    const p=newProgress('normal',1),a=p.wardens[0],b=p.wardens[1];
+    a.pedestal=0;b.pedestal=NEIGHBORS[0][0];
+    const free=PEDESTALS.map((_,i)=>i).filter(i=>i!==a.pedestal&&i!==b.pedestal&&!NEIGHBORS[a.pedestal].includes(i));
+    p.wardens.slice(2).forEach((w,i)=>{w.pedestal=free[i];w.job='thief';});
+    a.job='swordsman';b.job='swordsman';expect(synergyOf(p,a).atk).toBeCloseTo(.08);
+    b.job='hunter';expect(synergyOf(p,b).range).toBeCloseTo(.15);expect(wardenStats(p,b).range).toBeCloseTo(job('hunter').range*1.15);
+    b.job='thief';expect(synergyOf(p,a).speed).toBeCloseTo(.1);
+    a.job='hunter';expect(synergyOf(p,a).crit).toBeCloseTo(.05);
   });
 
   it('装備・鍛冶屋・恩恵が攻撃に掛かる', () => {

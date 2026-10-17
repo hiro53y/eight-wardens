@@ -1,3 +1,4 @@
+import {MOTION,facingFor,type Motion,type AttackStyle} from './motion';
 // 演出の状態：合戦の出来事（SimEvent）を、飛ぶ物・当たりの絵・数字・粒・帯・揺れ・効果音に直す
 import { playSe } from '../audio/sound';
 import { GATE } from '../game/field';
@@ -11,7 +12,8 @@ import type { ImgKey } from './assets';
 
 export interface Projectile { fx: JobDef['fx'] | 'rain'; from: [number, number]; to: [number, number]; uid: number; t0: number; dur: number }
 export interface Flash { k: ImgKey; x: number; y: number; t0: number; dur: number; size: number; rot: number }
-export interface FloatText { text: string; x: number; y: number; t0: number; dur: number; color: string; size: number; rise: number }
+export interface Strike {style:AttackStyle;from:[number,number];to:[number,number];t0:number;dur:number;impact:boolean;major:boolean}
+export interface FloatText { uid?:number; amount?:number; text: string; x: number; y: number; t0: number; dur: number; color: string; size: number; rise: number }
 export interface Particle { x: number; y: number; vx: number; vy: number; t0: number; dur: number; color: string; r: number; g: number }
 export interface Banner { k: ImgKey | null; t0: number; dur: number; sub?: string; title?: string; color?: string }
 export interface Ring { x: number; y: number; r: number; t0: number; dur: number; color: string }
@@ -22,6 +24,9 @@ export interface CutIn { sprite: number; name: string; color: string; t0: number
 export interface Fx {
   /** 演出の時計（秒）。一時停止で止まる */
   now: number;
+  reduced:boolean;
+  strikes:Strike[];
+  facing:Map<string,number>;
   projectiles: Projectile[];
   flashes: Flash[];
   texts: FloatText[];
@@ -39,7 +44,7 @@ export interface Fx {
   /** 敵の白い点滅の終わり */
   hitUntil: Map<number, number>;
   /** 守り手の踏み込み（始めと向き） */
-  lunge: Map<string, { t0: number; dx: number; dy: number }>;
+  lunge: Map<string, Motion>;
   /** 守り手の光（LvUp・転職） */
   glow: Map<string, { t0: number; kind: 'lv' | 'job' | 'rest' | 'skill' }>;
   /** 最後に見えた敵の位置（消えた後の演出用） */
@@ -56,7 +61,7 @@ export interface Fx {
 
 export function newFx(): Fx {
   return {
-    now: 0, projectiles: [], flashes: [], texts: [], particles: [], banners: [], rings: [], deaths: [], coins: [], cutin: null,
+    now: 0, reduced:false,strikes:[],facing:new Map(), projectiles: [], flashes: [], texts: [], particles: [], banners: [], rings: [], deaths: [], coins: [], cutin: null,
     flashUntil: 0, flashColor: '#fff', freeze: 0,
     hitUntil: new Map(), lunge: new Map(), glow: new Map(), last: new Map(),
     shakeUntil: 0, shakeMag: 0, eliteShown: false, numbers: true, speed: 1, combo: { n: 0, t0: -9 },
@@ -97,8 +102,8 @@ const SKILL_SE: Record<SkillId, string> = {
 const BOSS_TEXT: Record<BossSkill, string> = { summon: '手下を呼んだ！', charge: '突進！', roar: '咆哮！ 守り手がすくむ', regen: '傷が治っていく…', burrow: '地中に潜った！', dive: '地上に降りた！' };
 
 export function shake(fx: Fx, mag: number, dur: number) {
-  fx.shakeUntil = Math.max(fx.shakeUntil, fx.now + dur);
-  fx.shakeMag = Math.max(fx.now < fx.shakeUntil ? fx.shakeMag : 0, mag);
+  // Keep the battlefield fixed; force is expressed around the target.
+  void fx; void mag; void dur;
 }
 
 export function text(fx: Fx, s: string, x: number, y: number, color = '#fff', size = 30, dur = 0.9, rise = 60) {
@@ -107,6 +112,7 @@ export function text(fx: Fx, s: string, x: number, y: number, color = '#fff', si
 }
 
 function burst(fx: Fx, x: number, y: number, n: number, color: string, spd = 220, r = 6, g = 300) {
+  n=Math.ceil(n*(fx.reduced?.35:1));
   for (let i = 0; i < n; i++) {
     const a = Math.random() * Math.PI * 2;
     const v = spd * (0.4 + Math.random() * 0.8);
@@ -148,11 +154,15 @@ function skillFx(fx: Fx, p: Progress, b: Battle, ev: Extract<SimEvent, { k: 'ski
   const w = p.wardens.find((x) => x.id === ev.wid);
   const meta = SKILLS[ev.skill];
   if (w) {
-    fx.cutin = { sprite: w.sprite, name: meta.name, color: meta.color, t0: fx.now };
+    if(!fx.reduced&&(!fx.cutin||fx.now-fx.cutin.t0>.8))fx.cutin = { sprite: w.sprite, name: meta.name, color: meta.color, t0: fx.now };
+    const [ax,ay]=wardenPos(w),dx=ev.x-ax,dy=ev.y-ay,len=Math.hypot(dx,dy)||1;
+    fx.facing.set(w.id,facingFor(dx,fx.facing.get(w.id)));
+    fx.lunge.set(w.id,{t0:fx.now,dur:.7/Math.sqrt(fx.speed),dx:dx/len,dy:dy/len,style:job(w.job).fx});
+    fx.strikes.push({style:job(w.job).fx,from:[ax,ay-50],to:[ev.x,ev.y-30],t0:fx.now+.12,dur:.8,impact:true,major:true});
     fx.glow.set(w.id, { t0: fx.now, kind: 'skill' });
   }
-  fx.freeze = Math.max(fx.freeze, 0.22);
-  fx.flashUntil = fx.now + 0.18;
+  fx.freeze = 0;
+  fx.flashUntil = 0;
   fx.flashColor = meta.color;
   const [wx, wy] = w ? wardenPos(w) : [ev.x, ev.y];
   const { x, y } = ev;
@@ -199,7 +209,7 @@ function skillFx(fx: Fx, p: Progress, b: Battle, ev: Extract<SimEvent, { k: 'ski
       break;
     case 'shadow':
       ring(fx, wx, wy - 20, 700, meta.color, 0.6);
-      fx.flashUntil = fx.now + 0.35; fx.flashColor = '#2a0040';
+      fx.flashUntil = 0; fx.flashColor = '#2a0040';
       break;
     case 'plunder':
       ring(fx, wx, wy - 20, ev.r, meta.color, 0.5);
@@ -243,10 +253,14 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         const t = b.enemies.find((x) => x.uid === ev.target) ?? null;
         if (!w || !t) break;
         const [wx, wy] = wardenPos(w);
-        const from: [number, number] = [wx, wy - 55];
+        const face=facingFor(t.x-wx,fx.facing.get(w.id));fx.facing.set(w.id,face);
+        const from: [number, number] = [wx+face*40, wy - 55];
         const dx = t.x - wx, dy = t.y - wy;
         const len = Math.hypot(dx, dy) || 1;
-        fx.lunge.set(w.id, { t0: fx.now, dx: dx / len, dy: dy / len });
+        const old=fx.lunge.get(w.id);
+        // Fast jobs retain a readable stroke rather than resetting anticipation every frame.
+        if(!old||fx.now-old.t0>old.dur*.8)fx.lunge.set(w.id, { t0: fx.now, dx: dx / len, dy: dy / len,style:ev.fx,dur:Math.max(.09,MOTION[ev.fx].duration/Math.sqrt(fx.speed)) });
+        fx.strikes.push({style:ev.fx,from,to:[t.x,t.y-30],t0:fx.now,dur:.3/Math.sqrt(fx.speed),impact:false,major:false});
         if (ev.fx !== 'slash' && ev.fx !== 'chain') {
           fx.projectiles.push({ fx: ev.fx, from, to: [t.x, t.y - 30], uid: t.uid, t0: fx.now, dur: Math.max(0.06, ev.dur / fx.speed) });
         } else if (ev.fx === 'chain') {
@@ -262,19 +276,21 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         const w = p.wardens.find((x) => x.id === ev.wid);
         const fxk = w ? job(w.job).fx : 'arrow';
         const imp = IMPACT[fxk];
+        const origin=w?wardenPos(w):[pos.x-40,pos.y];
+        fx.strikes.push({style:fxk,from:[origin[0],origin[1]-55],to:[pos.x,pos.y-34],t0:fx.now+.04,dur:(ev.skill?.65:.28)/Math.sqrt(fx.speed),impact:true,major:!!ev.skill});
         const y = pos.y - 34;
-        if (!ev.skill || Math.random() < 0.5) fx.flashes.push({ k: imp.k, x: pos.x + (Math.random() - 0.5) * 16, y, t0: fx.now, dur: fxk === 'cannon' ? 0.45 : 0.28, size: imp.size * (ev.crit ? 1.5 : 1), rot: fxk === 'slash' || fxk === 'dragon' ? (Math.random() - 0.5) * 1.6 : Math.random() * 6.28 });
+        if (!fx.reduced&&ev.skill&&Math.random() < 0.35) fx.flashes.push({ k: imp.k, x: pos.x + (Math.random() - 0.5) * 16, y, t0: fx.now, dur: fxk === 'cannon' ? 0.45 : 0.28, size: imp.size * (ev.crit ? 1.5 : 1), rot: fxk === 'slash' || fxk === 'dragon' ? (Math.random() - 0.5) * 1.6 : Math.random() * 6.28 });
         fx.hitUntil.set(ev.uid, fx.now + 0.09);
         if (fxk === 'cannon') { burst(fx, pos.x, y, 10, '#ffb04a', 260, 7); shake(fx, 5, 0.18); }
         if (ev.crit) {
-          fx.freeze = Math.max(fx.freeze, 0.05);
+          fx.freeze = 0;
           text(fx, `${fmt(ev.n)}`, pos.x + (Math.random() - 0.5) * 20, y - 26, '#ffd23f', 42, 0.85, 70);
           text(fx, '会心!', pos.x, y - 70, '#fff3a0', 24, 0.6, 30);
           burst(fx, pos.x, y, 6, '#fff3a0', 220, 4);
           se('crit', 60);
         } else if (fx.numbers) {
           const big = ev.n >= 1000;
-          text(fx, fmt(ev.n), pos.x + (Math.random() - 0.5) * 30, y - 20, ev.metal ? '#c9d2dc' : ev.weak ? '#b8c4d8' : ev.skill ? '#9fe7ff' : big ? '#ffd45a' : '#ffffff', ev.metal ? 24 : ev.skill ? 34 : big ? 34 : 28, 0.7, 55);
+          damageText(fx,ev.uid,ev.n,pos.x,y-20, ev.metal ? '#c9d2dc' : ev.weak ? '#b8c4d8' : ev.skill ? '#9fe7ff' : big ? '#ffd45a' : '#ffffff', ev.metal ? 24 : ev.skill ? 34 : big ? 34 : 28, 0.7, 55);
         }
         se(ev.metal ? 'bump' : 'hit', 55);
         break;
@@ -301,8 +317,8 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
         if (def.boss) {
           shake(fx, 22, 1.2); se('clear', 0);
           fx.flashes.push({ k: 'fx_sparkle', x: ev.x, y, t0: fx.now, dur: 1.2, size: 420, rot: 0 });
-          fx.freeze = Math.max(fx.freeze, 0.5);
-          fx.flashUntil = fx.now + 0.3; fx.flashColor = '#fff';
+          fx.freeze = 0;
+          fx.flashUntil = 0; fx.flashColor = '#fff';
         } else if (def.kind === 'metal') { text(fx, 'メタル撃破！', ev.x, y - 80, '#e6eef8', 30, 1.2); se('coin', 0); }
         se(ev.triple ? 'coin' : 'death', 80);
         break;
@@ -392,6 +408,7 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
       }
     }
   }
+  trimFx(fx);
   // 消えた敵の位置は少しのあいだだけ残す
   if (fx.last.size > 300) {
     const live = new Set(b.enemies.map((e) => e.uid));
@@ -402,6 +419,10 @@ export function consume(fx: Fx, events: SimEvent[], b: Battle, p: Progress) {
 /** 時計を進め、終わった演出を片付ける */
 export function tickFx(fx: Fx, dt: number) {
   fx.now += dt;
+  fx.strikes=fx.strikes.filter(x=>fx.now-x.t0<x.dur);
+  for(const [id,m] of fx.lunge)if(fx.now-m.t0>m.dur)fx.lunge.delete(id);
+  for(const [id,t] of fx.hitUntil)if(fx.now>t)fx.hitUntil.delete(id);
+  for(const [id,m] of fx.glow)if(fx.now-m.t0>1.5)fx.glow.delete(id);
   const n = fx.now;
   fx.projectiles = fx.projectiles.filter((x) => n - x.t0 < x.dur);
   fx.flashes = fx.flashes.filter((x) => n - x.t0 < x.dur);
@@ -413,10 +434,24 @@ export function tickFx(fx: Fx, dt: number) {
   if (fx.cutin && n - fx.cutin.t0 > 1.1) fx.cutin = null;
   for (const pt of fx.particles) { if (n < pt.t0) continue; pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.vy += pt.g * dt; pt.vx *= 0.98; }
   fx.particles = fx.particles.filter((x) => n - x.t0 < x.dur);
+  trimFx(fx);
 }
 
 export function fmt(n: number): string {
   if (n >= 1e6) return `${(n / 1e6).toFixed(n >= 1e7 ? 0 : 1)}M`;
   if (n >= 1e4) return `${(n / 1e3).toFixed(n >= 1e5 ? 0 : 1)}k`;
   return `${Math.round(n)}`;
+}
+
+function damageText(fx:Fx,uid:number,n:number,x:number,y:number,color:string,size:number,dur:number,rise=55){
+ const old=fx.texts.find(t=>t.uid===uid&&t.color===color&&fx.now-t.t0<.12);
+ if(old){old.amount=(old.amount??0)+n;old.text=fmt(old.amount);return;}
+ const stack=fx.texts.filter(t=>Math.abs(t.x-x)<45&&Math.abs(t.y-y)<90&&fx.now-t.t0<.3).length;
+ text(fx,fmt(n),x,y-Math.min(3,stack)*23,color,size,dur,rise);const last=fx.texts[fx.texts.length-1];last.uid=uid;last.amount=n;
+}
+export function trimFx(fx:Fx){
+ const cap=fx.reduced?70:240;
+ if(fx.particles.length>cap)fx.particles.splice(0,fx.particles.length-cap);
+ for(const list of [fx.strikes,fx.projectiles,fx.flashes,fx.rings])if(list.length>(fx.reduced?30:90))list.splice(0,list.length-(fx.reduced?30:90));
+ if(fx.texts.length>60)fx.texts.splice(0,fx.texts.length-60);
 }

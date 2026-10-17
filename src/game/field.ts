@@ -2,13 +2,17 @@
 export const FIELD_W = 1672;
 export const FIELD_H = 941;
 
-/** 台座（味方の立つ所）。上の列から4段×3 */
+/** 12の防衛地点。番号は旧セーブと共通、座標と隣接は全処理で共有する。 */
 export const PEDESTALS: [number, number][] = [
-  [531, 432], [795, 432], [1047, 432],
-  [486, 514], [790, 514], [1119, 514],
-  [420, 612], [787, 612], [1177, 612],
-  [330, 750], [768, 750], [1238, 750],
+  [540,395], [850,365], [1160,415],
+  [400,520], [720,530], [1030,545],
+  [540,650], [880,660], [1190,690],
+  [345,775], [710,785], [1040,780],
 ];
+/** 近隣の地点を短い辺から結ぶ。最大3本、350px以内の相互接続。 */
+export const NEIGHBORS: number[][] = PEDESTALS.map(()=>[]);
+const edges=PEDESTALS.flatMap(([x,y],i)=>PEDESTALS.slice(i+1).map(([bx,by],k)=>({a:i,b:i+k+1,d:Math.hypot(x-bx,y-by)}))).filter(e=>e.d<=350).sort((a,b)=>a.d-b.d||a.a-b.a||a.b-b.b);
+for(const e of edges)if(NEIGHBORS[e.a].length<3&&NEIGHBORS[e.b].length<3){NEIGHBORS[e.a].push(e.b);NEIGHBORS[e.b].push(e.a);}
 
 /** 城門（敵がここに着くと村に入る） */
 export const GATE: [number, number] = [1362, 404];

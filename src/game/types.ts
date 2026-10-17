@@ -250,5 +250,5 @@ export interface Progress {
   tips: string[];
 }
 
-export interface Settings { bgm: number; se: number; speed: 1 | 2 | 3; numbers: boolean; autoSkill: boolean }
-export const DEFAULT_SETTINGS: Settings = { bgm: 0.5, se: 0.7, speed: 1, numbers: true, autoSkill: false };
+export interface Settings { bgm: number; se: number; speed: 1 | 2 | 3; numbers: boolean; autoSkill: boolean; effects: 'standard' | 'reduced' }
+export const DEFAULT_SETTINGS: Settings = { bgm: 0.5, se: 0.7, speed: 1, numbers: true, autoSkill: false, effects: 'standard' };

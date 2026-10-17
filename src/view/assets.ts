@@ -1,3 +1,4 @@
+import atlas32 from './artV32.json';
 import artV31 from './artV31.json';
 // 絵の読み込みと、1枚絵からの切り出し位置（WebP の軽量版 /assets/v2/ を使う）
 import type { EnemyDef } from '../game/types';
@@ -5,13 +6,16 @@ import type { EnemyDef } from '../game/types';
 export const V2 = '/assets/v2/';
 
 export type NewArt = 'iris'|'sena'|'shield_goblin'|'shaman'|'orc_lord'|'worm_king'|'battle_forest'|'battle_canyon'|'battle_desert'|'battle_abyss'|'portraits';
-export type ImgKey = `v31_${NewArt}`
+export const CHARACTERS32=['alto','lyca','kai','sena','minato','greta','shino','iris'] as const;
+export type Art32=typeof CHARACTERS32[number]|`map${1|2|3|4|5}`|`battle${1|2|3|4|5}`;
+export type ImgKey = `v32_${Art32}` | `v31_${NewArt}`
   | 'battle' | 'map' | 'title' | 'result' | 'wardens' | 'enemies' | 'portraits'
   | 'enemy_goblin' | 'enemy_orc' | 'enemy_wolf_elite' | 'enemy_wingbat'
   | 'banner_wave' | 'banner_boss' | 'banner_elite' | 'banner_clear' | 'deco_stars'
   | 'fx_slash' | 'fx_hit' | 'fx_magic' | 'fx_buff' | 'fx_heal' | 'fx_sparkle' | 'fx_target';
 
 export const IMG_KEYS: ImgKey[] = [
+  ...([...CHARACTERS32,'map1','map2','map3','map4','map5','battle1','battle2','battle3','battle4','battle5'] as const).map(k=>`v32_${k}` as ImgKey),
   'battle', 'map', 'title', 'result', 'wardens', 'enemies',
   ...(['iris','sena','shield_goblin','shaman','orc_lord','worm_king','battle_forest','battle_canyon','battle_desert','battle_abyss','portraits'] as const).map(k=>`v31_${k}` as ImgKey),
   'enemy_goblin', 'enemy_orc', 'enemy_wolf_elite', 'enemy_wingbat',
@@ -19,7 +23,7 @@ export const IMG_KEYS: ImgKey[] = [
   'fx_slash', 'fx_hit', 'fx_magic', 'fx_buff', 'fx_heal', 'fx_sparkle', 'fx_target',
 ];
 
-export const imgUrl = (k: ImgKey) => k.startsWith('v31_')?`/assets/v31/${k.slice(4)}.webp`:`${V2}${k}.webp`;
+export const imgUrl = (k: ImgKey) => k.startsWith('v32_')?`/assets/v32/${k.slice(4)}.webp`:k.startsWith('v31_')?`/assets/v31/${k.slice(4)}.webp`:`${V2}${k}.webp`;
 
 const images = new Map<ImgKey, HTMLImageElement>();
 let loading: Promise<void> | null = null;
@@ -79,7 +83,7 @@ const ENEMY_FILE: Record<string, { k: ImgKey; r: Rect; flip: boolean }> = {
   enemy_wingbat: { k: 'enemy_wingbat', r: R(10, 10, 584, 330), flip: false },
 };
 
-export interface Art { k: ImgKey; r: Rect; flip: boolean }
+export interface Art { k: ImgKey; r: Rect; flip: boolean; anchor?: number }
 
 export function enemyArt(def: EnemyDef): Art {
   const replacement=({shieldGoblin:'shield_goblin',shaman:'shaman',orcLord:'orc_lord',wormKing:'worm_king'} as Record<string,keyof typeof artV31>)[def.id];
@@ -128,4 +132,11 @@ export function enemyStyle(def: EnemyDef, size: number): Record<string, string> 
   };
 }
 
-export function wardenArt(sprite:number):Art{const key=sprite===7?'iris':sprite===3?'sena':null;return key?{k:`v31_${key}` as ImgKey,r:artV31[key].r,flip:false}:{k:'wardens',...(WARDEN_ART[sprite]??WARDEN_ART[0])};}
+export function wardenArt(sprite:number,pose=0):Art{const name=CHARACTERS32[sprite];const a=(atlas32.characters as Record<string,{frames:{r:Rect;anchor:number}[]}>)[name];if(a&&img(`v32_${name}`))return {k:`v32_${name}`,flip:false,...a.frames[pose]};const key=sprite===7?'iris':sprite===3?'sena':null;return key?{k:`v31_${key}` as ImgKey,r:artV31[key].r,flip:false}:{k:'wardens',...(WARDEN_ART[sprite]??WARDEN_ART[0])};}
+
+export function mapIconStyle(chapter:number,variant:number,size:number):Record<string,string>{
+  const a=(atlas32.maps as Record<string,{width:number;height:number;frames:Rect[]}>)[String(chapter)];
+  if(!a)return {};
+  const r=a.frames[variant],scale=size/Math.max(r.w,r.h);
+  return {backgroundImage:`url(${imgUrl(`v32_map${chapter}` as ImgKey)})`,backgroundSize:`${a.width*scale}px ${a.height*scale}px`,backgroundPosition:`${(size-r.w*scale)/2-r.x*scale}px ${(size-r.h*scale)/2-r.y*scale}px`};
+}

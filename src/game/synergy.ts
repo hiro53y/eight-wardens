@@ -1,17 +1,9 @@
-// 隣り合わせの連携：12の台座（4段×3列）の上下左右が隣。並べ方で能力が上がる
+// 隣り合わせの連携：12の防衛地点の近隣が隣。並べ方で能力が上がる
 import { job } from './jobs';
 import type { Line, Progress, Warden } from './types';
 
-/** 台座の隣（同じ列の上下、同じ段の左右） */
-export const NEIGHBORS: number[][] = Array.from({ length: 12 }, (_, i) => {
-  const row = Math.floor(i / 3), col = i % 3;
-  const n: number[] = [];
-  if (row > 0) n.push(i - 3);
-  if (row < 3) n.push(i + 3);
-  if (col > 0) n.push(i - 1);
-  if (col < 2) n.push(i + 1);
-  return n;
-});
+import {NEIGHBORS} from './field';
+export {NEIGHBORS} from './field';
 
 export interface Synergy {
   /** 同じ系統の隣の数（最大3） */

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { JOBS, attackOf, interval, job, levelCost, maxLv, promoteCost, limitCost, MAX_LIMIT } from '../src/game/jobs';
 import { ENEMIES, enemy, enemyHp } from '../src/game/enemies';
-import { GATE, PEDESTALS, pathOf, pointAt } from '../src/game/field';
+import { GATE, PEDESTALS, NEIGHBORS, pathOf, pointAt } from '../src/game/field';
 import { STAGES, STAGE_COUNT, stage } from '../src/game/stages';
 import { applyResult, clone, levelUp, levelUpError, limitBreak, moveTo, newProgress, promote, promoteError, restExpOf, setRest, starsOf } from '../src/game/progress';
 import { REST_TIME, advance, callNext, canTarget, createBattle, damageOf, pickTarget, refreshStats, startFight, step, useSkill, type Battle, type SimEnemy } from '../src/game/sim';
@@ -38,7 +38,7 @@ function onlyOne(p: Progress, jobId: string, lv = 0): Warden {
   const w = p.wardens[0];
   w.job = jobId; w.lv = lv; w.pedestal = 4;
   // 他は隣にいない台座へ（連携が効かないように）
-  const away = [0, 2, 6, 8, 9, 10, 11];
+  const away=PEDESTALS.map((_,i)=>i).filter(i=>i!==4&&!NEIGHBORS[4].includes(i));
   p.wardens.forEach((x, i) => { if (i) { x.resting = true; x.pedestal = away[i - 1]; } });
   return w;
 }
@@ -286,8 +286,8 @@ describe('保存', () => {
     const kv = memKV();
     kv.setItem('eight-wardens-v2:settings', JSON.stringify({ speed: 9 }));
     expect(loadSettings(kv).speed).toBe(1);
-    saveSettings({ bgm: 0.1, se: 0.2, speed: 3, numbers: false, autoSkill: true }, kv);
-    expect(loadSettings(kv)).toEqual({ bgm: 0.1, se: 0.2, speed: 3, numbers: false, autoSkill: true });
+    saveSettings({ bgm: 0.1, se: 0.2, speed: 3, numbers: false, autoSkill: true, effects: 'standard' }, kv);
+    expect(loadSettings(kv)).toEqual({ bgm: 0.1, se: 0.2, speed: 3, numbers: false, autoSkill: true, effects: 'standard' });
   });
 });
 

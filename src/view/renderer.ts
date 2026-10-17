@@ -1,3 +1,5 @@
+import {sampleMotion} from './motion';
+import {drawStrikes} from './strikes';
 // 戦場を Canvas に描く：背景（章の色）・台座・守り手・敵・飛ぶ物・当たり・数字・帯
 import { FIELD_H, FIELD_W, GATE, PEDESTALS } from '../game/field';
 import { enemy } from '../game/enemies';
@@ -65,6 +67,7 @@ const TINT: Record<ChapterDef['tint'], { mul: string; add?: string } | null> = {
 };
 
 function bgFor(ch: ChapterDef): CanvasImageSource | null {
+  const fresh=img(`v32_battle${ch.id}` as ImgKey);if(fresh)return fresh;
   const chapterArt:Record<number,ImgKey>={2:'v31_battle_forest',3:'v31_battle_canyon',4:'v31_battle_desert',5:'v31_battle_abyss'};
   const themed=chapterArt[ch.id]?img(chapterArt[ch.id]):null;
   if(themed)return themed;
@@ -109,12 +112,12 @@ function sheetFor(k: ImgKey, hue: number): CanvasImageSource | null {
   return c;
 }
 
-function drawArt(g: CanvasRenderingContext2D, src: CanvasImageSource, a: Pick<Art, 'r'>, cx: number, footY: number, h: number, flip: boolean) {
+function drawArt(g: CanvasRenderingContext2D, src: CanvasImageSource, a: Pick<Art, 'r'|'anchor'>, cx: number, footY: number, h: number, flip: boolean) {
   const w = (a.r.w / a.r.h) * h;
   g.save();
   g.translate(cx, footY);
   if (flip) g.scale(-1, 1);
-  g.drawImage(src, a.r.x, a.r.y, a.r.w, a.r.h, -w / 2, -h, w, h);
+  g.drawImage(src, a.r.x, a.r.y, a.r.w, a.r.h, -w * (a.anchor??.5), -h, w, h);
   g.restore();
 }
 
@@ -142,14 +145,7 @@ export function draw(g: CanvasRenderingContext2D, cw: number, ch: number, b: Bat
   g.fillStyle = '#0b1420';
   g.fillRect(0, 0, cw, ch);
 
-  // 画面の揺れ
-  let sx = 0, sy = 0;
-  if (fx.now < fx.shakeUntil) {
-    const k = (fx.shakeUntil - fx.now) * 3;
-    sx = (Math.random() - 0.5) * fx.shakeMag * Math.min(1, k);
-    sy = (Math.random() - 0.5) * fx.shakeMag * Math.min(1, k);
-  }
-  g.setTransform(v.s, 0, 0, v.s, v.ox + sx * v.s, v.oy + sy * v.s);
+  g.setTransform(v.s,0,0,v.s,v.ox,v.oy);
 
   const bg = bgFor(chap);
   if (bg) g.drawImage(bg, 0, 0, FIELD_W, FIELD_H);
@@ -220,7 +216,7 @@ export function draw(g: CanvasRenderingContext2D, cw: number, ch: number, b: Bat
   }
 
   // 連携の線（出撃前か、選んでいる時）
-  if (o.setup || sel) {
+  if (sel || o.moving) {
     g.save();
     g.lineCap = 'round';
     for (const l of synergyLinks(p)) {
@@ -254,6 +250,7 @@ export function draw(g: CanvasRenderingContext2D, cw: number, ch: number, b: Bat
 
   drawRings(g, fx);
   drawProjectiles(g, b, fx);
+  drawStrikes(g,fx);
   drawFlashes(g, fx);
   drawParticles(g, fx);
   drawTexts(g, fx);
@@ -262,13 +259,6 @@ export function draw(g: CanvasRenderingContext2D, cw: number, ch: number, b: Bat
   g.setTransform(1, 0, 0, 1, 0, 0);
   drawCoins(g, fx, v, o.coinTarget ?? [cw * 0.45, 0]);
   if (b.t < b.feverUntil && b.phase === 'fight') drawFeverEdge(g, cw, ch, t);
-  if (fx.now < fx.flashUntil) {
-    g.save();
-    g.globalAlpha = Math.min(0.45, (fx.flashUntil - fx.now) * 2.2);
-    g.fillStyle = fx.flashColor;
-    g.fillRect(0, 0, cw, ch);
-    g.restore();
-  }
   drawBanners(g, cw, ch, fx);
   drawCutin(g, cw, ch, fx);
 }
@@ -336,59 +326,23 @@ function drawFeverEdge(g: CanvasRenderingContext2D, cw: number, ch: number, t: n
   g.restore();
 }
 
-function drawCutin(g: CanvasRenderingContext2D, cw: number, ch: number, fx: Fx) {
-  const c = fx.cutin;
-  if (!c) return;
-  const k = (fx.now - c.t0) / 1.1;
-  if (k < 0 || k > 1) return;
-  const inK = Math.min(1, k / 0.12), outK = k > 0.8 ? (k - 0.8) / 0.2 : 0;
-  const h = Math.min(ch * 0.3, 150);
-  const y = ch * 0.5 - h / 2;
-  const slide = (1 - inK) * -cw * 0.5 + outK * cw * 0.6;
-  g.save();
-  g.globalAlpha = 1 - outK;
-  // 斜めの帯
-  g.translate(slide, 0);
-  g.beginPath();
-  g.moveTo(0, y + h * 0.15); g.lineTo(cw, y); g.lineTo(cw, y + h * 0.85); g.lineTo(0, y + h);
-  g.closePath();
-  const gr = g.createLinearGradient(0, 0, cw, 0);
-  gr.addColorStop(0, 'rgba(10,14,30,0.92)');
-  gr.addColorStop(0.5, 'rgba(20,28,60,0.85)');
-  gr.addColorStop(1, 'rgba(10,14,30,0.4)');
-  g.fillStyle = gr;
-  g.fill();
-  g.strokeStyle = c.color;
-  g.lineWidth = 3;
-  g.stroke();
-  // 顔
-  const face = img('v31_portraits');
-  if (face) {
-    const f = faceRect(c.sprite);
-    const fs = h * 0.95;
-    g.save();
-    g.beginPath();
-    g.rect(cw * 0.08, y + h * 0.04, fs * 1.3, h * 0.92);
-    g.clip();
-    g.drawImage(face, f.x - 30, f.y, f.w + 60, f.h, cw * 0.08 - fs * 0.05, y + h * 0.02, fs * 1.4, fs);
-    g.restore();
-  }
-  // 技の名前
-  g.font = `900 ${Math.round(h * 0.36)}px system-ui, sans-serif`;
-  g.textBaseline = 'middle';
-  g.textAlign = 'left';
-  g.lineWidth = 6;
-  g.strokeStyle = 'rgba(0,0,0,0.85)';
-  const tx = cw * 0.08 + h * 1.35 + 16;
-  g.strokeText(c.name, tx, y + h * 0.52);
-  g.fillStyle = c.color;
-  g.fillText(c.name, tx, y + h * 0.52);
-  g.restore();
+function drawCutin(g:CanvasRenderingContext2D,cw:number,ch:number,fx:Fx){
+ const c=fx.cutin;if(!c)return;const k=(fx.now-c.t0)/1.1;if(k<0||k>1)return;
+ const enter=Math.min(1,k/.12),exit=k>.8?(k-.8)/.2:0;
+ const w=Math.min(320,cw*.38),h=Math.min(64,ch*.17),x=cw-w-8+(1-enter)*70+exit*80,y=8;
+ g.save();g.translate(x,y);g.globalAlpha=(1-exit)*enter;
+ const grad=g.createLinearGradient(0,0,w,0);grad.addColorStop(0,'rgba(12,20,38,.96)');grad.addColorStop(1,'rgba(30,35,65,.88)');
+ g.fillStyle=grad;g.strokeStyle=c.color;g.lineWidth=2;g.beginPath();g.moveTo(15,0);g.lineTo(w,0);g.lineTo(w-12,h);g.lineTo(0,h);g.closePath();g.fill();g.stroke();
+ const face=img('v31_portraits');if(face){const r=faceRect(c.sprite);g.save();g.beginPath();g.rect(8,2,h,h-4);g.clip();g.drawImage(face,r.x,r.y,r.w,r.h,8,1,h,h);g.restore();}
+ g.textAlign='left';g.textBaseline='middle';g.fillStyle='#d8e5ff';g.font=`bold ${Math.max(9,h*.17)}px system-ui`;g.fillText('必 殺',h+15,h*.25);
+ g.font=`900 ${Math.max(16,h*.34)}px system-ui`;g.lineWidth=4;g.strokeStyle='#080d1a';g.strokeText(c.name,h+14,h*.65);g.fillStyle=c.color;g.fillText(c.name,h+14,h*.65);
+ g.globalAlpha*=.6;g.lineWidth=1;g.beginPath();g.moveTo(h+14,h*.93);g.lineTo(w-20,h*.93);g.strokeStyle=c.color;g.stroke();g.restore();
 }
 
 function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Battle, fx: Fx, selected: boolean, setup: boolean) {
   const [px, py] = PEDESTALS[w.pedestal];
-  const a = wardenArt(w.sprite);
+  const motion=sampleMotion(fx.lunge.get(w.id),fx.now);
+  const a = wardenArt(w.sprite,motion.pose);
   const src = img(a.k);
   const t = fx.now;
   const j = job(w.job);
@@ -424,13 +378,9 @@ function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Batt
     g.stroke();
     g.restore();
   }
-  // 上下の揺れ・踏み込み
-  let ox = 0, oy = Math.sin(t * 2.4 + w.sprite) * 2.5;
-  const lg = fx.lunge.get(w.id);
-  if (lg) {
-    const k = (t - lg.t0) / 0.18;
-    if (k < 1) { const s = Math.sin(k * Math.PI) * (j.fx === 'slash' || j.fx === 'spear' ? 26 : 10); ox += lg.dx * s; oy += lg.dy * s * 0.4; }
-  }
+  // Pose changes, weight transfer and recoil share the target direction.
+  const ox=motion.x,oy=motion.y+Math.sin(t*2.4+w.sprite)*1.3;
+  const facing=w.resting||(!motion.active&&!b.enemies.some(e=>canTarget(w,e,statsOf(b,p,w))))?-1:fx.facing.get(w.id)??-1;
   // 奥の列ほど小さく（遠近）
   const h = (100 + (py - 432) * 0.09) * (1 + (j.tier - 1) * 0.04);
   if (src) {
@@ -439,14 +389,15 @@ function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Batt
     const sq = w.resting ? 0.92 : 1;
     g.translate(px + ox, py + 8 + oy);
     g.scale(1, sq);
-    drawArt(g, src, a, 0, 0, h, a.flip);
+    g.rotate(motion.lean);
+    drawArt(g, src, a, 0, 0, h, a.flip !== (facing>0));
     // 光（LvUp・転職・休憩）
     const gl = fx.glow.get(w.id);
     if (gl && t - gl.t0 < 0.8) {
       // 技・LvUp・休憩の光
       g.globalCompositeOperation = 'lighter';
       g.globalAlpha = (1 - (t - gl.t0) / 0.8) * 0.7;
-      drawArt(g, src, a, 0, 0, h, a.flip);
+      drawArt(g, src, a, 0, 0, h, a.flip !== (facing>0));
     }
     g.restore();
   }
@@ -465,17 +416,17 @@ function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Batt
     g.restore();
   }
   // 名札（職・Lv）
-  const label = `${j.name} Lv${w.lv}${w.limit ? `+${w.limit}` : ''}`;
+  const label = selected?`${w.name} · ${j.name} Lv${w.lv}`:`${j.name} ${w.lv}${w.limit?`+${w.limit}`:''}`;
   g.save();
-  g.font = 'bold 21px system-ui, sans-serif';
+  g.font = 'bold 18px system-ui, sans-serif';
   g.textAlign = 'center';
   g.textBaseline = 'middle';
   const tw = g.measureText(label).width + 16;
   g.fillStyle = 'rgba(10,16,28,0.72)';
-  roundRect(g, px - tw / 2, py + 18, tw, 26, 8);
+  roundRect(g, px - tw / 2, py + 13, tw, 23, 8);
   g.fill();
   g.fillStyle = j.tier === 3 ? '#ffd970' : j.tier === 2 ? '#bfe3ff' : '#ffffff';
-  g.fillText(label, px, py + 31.5);
+  g.fillText(label, px, py + 24.5);
   g.restore();
   // 休憩：Zzz とゲージの輪
   if (w.resting) {
@@ -523,7 +474,7 @@ function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Batt
   // 育てられる印
   const canLv = !levelUpError(p, w);
   const canJob = w.lv >= maxLv(j, p.mode) && j.next.length > 0;
-  if (canLv || canJob) {
+  if (selected && (canLv || canJob)) {
     const bob = Math.sin(t * 5) * 4;
     g.save();
     g.font = 'bold 26px system-ui, sans-serif';
@@ -789,6 +740,7 @@ function drawTexts(g: CanvasRenderingContext2D, fx: Fx) {
   g.lineJoin = 'round';
   for (const tx of fx.texts) {
     const k = (fx.now - tx.t0) / tx.dur;
+    if(k<0)continue;
     const pop = k < 0.12 ? 0.6 + k / 0.12 * 0.6 : 1.2 - Math.min(0.2, (k - 0.12) * 0.6);
     g.globalAlpha = k > 0.7 ? Math.max(0, 1 - (k - 0.7) / 0.3) : 1;
     g.font = `900 ${Math.round(tx.size * pop)}px system-ui, sans-serif`;

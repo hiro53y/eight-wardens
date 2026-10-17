@@ -1,0 +1,235 @@
+[
+  {
+    "name": "alto",
+    "source": "out/v32/alto.png",
+    "file": "public/assets/v32/alto.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/wardens.webp"
+    ],
+    "prompt": "Production game sprite sheet, original polished hand-painted chibi fantasy, rich materials and crisp outlines matching reference. Reference ONLY top-left brown-haired male swordsman with blue scarf, blue/silver/gold armor and silver longsword. Keep his identity and clothing. THREE frames in ONE horizontal row, each in its own equal-width cell. Frame 1 LEFT: alert idle battle stance. Frame 2 CENTER: clear anticipation/wind-up with weapon drawn back. Frame 3 RIGHT: committed attack pose striking or shooting toward LEFT. EVERY frame has face, chest, nose, gaze and weapon directed LEFT, strong 3/4 side view, NOT frontal portrait. Same character, outfit, proportions 2.7-head-tall, identical scale, feet on same baseline. Full body and entire weapon visible in every cell, 12% transparent safety margins inside every cell. No text, labels, tile borders, floor, shadow, effects, other characters or background. Genuine transparent alpha. LEFTWARD attacking silhouette legible at 70px height. Reference sheet is identity/style reference only; do not copy its frontal poses or multiple characters."
+  },
+  {
+    "name": "lyca",
+    "source": "out/v32/lyca.png",
+    "file": "public/assets/v32/lyca.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/wardens.webp"
+    ],
+    "prompt": "Production game sprite sheet, original polished hand-painted chibi fantasy, rich materials and crisp outlines matching reference. Reference ONLY top-row second blond green-eyed male archer, green hood and leather armor. Longbow in foreground, drawing bowstring toward his cheek and arrow aimed LEFT. THREE frames in ONE horizontal row, each in its own equal-width cell. Frame 1 LEFT: alert idle battle stance. Frame 2 CENTER: clear anticipation/wind-up with weapon drawn back. Frame 3 RIGHT: committed attack pose striking or shooting toward LEFT. EVERY frame has face, chest, nose, gaze and weapon directed LEFT, strong 3/4 side view, NOT frontal portrait. Same character, outfit, proportions 2.7-head-tall, identical scale, feet on same baseline. Full body and entire weapon visible in every cell, 12% transparent safety margins inside every cell. No text, labels, tile borders, floor, shadow, effects, other characters or background. Genuine transparent alpha. LEFTWARD attacking silhouette legible at 70px height. Reference sheet is identity/style reference only; do not copy its frontal poses or multiple characters."
+  },
+  {
+    "name": "kai",
+    "source": "out/v32/kai.png",
+    "file": "public/assets/v32/kai.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/wardens.webp"
+    ],
+    "prompt": "Production game sprite sheet, original polished hand-painted chibi fantasy, rich materials and crisp outlines matching reference. Reference ONLY top-row third brown-haired green-hooded masked rogue with a short silver dagger. Slim crouched stance. THREE frames in ONE horizontal row, each in its own equal-width cell. Frame 1 LEFT: alert idle battle stance. Frame 2 CENTER: clear anticipation/wind-up with weapon drawn back. Frame 3 RIGHT: committed attack pose striking or shooting toward LEFT. EVERY frame has face, chest, nose, gaze and weapon directed LEFT, strong 3/4 side view, NOT frontal portrait. Same character, outfit, proportions 2.7-head-tall, identical scale, feet on same baseline. Full body and entire weapon visible in every cell, 12% transparent safety margins inside every cell. No text, labels, tile borders, floor, shadow, effects, other characters or background. Genuine transparent alpha. LEFTWARD attacking silhouette legible at 70px height. Reference sheet is identity/style reference only; do not copy its frontal poses or multiple characters."
+  },
+  {
+    "name": "map1",
+    "source": "out/v32/map1-prototype.png",
+    "file": "public/assets/v32/map1.webp",
+    "tool": "built-in image_gen",
+    "selected": false,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/map.webp"
+    ],
+    "prompt": "Production fantasy campaign map LANDMARK sprite atlas, 2 by 2 equally sized cells, genuine transparent alpha. Reference is ONLY style and lighting reference: warm painterly high-detail miniature architecture, crisp silhouettes legible at 50px, elevated three-quarter isometric view. FOUR separate complete buildings, each comfortably inside its own cell with 12% transparent margins and NO contact with adjacent cells. Top left: welcoming medieval village of timber houses with blue roofs, small garden and banner. Top right: stone watchtower and palisade outpost. Bottom left: ruined mossy chapel with broken arch. Bottom right: imposing boss fortress of blue-grey stone, two towers and closed gate. Small natural grass/earth footprints underneath, no large square tiles. No circles, borders, frames, lettering, numbers, characters or whole landscape. Rich materials, consistent upper-left daylight, handcrafted RPG map quality."
+  },
+  {
+    "name": "battle1",
+    "source": "out/v32/battle1.png",
+    "file": "public/assets/v32/battle1.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": false,
+    "references": [
+      "public/assets/v2/battle.webp"
+    ],
+    "prompt": "Edit this exact fantasy battlefield background. Remove ALL TWELVE circular stone platforms / round engraved medallions from the ground. Replace only those platforms with seamless natural grass, packed earth, small wildflowers and irregular worn paths matching the surrounding terrain. Keep the original scene composition, castle gate at the right, mountains, flags, forest, perspective, light, materials and painterly quality. The whole central battlefield should be uninterrupted natural terrain, no circles, paving discs, new buildings, people, HUD, text, symbols or drawn deployment markers. Preserve the 1672x941 wide framing."
+  },
+  {
+    "name": "sena",
+    "source": "out/v32/sena.png",
+    "file": "public/assets/v32/sena.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v31/sena.webp",
+      "out/v32/alto.png"
+    ],
+    "prompt": "Production chibi fantasy game animation sprite sheet. First reference = character identity, second reference = exact style/scale/layout reference. Brown-haired green-eyed archer Sena, green hood, brown/green leather armor and flowing cloak. A longbow aimed LEFT; keep reference face and costume. Exactly THREE frames in ONE horizontal row, equal-width separate cells. Frame 1 alert idle, frame 2 weapon anticipation/wind-up, frame 3 decisive attack/release LEFT. 3/4 SIDE view LEFT, nose, chest and weapon facing LEFT, not frontal. Identical character costume and 2.7-head-tall proportions, feet on common baseline, same scale across all frames. Full body and all weapon tips comfortably inside each cell with 10% transparent margins and clear empty gutters. Genuine alpha background, no floor/shadows/effects/text/frame or other characters. Polished painterly RPG rendering, crisp readable silhouette, warm upper-left lighting."
+  },
+  {
+    "name": "minato",
+    "source": "out/v32/minato.png",
+    "file": "public/assets/v32/minato.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/wardens.webp",
+      "out/v32/alto.png"
+    ],
+    "prompt": "Production chibi fantasy game animation sprite sheet. First reference = character identity, second reference = exact style/scale/layout reference. Fully armored knight Minato, face concealed by a closed steel greathelm, silver and gold plate armor, blue tabard, large blue/gold kite shield and silver sword. Shield toward LEFT in battle, sword raised then slashed LEFT. Exactly THREE frames in ONE horizontal row, equal-width separate cells. Frame 1 alert idle, frame 2 weapon anticipation/wind-up, frame 3 decisive attack/release LEFT. 3/4 SIDE view LEFT, nose, chest and weapon facing LEFT, not frontal. Identical character costume and 2.7-head-tall proportions, feet on common baseline, same scale across all frames. Full body and all weapon tips comfortably inside each cell with 10% transparent margins and clear empty gutters. Genuine alpha background, no floor/shadows/effects/text/frame or other characters. Polished painterly RPG rendering, crisp readable silhouette, warm upper-left lighting."
+  },
+  {
+    "name": "greta",
+    "source": "out/v32/greta.png",
+    "file": "public/assets/v32/greta.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/wardens.webp",
+      "out/v32/alto.png"
+    ],
+    "prompt": "Production chibi fantasy game animation sprite sheet. First reference = character identity, second reference = exact style/scale/layout reference. Female engineer Greta, chestnut hair in a loose ponytail, brass goggles on her head, green/brown explorer clothing, brass shoulder cannon. Cannon barrel aims LEFT in all three poses; third pose shows recoil (without painted smoke). Identity is the reference bottom-row second character. Exactly THREE frames in ONE horizontal row, equal-width separate cells. Frame 1 alert idle, frame 2 weapon anticipation/wind-up, frame 3 decisive attack/release LEFT. 3/4 SIDE view LEFT, nose, chest and weapon facing LEFT, not frontal. Identical character costume and 2.7-head-tall proportions, feet on common baseline, same scale across all frames. Full body and all weapon tips comfortably inside each cell with 10% transparent margins and clear empty gutters. Genuine alpha background, no floor/shadows/effects/text/frame or other characters. Polished painterly RPG rendering, crisp readable silhouette, warm upper-left lighting."
+  },
+  {
+    "name": "shino",
+    "source": "out/v32/shino.png",
+    "file": "public/assets/v32/shino.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v2/wardens.webp",
+      "out/v32/alto.png"
+    ],
+    "prompt": "Production chibi fantasy game animation sprite sheet. First reference = character identity, second reference = exact style/scale/layout reference. Black-haired purple-eyed ninja Shino, purple face mask, navy/purple clothing, long black ponytail and twin silver daggers. Crouched stance; anticipation twists back; attack throws or thrusts dagger LEFT. Identity is bottom-row third reference. Exactly THREE frames in ONE horizontal row, equal-width separate cells. Frame 1 alert idle, frame 2 weapon anticipation/wind-up, frame 3 decisive attack/release LEFT. 3/4 SIDE view LEFT, nose, chest and weapon facing LEFT, not frontal. Identical character costume and 2.7-head-tall proportions, feet on common baseline, same scale across all frames. Full body and all weapon tips comfortably inside each cell with 10% transparent margins and clear empty gutters. Genuine alpha background, no floor/shadows/effects/text/frame or other characters. Polished painterly RPG rendering, crisp readable silhouette, warm upper-left lighting."
+  },
+  {
+    "name": "iris",
+    "source": "out/v32/iris.png",
+    "file": "public/assets/v32/iris.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "public/assets/v31/iris.webp",
+      "out/v32/alto.png"
+    ],
+    "prompt": "Production chibi fantasy game animation sprite sheet. First reference = character identity, second reference = exact style/scale/layout reference. Lavender-haired violet-eyed swordswoman Iris, gold circlet, white/violet/gold armor and cloak, silver longsword and violet/gold shield. NO STAFF. Flowing hair toward RIGHT, face and sword toward LEFT. Preserve the reference identity. Exactly THREE frames in ONE horizontal row, equal-width separate cells. Frame 1 alert idle, frame 2 weapon anticipation/wind-up, frame 3 decisive attack/release LEFT. 3/4 SIDE view LEFT, nose, chest and weapon facing LEFT, not frontal. Identical character costume and 2.7-head-tall proportions, feet on common baseline, same scale across all frames. Full body and all weapon tips comfortably inside each cell with 10% transparent margins and clear empty gutters. Genuine alpha background, no floor/shadows/effects/text/frame or other characters. Polished painterly RPG rendering, crisp readable silhouette, warm upper-left lighting."
+  },
+  {
+    "name": "map2",
+    "source": "out/v32/map2.png",
+    "file": "public/assets/v32/map2.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "out/v32/map1.png"
+    ],
+    "prompt": "Fantasy campaign landmark sprite atlas. Match reference miniature building painting and perspective. EXACT 2x2 equal-size grid of FOUR isolated complete landmarks. Ancient forest: top left timber goblin tent camp with moss and banners; top right a tall watchpost built around a huge tree; bottom left ruined woodland shrine with roots and green crystals; bottom right boss stronghold of thick logs and heavy tusked gate, red banners. CRITICAL: EVERY landmark including full natural footprint must fit inside CENTRAL 75% of its OWN cell. Wide fully transparent gutters across centre and all outer edges, NO clipped grass or building. No large tiles, no frames, circles, letters, numbers, characters or map landscape. Elevated isometric 3/4 view, rich stone/wood materials, crisp silhouette readable at 60px. Genuine transparent alpha."
+  },
+  {
+    "name": "map3",
+    "source": "out/v32/map3.png",
+    "file": "public/assets/v32/map3.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "out/v32/map1.png"
+    ],
+    "prompt": "Fantasy campaign landmark sprite atlas. Match reference miniature building painting and perspective. EXACT 2x2 equal-size grid of FOUR isolated complete landmarks. Moonlit canyon: top left stone toll bridge between rocky outcrops; top right cliff watchtower with blue torch; bottom left abandoned moonlit chapel ruins; bottom right boss mountain citadel with dark blue slate towers and violet fire. Cool blue moonlight, warm windows. CRITICAL: EVERY landmark including full natural footprint must fit inside CENTRAL 75% of its OWN cell. Wide fully transparent gutters across centre and all outer edges, NO clipped grass or building. No large tiles, no frames, circles, letters, numbers, characters or map landscape. Elevated isometric 3/4 view, rich stone/wood materials, crisp silhouette readable at 60px. Genuine transparent alpha."
+  },
+  {
+    "name": "map4",
+    "source": "out/v32/map4.png",
+    "file": "public/assets/v32/map4.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "out/v32/map1.png"
+    ],
+    "prompt": "Fantasy campaign landmark sprite atlas. Match reference miniature building painting and perspective. EXACT 2x2 equal-size grid of FOUR isolated complete landmarks. Desert: top left sandstone caravanserai and red tents; top right oasis watchtower with palms; bottom left buried ancient temple gateway; bottom right boss monumental desert fortress with golden sandstone and giant worn serpent statues. Warm sandy palette. CRITICAL: EVERY landmark including full natural footprint must fit inside CENTRAL 75% of its OWN cell. Wide fully transparent gutters across centre and all outer edges, NO clipped grass or building. No large tiles, no frames, circles, letters, numbers, characters or map landscape. Elevated isometric 3/4 view, rich stone/wood materials, crisp silhouette readable at 60px. Genuine transparent alpha."
+  },
+  {
+    "name": "map5",
+    "source": "out/v32/map5.png",
+    "file": "public/assets/v32/map5.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "out/v32/map1.png"
+    ],
+    "prompt": "Fantasy campaign landmark sprite atlas. Match reference miniature building painting and perspective. EXACT 2x2 equal-size grid of FOUR isolated complete landmarks. Purple abyss: top left ruined outpost with violet crystals; top right arcane obelisk tower; bottom left broken ritual altar and floating stones; bottom right boss black gothic castle with violet crystal spires and glowing portal. Dark stone and violet accents, clear architecture silhouette. CRITICAL: EVERY landmark including full natural footprint must fit inside CENTRAL 75% of its OWN cell. Wide fully transparent gutters across centre and all outer edges, NO clipped grass or building. No large tiles, no frames, circles, letters, numbers, characters or map landscape. Elevated isometric 3/4 view, rich stone/wood materials, crisp silhouette readable at 60px. Genuine transparent alpha."
+  },
+  {
+    "name": "battle2",
+    "source": "out/v32/battle2.png",
+    "file": "public/assets/v32/battle2.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": false,
+    "references": [
+      "public/assets/v31/battle_forest.webp"
+    ],
+    "prompt": "Edit this exact fantasy battlefield background. Remove ALL TWELVE circular stone platforms / engraved round medallions from the ground. Replace only those platforms with seamless natural earth, grass, sand or rock matching their surroundings. Preserve original scene composition, castle gate at RIGHT, perspective, landscape, time of day, lighting, palette, material detail and painterly quality. No circles, paving discs, deployment markers, added buildings, people, HUD or text. Keep original wide 1672x941 framing."
+  },
+  {
+    "name": "battle3",
+    "source": "out/v32/battle3.png",
+    "file": "public/assets/v32/battle3.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": false,
+    "references": [
+      "public/assets/v31/battle_canyon.webp"
+    ],
+    "prompt": "Edit this exact fantasy battlefield background. Remove ALL TWELVE circular stone platforms / engraved round medallions from the ground. Replace only those platforms with seamless natural earth, grass, sand or rock matching their surroundings. Preserve original scene composition, castle gate at RIGHT, perspective, landscape, time of day, lighting, palette, material detail and painterly quality. No circles, paving discs, deployment markers, added buildings, people, HUD or text. Keep original wide 1672x941 framing."
+  },
+  {
+    "name": "battle4",
+    "source": "out/v32/battle4.png",
+    "file": "public/assets/v32/battle4.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": false,
+    "references": [
+      "public/assets/v31/battle_desert.webp"
+    ],
+    "prompt": "Edit this exact fantasy battlefield background. Remove ALL TWELVE circular stone platforms / engraved round medallions from the ground. Replace only those platforms with seamless natural earth, grass, sand or rock matching their surroundings. Preserve original scene composition, castle gate at RIGHT, perspective, landscape, time of day, lighting, palette, material detail and painterly quality. No circles, paving discs, deployment markers, added buildings, people, HUD or text. Keep original wide 1672x941 framing."
+  },
+  {
+    "name": "battle5",
+    "source": "out/v32/battle5.png",
+    "file": "public/assets/v32/battle5.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": false,
+    "references": [
+      "public/assets/v31/battle_abyss.webp"
+    ],
+    "prompt": "Edit this exact fantasy battlefield background. Remove ALL TWELVE circular stone platforms / engraved round medallions from the ground. Replace only those platforms with seamless natural earth, grass, sand or rock matching their surroundings. Preserve original scene composition, castle gate at RIGHT, perspective, landscape, time of day, lighting, palette, material detail and painterly quality. No circles, paving discs, deployment markers, added buildings, people, HUD or text. Keep original wide 1672x941 framing."
+  },
+  {
+    "name": "map1-refined",
+    "source": "out/v32/map1.png",
+    "file": "public/assets/v32/map1.webp",
+    "tool": "built-in image_gen",
+    "selected": true,
+    "transparent": true,
+    "references": [
+      "out/v32/map1-prototype.png"
+    ],
+    "prompt": "Refine this exact transparent 2x2 landmark atlas. Keep ALL FOUR existing architectural designs, colors, materials, viewing angle and detail. Fix only the spacing: shrink EACH complete landmark AND its natural grass/earth footprint into the central 76% of its own equal-size quarter-cell. All FOUR sides of EACH cell must have generous truly transparent gutters, including the vertical and horizontal central gutters. No structure, grass or stone may touch an outer image edge or cross a cell boundary. Preserve complete original building silhouettes; do not add text, frames, squares, circles or backgrounds. Transparent alpha."
+  }
+]

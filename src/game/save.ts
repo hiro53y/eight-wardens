@@ -117,6 +117,7 @@ export function loadSettings(kv: KV | null = store()): Settings {
     const raw = get(kv, KEY_SETTINGS);
     if (!raw) return { ...DEFAULT_SETTINGS };
     const s = { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as Partial<Settings>) };
+    if (!['standard','reduced'].includes(s.effects)) s.effects='standard';
     if (![1, 2, 3].includes(s.speed)) s.speed = 1;
     for (const k of ['bgm','se'] as const) s[k]=num(s[k])?Math.max(0,Math.min(1,s[k])):DEFAULT_SETTINGS[k];
     for (const k of ['numbers','autoSkill'] as const) if(typeof s[k]!=='boolean')s[k]=DEFAULT_SETTINGS[k];

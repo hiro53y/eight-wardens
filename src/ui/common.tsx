@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { playSe } from '../audio/sound';
 import type { Settings } from '../game/types';
 
-export const VERSION = '3.1.0';
+export const VERSION = '3.2.0';
 
 export function Modal({ title, onClose, children, wide, className }: { title?: ReactNode; onClose?: () => void; children: ReactNode; wide?: boolean; className?: string }) {
   return (
@@ -106,6 +106,7 @@ export function SettingsPanel({ settings, onSettings, onClose, onWipe }: { setti
           <span>技を自動で撃つ</span>
           <button className={`toggle ${settings.autoSkill ? 'on' : ''}`} onClick={() => set({ autoSkill: !settings.autoSkill })}>{settings.autoSkill ? 'する' : 'しない'}</button>
         </label>
+        <label className="row"><span>演出の量</span><button className="toggle" onClick={()=>set({effects:settings.effects==='standard'?'reduced':'standard'})}>{settings.effects==='standard'?'標準':'控えめ'}</button></label>
         <div className="row">
           <span>はじめの速さ</span>
           <div className="seg">

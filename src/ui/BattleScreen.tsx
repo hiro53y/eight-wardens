@@ -147,6 +147,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
       const el = wrap.current, cv = canvas.current;
       if (!el || !cv) return;
       const L = live.current;
+      fx.reduced=settings.effects==='reduced';
       b.autoSkill = L.auto;
       if (!L.stop) {
         fx.speed = L.speed;
@@ -187,7 +188,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
     };
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [b, p, onChange]);
+  }, [b, p, onChange, settings.effects]);
 
   // 確かめ用の口（開発中か ?dbg=1 の時だけ）：早送りと状態の読み出し
   useEffect(() => {
@@ -370,7 +371,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
               <div className="setup-enemies">
                 {[...new Set(s.groups.map((g) => g.enemy))].map((id) => { const e = enemy(id); return <div key={id} className="eicon" title={e.name} style={enemyStyle(e, 34)} />; })}
               </div>
-              <p>
+              <p className={mode.kind==='stage'?'setup-guide':'setup-note'}>
                 {mode.kind === 'tower' && run ? `恩恵：${run.buffs.map((x) => BUFFS[x].name).join('・') || 'なし'}` : mode.kind === 'daily' && setup.rule ? DAILY_RULES[setup.rule].desc : '仲間に触れて選び、光る台座に触れると配置を変えられる。'}
               </p>
               <button className="btn gold big" onClick={begin}>出撃！</button>

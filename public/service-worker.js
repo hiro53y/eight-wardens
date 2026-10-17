@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eight-wardens-shell-v12-art-inspection';
+const CACHE_NAME = 'eight-wardens-shell-v13-landmarks-motion';
 // 遊ぶのに要る物だけ先に入れる（絵は WebP の軽量版。BGM は流す時に読む）
 const APP_SHELL = [
   '/',
@@ -7,6 +7,24 @@ const APP_SHELL = [
   '/icons/icon-192.png',
   '/icons/icon-512.png',
   '/icons/icon-maskable-512.png',
+  '/assets/v32/alto.webp',
+  '/assets/v32/battle1.webp',
+  '/assets/v32/battle2.webp',
+  '/assets/v32/battle3.webp',
+  '/assets/v32/battle4.webp',
+  '/assets/v32/battle5.webp',
+  '/assets/v32/greta.webp',
+  '/assets/v32/iris.webp',
+  '/assets/v32/kai.webp',
+  '/assets/v32/lyca.webp',
+  '/assets/v32/map1.webp',
+  '/assets/v32/map2.webp',
+  '/assets/v32/map3.webp',
+  '/assets/v32/map4.webp',
+  '/assets/v32/map5.webp',
+  '/assets/v32/minato.webp',
+  '/assets/v32/sena.webp',
+  '/assets/v32/shino.webp',
   '/assets/v2/battle.webp',
   '/assets/v2/map.webp',
   '/assets/v2/title.webp',

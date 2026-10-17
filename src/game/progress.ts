@@ -10,13 +10,13 @@ export const PROGRESS_VERSION = 3;
 
 /** 8人の守り手（見た目は1枚絵の0〜7） */
 const ROSTER: { name: string; sprite: number; job: string; pedestal: number }[] = [
-  { name: 'アルト', sprite: 0, job: 'swordsman', pedestal: 4 },
-  { name: 'リュカ', sprite: 1, job: 'hunter', pedestal: 1 },
-  { name: 'カイ', sprite: 2, job: 'thief', pedestal: 3 },
-  { name: 'セナ', sprite: 3, job: 'hunter', pedestal: 7 },
+  { name: 'アルト', sprite: 0, job: 'swordsman', pedestal: 3 },
+  { name: 'リュカ', sprite: 1, job: 'hunter', pedestal: 2 },
+  { name: 'カイ', sprite: 2, job: 'thief', pedestal: 0 },
+  { name: 'セナ', sprite: 3, job: 'hunter', pedestal: 5 },
   { name: 'ミナト', sprite: 4, job: 'swordsman', pedestal: 6 },
-  { name: 'グレタ', sprite: 5, job: 'hunter', pedestal: 5 },
-  { name: 'シノ', sprite: 6, job: 'thief', pedestal: 8 },
+  { name: 'グレタ', sprite: 5, job: 'hunter', pedestal: 8 },
+  { name: 'シノ', sprite: 6, job: 'thief', pedestal: 9 },
   { name: 'イリス', sprite: 7, job: 'swordsman', pedestal: 10 },
 ];
 

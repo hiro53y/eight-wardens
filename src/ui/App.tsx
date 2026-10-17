@@ -1,3 +1,4 @@
+import {EffectReview} from './EffectReview';
 // 画面の切り替えと、進み・設定の保存
 import { useCallback, useEffect, useState } from 'react';
 import { playBgm, resumeBgm, setBgmVolume } from '../audio/bgm';
@@ -70,6 +71,7 @@ export function App() {
     setScreen({ k: 'title' });
   };
 
+  if(import.meta.env.DEV&&new URLSearchParams(location.search).get('qa')==='effects')return <EffectReview/>;
   if (screen.k === 'title' || !p) {
     return (
       <Title

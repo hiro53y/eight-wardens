@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { playBgm, resumeBgm, setBgmVolume } from '../audio/bgm';
 import { setSeVolume, unlockAudio } from '../audio/sound';
 import { newProgress } from '../game/progress';
-import { loadProgress, loadSettings, saveProgress, saveSettings, wipe } from '../game/save';
+import { hasStoredProgress, loadProgress, loadSettings, saveProgress, saveSettings, wipe } from '../game/save';
 import type { Mode, Progress, Settings } from '../game/types';
 import { loadImages } from '../view/assets';
 import { BattleScreen, type BattleMode } from './BattleScreen';
@@ -13,9 +13,12 @@ import { Title } from './Title';
 
 type Screen = { k: 'title' } | { k: 'map' } | { k: 'battle'; mode: BattleMode; key: number };
 
+function reviewProgress(){const p=newProgress('normal',310);p.unlocked=35;p.exp=50000;p.coins=50000;p.wardens.forEach(w=>{w.lv=3;});return p;}
 export function App() {
-  const [screen, setScreen] = useState<Screen>({ k: 'title' });
-  const [p, setP] = useState<Progress | null>(() => loadProgress());
+  const review=import.meta.env.DEV&&new URLSearchParams(location.search).get('qa')==='review';
+  const [screen, setScreen] = useState<Screen>(review?{k:'map'}:{k:'title'});
+  const [hasRecord,setHasRecord]=useState(()=>hasStoredProgress());
+  const [p, setP] = useState<Progress | null>(() => review?reviewProgress():loadProgress());
   const [settings, setSettings] = useState<Settings>(() => loadSettings());
   const [, setRev] = useState(0);
   const [loaded, setLoaded] = useState(0);
@@ -44,6 +47,7 @@ export function App() {
   const start = (mode: Mode) => {
     const np = newProgress(mode, (Date.now() & 0x7fffffff) ^ 0x5eed);
     saveProgress(np);
+    setHasRecord(true);
     setP(np);
     setScreen({ k: 'map' });
   };
@@ -61,6 +65,7 @@ export function App() {
 
   const onWipe = () => {
     wipe();
+    setHasRecord(false);
     setP(null);
     setScreen({ k: 'title' });
   };
@@ -70,6 +75,7 @@ export function App() {
       <Title
         loaded={loaded}
         hasSave={!!p}
+        hasRecord={hasRecord}
         settings={settings}
         onSettings={setSettings}
         onNew={start}

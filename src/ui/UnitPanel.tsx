@@ -20,6 +20,7 @@ interface Props {
   mods?: BattleMods;
   /** 技を撃てない理由（null なら撃てる。undefined なら技のボタンを出さない） */
   skillErr?: string | null;
+  skillWarning?: string;
   onSkill?: () => void;
   onChange: () => void;
   onFx?: (kind: 'lv' | 'job', wid: string, label?: string) => void;
@@ -51,7 +52,7 @@ function traits(j: JobDef): string[] {
   return t;
 }
 
-export function UnitPanel({ p, w, inBattle, bossStage, noRest, mods, skillErr, onSkill, onChange, onFx, onMove, onClose }: Props) {
+export function UnitPanel({ p, w, inBattle, bossStage, noRest, mods, skillErr, skillWarning, onSkill, onChange, onFx, onMove, onClose }: Props) {
   const [pick, setPick] = useState<Item['kind'] | null>(null);
   const j = job(w.job);
   const max = maxLv(j, p.mode);
@@ -123,6 +124,7 @@ export function UnitPanel({ p, w, inBattle, bossStage, noRest, mods, skillErr, o
         <div className="skill-box" style={{ borderColor: sk.color }}>
           <div className="skill-head"><b style={{ color: sk.color }}>技：{sk.name}</b>{inBattle && <i className="sp-bar"><i style={{ width: `${Math.min(1, w.sp ?? 0) * 100}%` }} /></i>}</div>
           <p className="desc">{sk.desc}</p>
+          {inBattle&&skillWarning&&<p className="warn" role="status">{skillWarning}</p>}
           {inBattle && onSkill && skillErr !== undefined && (
             <button className="btn gold" disabled={!!skillErr} onClick={onSkill}>{skillErr ? `技（${skillErr}）` : '技を撃つ！'}</button>
           )}

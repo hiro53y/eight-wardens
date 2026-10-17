@@ -8,7 +8,7 @@ import { SKILL_RADIUS, canTarget, statsOf, type Battle, type SimEnemy } from '..
 import { CHAPTERS, type ChapterDef } from '../game/stages';
 import { synergyLinks } from '../game/synergy';
 import type { Progress, Warden } from '../game/types';
-import { WARDEN_ART, enemyArt, faceRect, img, type Art, type ImgKey } from './assets';
+import { wardenArt, enemyArt, faceRect, img, type Art, type ImgKey } from './assets';
 import type { Fx } from './effects';
 
 export interface Viewport { s: number; ox: number; oy: number }
@@ -65,6 +65,9 @@ const TINT: Record<ChapterDef['tint'], { mul: string; add?: string } | null> = {
 };
 
 function bgFor(ch: ChapterDef): CanvasImageSource | null {
+  const chapterArt:Record<number,ImgKey>={2:'v31_battle_forest',3:'v31_battle_canyon',4:'v31_battle_desert',5:'v31_battle_abyss'};
+  const themed=chapterArt[ch.id]?img(chapterArt[ch.id]):null;
+  if(themed)return themed;
   const base = img('battle');
   if (!base) return null;
   const t = TINT[ch.tint];
@@ -274,7 +277,7 @@ function drawDeaths(g: CanvasRenderingContext2D, fx: Fx, hue: number) {
   for (const d of fx.deaths) {
     const def = enemy(d.def);
     const a = enemyArt(def);
-    const src = sheetFor(a.k, def.boss ? 0 : (def.hue ?? 0) + hue);
+    const src = sheetFor(a.k, a.k.startsWith('v31_')||def.boss ? 0 : (def.hue ?? 0) + hue);
     if (!src) continue;
     const k = (fx.now - d.t0) / 0.4;
     const foot = def.kind === 'fly' ? d.y + def.size * 0.4 : d.y + 14;
@@ -359,7 +362,7 @@ function drawCutin(g: CanvasRenderingContext2D, cw: number, ch: number, fx: Fx) 
   g.lineWidth = 3;
   g.stroke();
   // 顔
-  const face = img('portraits');
+  const face = img('v31_portraits');
   if (face) {
     const f = faceRect(c.sprite);
     const fs = h * 0.95;
@@ -385,8 +388,8 @@ function drawCutin(g: CanvasRenderingContext2D, cw: number, ch: number, fx: Fx) 
 
 function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Battle, fx: Fx, selected: boolean, setup: boolean) {
   const [px, py] = PEDESTALS[w.pedestal];
-  const a = WARDEN_ART[w.sprite] ?? WARDEN_ART[0];
-  const src = img('wardens');
+  const a = wardenArt(w.sprite);
+  const src = img(a.k);
   const t = fx.now;
   const j = job(w.job);
   // 足元
@@ -538,7 +541,7 @@ function drawWarden(g: CanvasRenderingContext2D, w: Warden, p: Progress, b: Batt
 function drawEnemy(g: CanvasRenderingContext2D, e: SimEnemy, b: Battle, fx: Fx, hue: number, sel: Warden | null) {
   const def = enemy(e.def);
   const a = enemyArt(def);
-  const src = sheetFor(a.k, def.boss ? 0 : (def.hue ?? 0) + hue);
+  const src = sheetFor(a.k, a.k.startsWith('v31_')||def.boss ? 0 : (def.hue ?? 0) + hue);
   const t = fx.now;
   const fly = e.kind === 'fly';
   const stopped = b.t < e.stopUntil;

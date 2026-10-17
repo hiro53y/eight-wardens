@@ -3,5 +3,5 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  test: { environment: 'node', include: ['tests/**/*.test.ts'] },
+  test: { fileParallelism: false, environment: 'node', include: ['tests/**/*.test.ts'] },
 } as Parameters<typeof defineConfig>[0]);

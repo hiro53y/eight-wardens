@@ -1,22 +1,25 @@
+import artV31 from './artV31.json';
 // 絵の読み込みと、1枚絵からの切り出し位置（WebP の軽量版 /assets/v2/ を使う）
 import type { EnemyDef } from '../game/types';
 
 export const V2 = '/assets/v2/';
 
-export type ImgKey =
+export type NewArt = 'iris'|'sena'|'shield_goblin'|'shaman'|'orc_lord'|'worm_king'|'battle_forest'|'battle_canyon'|'battle_desert'|'battle_abyss'|'portraits';
+export type ImgKey = `v31_${NewArt}`
   | 'battle' | 'map' | 'title' | 'result' | 'wardens' | 'enemies' | 'portraits'
   | 'enemy_goblin' | 'enemy_orc' | 'enemy_wolf_elite' | 'enemy_wingbat'
   | 'banner_wave' | 'banner_boss' | 'banner_elite' | 'banner_clear' | 'deco_stars'
   | 'fx_slash' | 'fx_hit' | 'fx_magic' | 'fx_buff' | 'fx_heal' | 'fx_sparkle' | 'fx_target';
 
 export const IMG_KEYS: ImgKey[] = [
-  'battle', 'map', 'title', 'result', 'wardens', 'enemies', 'portraits',
+  'battle', 'map', 'title', 'result', 'wardens', 'enemies',
+  ...(['iris','sena','shield_goblin','shaman','orc_lord','worm_king','battle_forest','battle_canyon','battle_desert','battle_abyss','portraits'] as const).map(k=>`v31_${k}` as ImgKey),
   'enemy_goblin', 'enemy_orc', 'enemy_wolf_elite', 'enemy_wingbat',
   'banner_wave', 'banner_boss', 'banner_elite', 'banner_clear', 'deco_stars',
   'fx_slash', 'fx_hit', 'fx_magic', 'fx_buff', 'fx_heal', 'fx_sparkle', 'fx_target',
 ];
 
-export const imgUrl = (k: ImgKey) => `${V2}${k}.webp`;
+export const imgUrl = (k: ImgKey) => k.startsWith('v31_')?`/assets/v31/${k.slice(4)}.webp`:`${V2}${k}.webp`;
 
 const images = new Map<ImgKey, HTMLImageElement>();
 let loading: Promise<void> | null = null;
@@ -79,6 +82,9 @@ const ENEMY_FILE: Record<string, { k: ImgKey; r: Rect; flip: boolean }> = {
 export interface Art { k: ImgKey; r: Rect; flip: boolean }
 
 export function enemyArt(def: EnemyDef): Art {
+  const replacement=({shieldGoblin:'shield_goblin',shaman:'shaman',orcLord:'orc_lord',wormKing:'worm_king'} as Record<string,keyof typeof artV31>)[def.id];
+  if(replacement)return {k:`v31_${replacement}` as ImgKey,r:artV31[replacement].r,flip:false};
+
   if ('sheet' in def.art) {
     const a = ENEMY_SHEET[def.art.index] ?? ENEMY_SHEET[0];
     return { k: 'enemies', r: a.r, flip: a.flip };
@@ -100,7 +106,7 @@ export function faceStyle(sprite: number, size: number): Record<string, string> 
   const f = faceRect(sprite);
   const k = size / f.w;
   return {
-    backgroundImage: `url(${imgUrl('portraits')})`,
+    backgroundImage: `url(${imgUrl('v31_portraits')})`,
     backgroundSize: `${1774 * k}px ${887 * k}px`,
     backgroundPosition: `${-f.x * k}px ${-f.y * k}px`,
   };
@@ -109,8 +115,9 @@ export function faceStyle(sprite: number, size: number): Record<string, string> 
 /** CSS の背景で敵の絵を出す（一覧用） */
 export function enemyStyle(def: EnemyDef, size: number): Record<string, string> {
   const a = enemyArt(def);
-  const sheetW = a.k === 'enemies' ? 1774 : img(a.k)?.naturalWidth ?? 600;
-  const sheetH = a.k === 'enemies' ? 887 : img(a.k)?.naturalHeight ?? 400;
+  const newKey=a.k.startsWith('v31_')?a.k.slice(4) as keyof typeof artV31:null;
+  const sheetW = newKey?artV31[newKey].width:a.k === 'enemies' ? 1774 : img(a.k)?.naturalWidth ?? 600;
+  const sheetH = newKey?artV31[newKey].height:a.k === 'enemies' ? 887 : img(a.k)?.naturalHeight ?? 400;
   const k = size / Math.max(a.r.w, a.r.h);
   const ox = (size - a.r.w * k) / 2, oy = (size - a.r.h * k) / 2;
   return {
@@ -120,3 +127,5 @@ export function enemyStyle(def: EnemyDef, size: number): Record<string, string> 
     transform: a.flip ? 'scaleX(-1)' : 'none',
   };
 }
+
+export function wardenArt(sprite:number):Art{const key=sprite===7?'iris':sprite===3?'sena':null;return key?{k:`v31_${key}` as ImgKey,r:artV31[key].r,flip:false}:{k:'wardens',...(WARDEN_ART[sprite]??WARDEN_ART[0])};}

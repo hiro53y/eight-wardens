@@ -1,3 +1,5 @@
+import {EnemyPanel} from './EnemyPanel';
+import {bossForecast,hitEnemy} from '../game/enemyInfo';
 // 防衛戦：Canvas の戦場＋上の帯（敵・村人・EXP・金貨・速さ）＋下の8人の札＋守り手の小窓
 // 本編・無限の塔・毎日の挑戦の3つをこの画面で遊ぶ
 import { useEffect, useRef, useState } from 'react';
@@ -9,7 +11,7 @@ import { job, maxLv } from '../game/jobs';
 import { applyResult, canPlay, levelUpError, moveTo, setRest } from '../game/progress';
 import { saveProgress } from '../game/save';
 import { SKILLS } from '../game/skills';
-import { advance, callNext, createBattle, nextGroupAt, refreshStats, remaining, skillError, startFight, useSkill, type Battle } from '../game/sim';
+import { advance, callNext, createBattle, nextGroupAt, refreshStats, remaining, skillWarning, skillError, startFight, useSkill, type Battle } from '../game/sim';
 import { STAGE_COUNT } from '../game/stages';
 import { BUFFS, DAILY_RULES, chooseBuff, dailyDef, dailyResult, dateKey, floorScore, towerFloor, towerMods, towerResult, type DailyRule } from '../game/tower';
 import type { BuffId, Item, Progress, Settings, Warden } from '../game/types';
@@ -85,6 +87,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
   const [speed, setSpeed] = useState<1 | 2 | 3>(settings.speed);
   const [paused, setPaused] = useState(false);
   const [menu, setMenu] = useState<Menu>('');
+  const [enemyId,setEnemyId]=useState<number|null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [moving, setMoving] = useState(false);
   const [result, setResult] = useState<Outcome | null>(null);
@@ -96,7 +99,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
 
   // ループから読む値
   const live = useRef({ speed, stop: false, sel, moving, auto: settings.autoSkill });
-  live.current = { speed, stop: paused || menu !== '' || !!result, sel, moving, auto: settings.autoSkill };
+  live.current = { speed, stop: paused || menu !== '' || enemyId !== null || !!result, sel, moving, auto: settings.autoSkill };
   const ended = useRef<{ at: number; r: Outcome } | null>(null);
 
   const s = b.def;
@@ -277,8 +280,12 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
       const ped = hitPedestal(x, y);
       if (ped >= 0) { moveTo(p, selW, ped); refreshStats(b, p); playSe('equip'); onChange(); return; }
     }
+    const target=hitEnemy(b,x,y);
+    if(target){setSel(null);setMoving(false);setEnemyId(target.uid);endPress();return;}
     setSel(null);
   };
+
+  useEffect(()=>()=>endPress(),[]);
 
   const begin = () => {
     startFight(b);
@@ -307,6 +314,8 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
   const fx = fxRef.current;
   const left = remaining(b);
   const boss = b.enemies.find((e) => e.boss);
+  const forecast=boss?bossForecast(b,boss):null;
+  const inspected=enemyId===null?null:b.enemies.find(e=>e.uid===enemyId);
   const anyRest = p.wardens.some((w) => w.resting);
   const allResting = p.wardens.every((w) => w.resting);
   const fighting = b.phase === 'fight';
@@ -338,7 +347,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
 
       {boss && (
         <div className="boss-bar">
-          <span>{enemy(boss.def).name}{b.bossState[boss.uid]?.phase ? ` ${'!'.repeat(b.bossState[boss.uid].phase)}` : ''}</span>
+          <span>{enemy(boss.def).name}{forecast&&<small className="boss-countdown">行動まで約{forecast.seconds}秒 · 候補 {forecast.candidates.join('／')}</small>}{b.bossState[boss.uid]?.phase ? ` ${'!'.repeat(b.bossState[boss.uid].phase)}` : ''}</span>
           <i><i style={{ width: `${Math.max(0, boss.hp / boss.maxHp) * 100}%` }} /></i>
         </div>
       )}
@@ -377,6 +386,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
             noRest={!!b.mods.noRest}
             mods={b.mods}
             skillErr={skillError(b, selW)}
+            skillWarning={skillWarning(b,selW)??undefined}
             onSkill={() => fire(selW)}
             onChange={() => { refreshStats(b, p); onChange(); }}
             onFx={(kind, wid, lbl) => glowWarden(fx, p, wid, kind, lbl)}
@@ -424,6 +434,7 @@ export function BattleScreen({ p, mode, settings, onSettings, onChange, onMap, o
         })}
       </div>
 
+      {inspected&&<EnemyPanel b={b} e={inspected} onClose={()=>setEnemyId(null)}/>}
       {menu === 'pause' && (
         <Modal title="一時停止" onClose={() => setMenu('')}>
           <div className="pause-menu">

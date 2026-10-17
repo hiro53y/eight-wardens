@@ -1,4 +1,4 @@
-# Eight Wardens：八人の防衛隊 3.0
+# Eight Wardens：八人の防衛隊 3.1
 
 スマホ横向き専用の育成タワーディフェンス PWA です（公開先 https://eight-wardens.pages.dev/ ）。
 2.0 で、名作フリーゲーム「Eight Defender's」（Nes 作）の仕組み（共有の EXP・休憩・Lv3 で2択の転職・飛行／メタル）に沿って一から作り直しました。元作品の名前・絵は使っていません。
@@ -10,6 +10,13 @@
 - 転職：Lv3 で金貨を払い、2つの職から選ぶ（剣・狩・盗 × 3段、21職）。3段目は Lv5（玄人は Lv10）まで、その先は上限突破。
 - 敵：通常・飛行（道を無視して城門へ）・メタル（ふつうは1しか通らない）。全35ステージ（5章×7、各章の7番目がボス）。
 - 難しさ：ふつう／玄人。負けても得た EXP・金貨は残る。
+
+### 3.1 で改善したこと
+- 盾持ち・回復役・オークの将・大すなもぐらを専用画像へ。アイリスは剣、セナは弓を持つ姿に修正。第2〜5章の戦場を描き分け、人物の黒い部分が欠ける透過処理を元画像から復元。
+- 30/60/120fpsと速度1/2/3で進行が一致する固定刻みへ修正。
+- 敵をタップすると情報と対処のヒントを表示し、閲覧中は一時停止。ボスは行動までの秒数と技の候補を表示（技は発動時に抽選）。必殺技は対象がいない場合に警告。
+- 保存のID・配置・持ち物・数値を検証。読めない原文は起動時に変更せず、新規開始には既存の上書き確認を使う。起動を止める保存確認画面は追加しない。
+- 地図の施設名を省略せず表示。能力・報酬・35面・ボスAIは維持。
 
 ### 3.0 で増えたこと
 - 必殺技：攻撃でゲージがたまり、札の「技」か仲間を2回タップで撃つ（職ごとに14種。設定で自動も）。撃つとカットイン・ヒットストップ。
@@ -27,7 +34,7 @@ npm run dev
 npm run test
 npm run build
 ```
-- `npm run test`：ゲームの仕組みの単体テスト・総当たり・ボットによる全35ステージ通し（Vitest、43件）。
+- `npm run test`：ゲームの仕組みの単体テスト・総当たり・ボットによる全35ステージ通し（Vitest、通常82件）。
 - `BALANCE=1 npm run test`：ボットで難しさを集計（ふつう・玄人）。`CALIBRATE=1`：ステージごとの硬さ（`HP_CALIB`）を探し直す（出た値の8割を使い、1・2は手で下げる）。`TOWER=1`：塔の何階まで登れるか。
 - 確かめ用の口：開発中か `?dbg=1` の時だけ `window.__ew`（`run(秒)` で早送り、`start()` で出撃、`skill(i)`・`call()`）。`?rafshim=1` で描画をタイマーで回す（画面が見えていない時の確認用）。
 
@@ -40,9 +47,15 @@ npm run build
 - 保存キー：`eight-wardens-v2:progress`・`eight-wardens-v2:settings`（中身の版は 3。2.0 の保存は読み込み時に 3 へ移す。旧 v1 は読まない・消さない）。
 
 ## PWA
-- `public/service-worker.js`（`/service-worker.js` に登録）と互換の `public/sw.js` は同じ内容。キャッシュ名 `eight-wardens-shell-v11-plus`。
+- `public/service-worker.js`（`/service-worker.js` に登録）と互換の `public/sw.js` は同じ内容。キャッシュ名 `eight-wardens-shell-v12-art-inspection`。
 - 先に入れるのは画面の枠と WebP の絵だけ。BGM は流す時に読み、キャッシュには入れない。
 - manifest の `start_url "/"`・`orientation: landscape` は変えていない。
 
 ## 公開
 GitHub `hiro53y/eight-wardens` の main に push すると Cloudflare Pages が `npm run build` して公開する。
+
+## 3.1の検証
+- PowerShell: `$env:ACCEPTANCE31='1'; npm test`：104件通過、既存の任意集計2件スキップ。
+- 通常/玄人それぞれ10seedで全35面。塔は本編10/20/35戦の進行×3seed、日替わりは全5条件×5seed。詳細は `_VERIFY.md`。
+- 画像生成プロンプトは `docs/art-v31.json`、新画像は `public/assets/v31/`。元PNGはローカルの `out/v31/` に保持。既存画像は変更しない。
+- Pixel 9a実機の操作感・発熱・インストール済みPWA更新は未確認。

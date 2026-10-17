@@ -87,6 +87,8 @@ export interface Battle {
   def: StageDef;
   seed: number;
   rng: number;
+  /** 未処理のシミュレーション時間。描画フレーム間で繰り越す */
+  carry: number;
   t: number;
   phase: 'setup' | 'fight' | 'won' | 'lost';
   scale: number;
@@ -147,7 +149,7 @@ export function createBattle(p: Progress, stageId: number, seed: number, o: Batt
   const reward = s.rewardScale ?? Math.pow(baseScale(stageId), 0.9);
   const maxV = o.maxVillagers ?? villagersOf(p);
   const b: Battle = {
-    kind: o.kind ?? 'stage', stage: s.id, def: s, seed, rng: hashSeed(seed, 'battle', s.id), t: 0, phase: 'setup', scale, reward, boss: s.boss, mods: o.mods ?? {},
+    carry: 0, kind: o.kind ?? 'stage', stage: s.id, def: s, seed, rng: hashSeed(seed, 'battle', s.id), t: 0, phase: 'setup', scale, reward, boss: s.boss, mods: o.mods ?? {},
     groupStart: s.groups.map((gr) => gr.at), spawned: s.groups.map(() => 0), total: s.groups.reduce((n, gr) => n + gr.count, 0),
     enemies: [], pending: [], cool: {}, coinFrac: {}, nextUid: 1,
     villagers: o.villagers ?? maxV, villagersStart: maxV, lost: 0, kills: 0, exp: 0, coins: 0, restExp: 0, events: [],
@@ -590,6 +592,29 @@ export function skillError(b: Battle, w: Warden): string | null {
   return null;
 }
 
+/** 技の効果対象を副作用なく照会する。通常攻撃の射程とは別。 */
+export function skillTargets(b: Battle, w: Warden): SimEnemy[] {
+  const s=job(w.job).skill, all=live(b), [x,y]=wardenPos(w);
+  const around=(cx:number,cy:number,r:number)=>all.filter(e=>Math.hypot(e.x-cx,e.y-cy)<=r);
+  const f=front(all);
+  switch(s){
+    case 'goldRain': return [];
+    case 'whirl': case 'smoke': case 'darkwave': case 'plunder': return around(x,y-20,SKILL_RADIUS[s]!);
+    case 'armorCrush': return around(x,y-20,520);
+    case 'issen': {const first=front(all.filter(e=>e.kind!=='fly'))??f;return first?all.filter(e=>e===first||(e.kind!=='fly'&&first.kind!=='fly'&&e.lane===first.lane)):[];}
+    case 'seal': return f?around(f.x,f.y,300):[];
+    case 'bigCannon': return f?around(f.x,f.y,240):[];
+    case 'dragonfall': {const flies=all.filter(e=>e.kind==='fly');return flies.length?flies:f?[f]:[];}
+    case 'arrowRain': {let c=all[0],best=-1;for(const e of all){const n=around(e.x,e.y,200).length;if(n>best){best=n;c=e;}}return c?around(c.x,c.y,210):[];}
+    case 'snipe': {const t=all.reduce<SimEnemy|null>((a,e)=>!a||e.hp>a.hp?e:a,null);return t?[t]:[];}
+    case 'shadow': {const targets=around(x,y-20,700).filter(e=>e.boss||e.hp<=e.maxHp*.3);return targets.length?targets:f?[f]:[];}
+    case 'net': return all;
+  }
+}
+export function skillWarning(b:Battle,w:Warden):string|null {
+  if(job(w.job).skill==='goldRain'||!live(b).length)return null;
+  return skillTargets(b,w).length?null:'技の範囲内に対象がいません。今撃つとゲージを消費します';
+}
 /** 技が当たる敵がいるか（自動で撃つ判断） */
 function skillUseful(b: Battle, w: Warden): boolean {
   const s = job(w.job).skill;
@@ -610,8 +635,9 @@ export function useSkill(b: Battle, p: Progress, w: Warden): boolean {
   let cx = wx, cy = wy - 20, rad = SKILL_RADIUS[s] ?? 0;
   const hit = (e: SimEnemy, mult: number, pierce = false) => hurt(b, p, w, e, damageOf(b, p, w, e, mult, pierce), { skill: true });
   const all = live(b);
+  const targets = skillTargets(b,w);
   switch (s) {
-    case 'whirl': for (const e of near(b, cx, cy, rad)) hit(e, 6); break;
+    case 'whirl': for (const e of targets) hit(e, 6); break;
     case 'issen': {
       const f = front(all.filter((e) => e.kind !== 'fly')) ?? front(all);
       if (!f) break;
@@ -623,10 +649,10 @@ export function useSkill(b: Battle, p: Progress, w: Warden): boolean {
       const f = front(all);
       if (!f) break;
       cx = f.x; cy = f.y; rad = 300;
-      for (const e of near(b, cx, cy, rad)) { e.slowPerm = Math.min(e.slowPerm, 0.45); hit(e, 3); }
+      for (const e of targets) { e.slowPerm = Math.min(e.slowPerm, 0.45); hit(e, 3); }
       break;
     }
-    case 'darkwave': for (const e of near(b, cx, cy, rad)) { e.defDown = Math.max(e.defDown, 0.35); e.defUntil = b.t + 6; hit(e, 4); } break;
+    case 'darkwave': for (const e of targets) { e.defDown = Math.max(e.defDown, 0.35); e.defUntil = b.t + 6; hit(e, 4); } break;
     case 'dragonfall': {
       const flyers = all.filter((e) => e.kind === 'fly');
       if (flyers.length) for (const e of flyers) hit(e, 8);
@@ -640,7 +666,7 @@ export function useSkill(b: Battle, p: Progress, w: Warden): boolean {
       for (const e of all) { const n = all.filter((o) => Math.hypot(o.x - e.x, o.y - e.y) <= 200).length; if (n > bestN) { bestN = n; c = e; } }
       if (!c) break;
       cx = c.x; cy = c.y; rad = 210;
-      const targets = near(b, cx, cy, rad);
+
       for (let i = 0; i < 4; i++) for (const e of targets) hit(e, 2);
       break;
     }
@@ -655,23 +681,25 @@ export function useSkill(b: Battle, p: Progress, w: Warden): boolean {
       const f = front(all);
       if (!f) break;
       cx = f.x; cy = f.y; rad = 240;
-      for (const e of near(b, cx, cy, rad)) { e.d = Math.max(0, e.d - 240 * (e.boss ? 0.3 : 1)); hit(e, 6); }
+      for (const e of targets) { e.d = Math.max(0, e.d - 240 * (e.boss ? 0.3 : 1)); hit(e, 6); }
       break;
     }
     case 'armorCrush': {
       rad = 520;
-      for (const e of near(b, cx, cy, rad)) {
+      for (const e of targets) {
         e.armorUntil = Math.max(e.armorUntil, b.t + 6);
         e.defDown = Math.max(e.defDown, 0.5); e.defUntil = b.t + 6;
         hit(e, 3);
       }
       break;
     }
-    case 'smoke': for (const e of near(b, cx, cy, rad)) { e.stopUntil = Math.max(e.stopUntil, b.t + (e.boss ? 1 : 3)); e.stopImmune = e.stopUntil + 0.5; } break;
+    case 'smoke': for (const e of targets) { e.stopUntil = Math.max(e.stopUntil, b.t + (e.boss ? 1 : 3)); e.stopImmune = e.stopUntil + 0.5; } break;
     case 'shadow': {
       rad = 700;
       let any = false;
-      for (const e of near(b, cx, cy, rad)) {
+      for (const e of targets) {
+        // 範囲内の暗殺対象がいない時の前方1体は、従来どおり通常の8倍攻撃。
+        if (Math.hypot(e.x-cx,e.y-cy)>rad) { hit(e,8); any=true; continue; }
         if (!e.boss && e.hp <= e.maxHp * 0.3) { any = true; hurt(b, p, w, e, { n: Math.ceil(e.hp), metal: false, weak: false }, { skill: true }); }
         else if (e.boss) { any = true; hit(e, 8); }
       }
@@ -679,7 +707,7 @@ export function useSkill(b: Battle, p: Progress, w: Warden): boolean {
       break;
     }
     case 'plunder': {
-      for (const e of near(b, cx, cy, rad)) {
+      for (const e of targets) {
         hit(e, 4);
         const n = Math.max(1, Math.round(6 * b.reward * cm));
         p.coins += n; b.coins += n;
@@ -742,12 +770,12 @@ export function step(b: Battle, p: Progress, dt = STEP) {
 
 /** 何秒ぶん進める（刻みに分ける） */
 export function advance(b: Battle, p: Progress, seconds: number) {
-  let left = seconds;
-  while (left > 1e-9 && b.phase === 'fight') {
-    const dt = Math.min(STEP, left);
-    step(b, p, dt);
-    left -= dt;
-  }
+  if (!Number.isFinite(seconds) || seconds <= 0 || b.phase !== 'fight') return;
+  const total = (b.carry ?? 0) + seconds;
+  const ticks = Math.floor((total + 1e-9) / STEP);
+  b.carry = Math.max(0, total - ticks * STEP);
+  for (let i = 0; i < ticks && b.phase === 'fight'; i++) step(b, p);
+  if (b.phase !== 'fight') b.carry = 0;
 }
 
 /** 生きている敵 */

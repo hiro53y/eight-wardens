@@ -8,6 +8,7 @@ import { Help, Modal, SettingsPanel, VERSION } from './common';
 interface Props {
   loaded: number;
   hasSave: boolean;
+  hasRecord: boolean;
   settings: Settings;
   onSettings: (s: Settings) => void;
   onNew: (mode: Mode) => void;
@@ -15,12 +16,12 @@ interface Props {
   onWipe: () => void;
 }
 
-export function Title({ loaded, hasSave, settings, onSettings, onNew, onContinue, onWipe }: Props) {
+export function Title({ loaded, hasSave, hasRecord, settings, onSettings, onNew, onContinue, onWipe }: Props) {
   const [modal, setModal] = useState<'' | 'mode' | 'help' | 'settings'>('');
   const [overwrite, setOverwrite] = useState<Mode | null>(null);
   const ready = loaded >= 1;
   const pick = (m: Mode) => {
-    if (hasSave && overwrite !== m) { setOverwrite(m); playSe('menu'); return; }
+    if (hasRecord && overwrite !== m) { setOverwrite(m); playSe('menu'); return; }
     playSe('equip');
     onNew(m);
   };

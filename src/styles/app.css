@@ -427,3 +427,7 @@ i.up { position: absolute; top: 2px; right: 4px; font-style: normal; font-size: 
 @media (max-width: 900px) { .map-hud .chip.score, .btn.hubbtn span { display: none; } }
 
 .res-rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16px; width: min(440px, 100%); }
+
+/* v3.1: visible names and a single paused inspection panel */
+.enemy-profile{display:flex;gap:14px;align-items:center}.enemy-details{font-size:13px;line-height:1.5}.enemy-details h3{font-size:14px;margin:12px 0 5px}.enemy-details ul{padding-left:20px}.boss-advice{background:#232f45;border:1px solid #697c9b;border-radius:8px;padding:10px}.boss-countdown{font-size:10px;display:block;font-weight:500}.boss-bar{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;width:min(52vw,450px)}.boss-bar>i{width:100%;height:7px}.boss-bar span{white-space:normal}.btn.hubbtn i{font-size:11px}.map-hud{flex-wrap:wrap;align-content:flex-start}.enemy-chip{color:inherit;text-align:left;cursor:pointer}.enemy-chip:hover{border-color:#e3bd62}
+@media(max-width:900px){.map-hud .chip.mode,.map-hud .chip.score{display:none}.map-hud{gap:3px;padding:4px}.map-hud .chip{font-size:10px;padding:3px 5px}.map-hud .btn{font-size:10px;min-height:28px;padding:3px 6px}.map-hud .grow{display:none}.map-hud .btn.hubbtn{padding:3px 5px}.map-hud .btn.hubbtn i{font-size:10px}}

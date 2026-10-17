@@ -1,0 +1,436 @@
+[
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 100,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 117,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 134,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 151,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 168,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 185,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 202,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 219,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 236,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "normal",
+    "seed": 253,
+    "cleared": true,
+    "battles": 35,
+    "retries": 0,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 100,
+    "cleared": true,
+    "battles": 46,
+    "retries": 10,
+    "grinds": 1
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 117,
+    "cleared": true,
+    "battles": 50,
+    "retries": 13,
+    "grinds": 2
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 134,
+    "cleared": true,
+    "battles": 41,
+    "retries": 5,
+    "grinds": 1
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 151,
+    "cleared": true,
+    "battles": 44,
+    "retries": 7,
+    "grinds": 2
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 168,
+    "cleared": true,
+    "battles": 44,
+    "retries": 8,
+    "grinds": 1
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 185,
+    "cleared": true,
+    "battles": 46,
+    "retries": 8,
+    "grinds": 3
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 202,
+    "cleared": true,
+    "battles": 43,
+    "retries": 7,
+    "grinds": 1
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 219,
+    "cleared": true,
+    "battles": 43,
+    "retries": 7,
+    "grinds": 1
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 236,
+    "cleared": true,
+    "battles": 42,
+    "retries": 7,
+    "grinds": 0
+  },
+  {
+    "suite": "CAMPAIGN",
+    "mode": "pro",
+    "seed": 253,
+    "cleared": true,
+    "battles": 46,
+    "retries": 9,
+    "grinds": 2
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 10,
+    "seed": 1000,
+    "best": 16
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 10,
+    "seed": 2000,
+    "best": 16
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 10,
+    "seed": 3000,
+    "best": 17
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 20,
+    "seed": 1000,
+    "best": 66
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 20,
+    "seed": 2000,
+    "best": 65
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 20,
+    "seed": 3000,
+    "best": 65
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 35,
+    "seed": 1000,
+    "best": 64
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 35,
+    "seed": 2000,
+    "best": 64
+  },
+  {
+    "suite": "TOWER",
+    "mainBattles": 35,
+    "seed": 3000,
+    "best": 69
+  },
+  {
+    "suite": "DAILY",
+    "rule": "metal",
+    "date": "2026-10-24",
+    "seed": 1,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "metal",
+    "date": "2026-10-24",
+    "seed": 2,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "metal",
+    "date": "2026-10-24",
+    "seed": 3,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "metal",
+    "date": "2026-10-24",
+    "seed": 4,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "metal",
+    "date": "2026-10-24",
+    "seed": 5,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "fast",
+    "date": "2026-10-26",
+    "seed": 1,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "fast",
+    "date": "2026-10-26",
+    "seed": 2,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "fast",
+    "date": "2026-10-26",
+    "seed": 3,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "fast",
+    "date": "2026-10-26",
+    "seed": 4,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "fast",
+    "date": "2026-10-26",
+    "seed": 5,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "sky",
+    "date": "2026-10-29",
+    "seed": 1,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "sky",
+    "date": "2026-10-29",
+    "seed": 2,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "sky",
+    "date": "2026-10-29",
+    "seed": 3,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "sky",
+    "date": "2026-10-29",
+    "seed": 4,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "sky",
+    "date": "2026-10-29",
+    "seed": 5,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "noRest",
+    "date": "2026-10-31",
+    "seed": 1,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "noRest",
+    "date": "2026-10-31",
+    "seed": 2,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "noRest",
+    "date": "2026-10-31",
+    "seed": 3,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "noRest",
+    "date": "2026-10-31",
+    "seed": 4,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "noRest",
+    "date": "2026-10-31",
+    "seed": 5,
+    "phase": "won",
+    "reward": true
+  },
+  {
+    "suite": "DAILY",
+    "rule": "bossRush",
+    "date": "2026-10-22",
+    "seed": 1,
+    "phase": "lost",
+    "reward": false
+  },
+  {
+    "suite": "DAILY",
+    "rule": "bossRush",
+    "date": "2026-10-22",
+    "seed": 2,
+    "phase": "lost",
+    "reward": false
+  },
+  {
+    "suite": "DAILY",
+    "rule": "bossRush",
+    "date": "2026-10-22",
+    "seed": 3,
+    "phase": "lost",
+    "reward": false
+  },
+  {
+    "suite": "DAILY",
+    "rule": "bossRush",
+    "date": "2026-10-22",
+    "seed": 4,
+    "phase": "lost",
+    "reward": false
+  },
+  {
+    "suite": "DAILY",
+    "rule": "bossRush",
+    "date": "2026-10-22",
+    "seed": 5,
+    "phase": "lost",
+    "reward": false
+  }
+]

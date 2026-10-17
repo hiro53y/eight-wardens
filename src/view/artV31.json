@@ -1,0 +1,68 @@
+{
+  "iris": {
+    "r": {
+      "x": 23,
+      "y": 28,
+      "w": 730,
+      "h": 590
+    },
+    "width": 768,
+    "height": 640,
+    "flip": false
+  },
+  "sena": {
+    "r": {
+      "x": 26,
+      "y": 2,
+      "w": 726,
+      "h": 624
+    },
+    "width": 768,
+    "height": 640,
+    "flip": false
+  },
+  "shield_goblin": {
+    "r": {
+      "x": 19,
+      "y": 19,
+      "w": 731,
+      "h": 592
+    },
+    "width": 768,
+    "height": 636,
+    "flip": false
+  },
+  "shaman": {
+    "r": {
+      "x": 44,
+      "y": 13,
+      "w": 679,
+      "h": 608
+    },
+    "width": 768,
+    "height": 636,
+    "flip": false
+  },
+  "orc_lord": {
+    "r": {
+      "x": 6,
+      "y": 7,
+      "w": 739,
+      "h": 754
+    },
+    "width": 750,
+    "height": 768,
+    "flip": false
+  },
+  "worm_king": {
+    "r": {
+      "x": 29,
+      "y": 13,
+      "w": 704,
+      "h": 676
+    },
+    "width": 768,
+    "height": 702,
+    "flip": false
+  }
+}

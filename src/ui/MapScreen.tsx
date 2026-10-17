@@ -1,3 +1,4 @@
+import {EnemyDetails} from './EnemyPanel';
 // 章の地図：35のステージを村から魔境へ。選ぶと敵の顔ぶれと報酬
 import { useLayoutEffect, useRef, useState } from 'react';
 import { playSe } from '../audio/sound';
@@ -51,7 +52,7 @@ export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTower, 
       const cw = el.clientWidth, ch = el.clientHeight;
       // 道すじ（y 150〜880）が上の帯の下にすべて入る大きさ
       const hud = 40;
-      const s = Math.min(Math.max(cw / MAP_W, ch / MAP_H), (ch - hud - 4) / 730);
+      const s = Math.min(cw / MAP_W, (ch - hud - 4) / 730);
       const oy = Math.min(hud - 150 * s, Math.max(ch - MAP_H * s, (ch - MAP_H * s) / 2));
       setView({ s, ox: (cw - MAP_W * s) / 2, oy });
     };
@@ -113,11 +114,11 @@ export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTower, 
         <span className="chip score">点 <b>{fmtNum(p.score)}</b></span>
         <span className="grow" />
       
-        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('village'); }}><i>村</i><span>施設</span></button>
+        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('village'); }}><i>村の施設</i></button>
         <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('shop'); }}><i>店</i><span>{p.shop.length}品</span></button>
-        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('items'); }}><i>袋</i><span>{p.items.length}</span></button>
-        <button className={`btn small hubbtn ${towerOpen(p) ? 'hot' : 'off'}`} onClick={() => { playSe('menu'); setModal('tower'); }}><i>塔</i><span>{p.tower.best ? `${p.tower.best}階` : towerOpen(p) ? '挑む' : '未'}</span></button>
-        <button className={`btn small hubbtn ${towerOpen(p) && !(p.daily.date === dateKey() && p.daily.cleared) ? 'hot' : ''} ${towerOpen(p) ? '' : 'off'}`} onClick={() => { playSe('menu'); setModal('daily'); }}><i>日</i><span>毎日</span></button>
+        <button className="btn small hubbtn" onClick={() => { playSe('menu'); setModal('items'); }}><i>持ち物</i><span>{p.items.length}</span></button>
+        <button className={`btn small hubbtn ${towerOpen(p) ? 'hot' : 'off'}`} onClick={() => { playSe('menu'); setModal('tower'); }}><i>無限の塔</i><span>{p.tower.best ? `${p.tower.best}階` : towerOpen(p) ? '挑む' : '未'}</span></button>
+        <button className={`btn small hubbtn ${towerOpen(p) && !(p.daily.date === dateKey() && p.daily.cleared) ? 'hot' : ''} ${towerOpen(p) ? '' : 'off'}`} onClick={() => { playSe('menu'); setModal('daily'); }}><i>毎日の挑戦</i></button>
         <button className={`btn small gold ${ready ? 'pulse' : ''}`} onClick={() => { playSe('menu'); setModal('units'); }}>部隊{ready ? ' ▲' : ''}</button>
         <button className="btn small" onClick={() => { playSe('menu'); setModal('help'); }}>?</button>
         <button className="btn small" onClick={() => { playSe('menu'); setModal('settings'); }}>設定</button>
@@ -166,6 +167,7 @@ export function MapScreen({ p, settings, onSettings, onChange, onPlay, onTower, 
 }
 
 function StageModal({ p, id, onClose, onPlay }: { p: Progress; id: number; onClose: () => void; onPlay: () => void }) {
+  const [info,setInfo]=useState<string|null>(null);
   const s = stage(id);
   const ch = chapterOf(id);
   const list = stageEnemies(id).map((e) => enemy(e));
@@ -175,7 +177,7 @@ function StageModal({ p, id, onClose, onPlay }: { p: Progress; id: number; onClo
       <div className="stage-info">
         <div className="enemy-list">
           {list.map((e) => (
-            <div key={e.id} className={`enemy-chip ${e.boss ? 'boss' : ''}`}>
+            <button type="button" onClick={()=>setInfo(info===e.id?null:e.id)} key={e.id} className={`enemy-chip ${e.boss ? 'boss' : ''}`}>
               <div className="eicon" style={enemyStyle(e, 44)} />
               <div>
                 <b>{e.name}</b>
@@ -187,9 +189,10 @@ function StageModal({ p, id, onClose, onPlay }: { p: Progress; id: number; onClo
                   {e.lives > 1 && <i className="tag">村人-{e.lives}</i>}
                 </span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
+        {info&&<EnemyDetails def={enemy(info)}/>}
         <div className="stage-meta">
           <span>敵 <b>{stageEnemyCount(id)}</b>体</span>
           <span>休憩1回 <b>{s.boss ? '効かない' : `EXP ${fmtNum(restExpOf(p, id))}`}</b></span>

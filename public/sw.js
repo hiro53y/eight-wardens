@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eight-wardens-shell-v11-plus';
+const CACHE_NAME = 'eight-wardens-shell-v12-art-inspection';
 // 遊ぶのに要る物だけ先に入れる（絵は WebP の軽量版。BGM は流す時に読む）
 const APP_SHELL = [
   '/',
@@ -13,7 +13,17 @@ const APP_SHELL = [
   '/assets/v2/result.webp',
   '/assets/v2/wardens.webp',
   '/assets/v2/enemies.webp',
-  '/assets/v2/portraits.webp',
+  '/assets/v31/iris.webp',
+  '/assets/v31/sena.webp',
+  '/assets/v31/shield_goblin.webp',
+  '/assets/v31/shaman.webp',
+  '/assets/v31/orc_lord.webp',
+  '/assets/v31/worm_king.webp',
+  '/assets/v31/battle_forest.webp',
+  '/assets/v31/battle_canyon.webp',
+  '/assets/v31/battle_desert.webp',
+  '/assets/v31/battle_abyss.webp',
+  '/assets/v31/portraits.webp',
   '/assets/v2/enemy_goblin.webp',
   '/assets/v2/enemy_orc.webp',
   '/assets/v2/enemy_wolf_elite.webp',

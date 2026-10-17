@@ -1,0 +1,114 @@
+[
+  {
+    "name": "iris",
+    "file": "public/assets/v31/iris.webp",
+    "source": "out/v31/iris.png",
+    "tool": "built-in image_gen",
+    "transparent": true,
+    "references": [
+      "assets/v2/wardens.webp",
+      "assets/generated/unit-portraits-sheet.png"
+    ],
+    "prompt": "Original fantasy RPG game art. Match the reference's polished chibi anime illustration, crisp silhouettes, warm upper-left lighting and rich material highlights. One full body character on genuine transparent alpha, no ground/shadow/background, no text or frame, all limbs/weapons comfortably inside frame with 8% margins. Character faces LEFT (nose points toward the LEFT edge), three-quarter view. Reference bottom-right Iris only. Preserve her lavender long hair, purple eyes, gold circlet and white/violet/gold outfit. Draw a 2.7-head-tall chibi swordswoman holding a silver longsword angled down-left and a small violet-gold shield. Replace staff with sword. Face and gaze LEFT, sword arm in foreground. Do not depict any of the other seven characters."
+  },
+  {
+    "name": "sena",
+    "file": "public/assets/v31/sena.webp",
+    "source": "out/v31/sena.png",
+    "tool": "built-in image_gen",
+    "transparent": true,
+    "references": [
+      "assets/v2/wardens.webp",
+      "assets/generated/unit-portraits-sheet.png"
+    ],
+    "prompt": "Original fantasy RPG game art. Match the reference's polished chibi anime illustration, crisp silhouettes, warm upper-left lighting and rich material highlights. One full body character on genuine transparent alpha, no ground/shadow/background, no text or frame, all limbs/weapons comfortably inside frame with 8% margins. Character faces LEFT (nose points toward the LEFT edge), three-quarter view. Reference TOP RIGHT Sena only, the young adult brown-haired, green-eyed teal-hooded scout. Preserve this person's recognizable face and hood/clothing; replace spear with a finely crafted wood recurve BOW and arrow nocked, aim bow toward LEFT. Compact battle-ready archer, two complete feet visible, 2.7-head-tall chibi. No spear, dagger, sword, cape holes or extra characters."
+  },
+  {
+    "name": "shield_goblin",
+    "file": "public/assets/v31/shield_goblin.webp",
+    "source": "out/v31/shield_goblin.png",
+    "tool": "built-in image_gen",
+    "transparent": true,
+    "references": [
+      "assets/v2/enemy_goblin.webp"
+    ],
+    "prompt": "Original fantasy RPG game art. Match the reference's polished chibi anime illustration, crisp silhouettes, warm upper-right lighting and rich material highlights. One full body character on genuine transparent alpha, no ground/shadow/background, no text or frame, all limbs/weapons comfortably inside frame with 8% margins. Character faces RIGHT (nose points toward the RIGHT edge), three-quarter view. Use the reference goblin's species and rendering. Heavy shield goblin, green skin, reddish eyes, spiked metal helmet, iron/wood round shield dominating the forward arm on viewer right, short iron spear in other hand, chainmail and brown leather. Broad sturdy silhouette, defensive stance. A shield must be unmistakable even at 48px. Exactly one goblin."
+  },
+  {
+    "name": "shaman",
+    "file": "public/assets/v31/shaman.webp",
+    "source": "out/v31/shaman.png",
+    "tool": "built-in image_gen",
+    "transparent": true,
+    "references": [
+      "assets/v2/enemy_goblin.webp"
+    ],
+    "prompt": "Original fantasy RPG game art. Match the reference's polished chibi anime illustration, crisp silhouettes, warm upper-right lighting and rich material highlights. One full body character on genuine transparent alpha, no ground/shadow/background, no text or frame, all limbs/weapons comfortably inside frame with 8% margins. Character faces RIGHT (nose points toward the RIGHT edge), three-quarter view. Healing goblin shaman, same species and rendering as reference. Green skin, reddish amber eyes, long pointed ears. Bone/bead headdress, teal and ochre woven robe, wooden healing staff topped by an emerald crystal and small bone charms. No helmet or spear. One visible raised open hand and one hand gripping staff. Distinct upright narrow healer silhouette, not a warrior."
+  },
+  {
+    "name": "orc_lord",
+    "file": "public/assets/v31/orc_lord.webp",
+    "source": "out/v31/orc_lord.png",
+    "tool": "built-in image_gen",
+    "transparent": true,
+    "references": [
+      "assets/v2/enemy_orc.webp"
+    ],
+    "prompt": "Original fantasy RPG game art. Match the reference's polished chibi anime illustration, crisp silhouettes, warm upper-right lighting and rich material highlights. One full body character on genuine transparent alpha, no ground/shadow/background, no text or frame, all limbs/weapons comfortably inside frame with 8% margins. Character faces RIGHT (nose points toward the RIGHT edge), three-quarter view. A powerful orc warlord of the same species as reference, oversized tusks, scarred green face, blackened iron and gold armor, deep crimson cloak, crownlike horned helmet, heavy double edged battleaxe held across body. One commanding stocky original boss, readable detailed silhouette. Full body and all axe blades inside frame. Do not simply enlarge the normal orc."
+  },
+  {
+    "name": "worm_king",
+    "file": "public/assets/v31/worm_king.webp",
+    "source": "out/v31/worm_king.png",
+    "tool": "built-in image_gen",
+    "transparent": true,
+    "references": [
+      "assets/v2/enemies.webp"
+    ],
+    "prompt": "Original fantasy RPG game art. Match the reference's polished chibi anime illustration, crisp silhouettes, warm upper-right lighting and rich material highlights. One full body character on genuine transparent alpha, no ground/shadow/background, no text or frame, all limbs/weapons comfortably inside frame with 8% margins. Character faces RIGHT (nose points toward the RIGHT edge), three-quarter view. One huge sand burrowing worm king, based on the TOP RIGHT sandworm in reference. Thick segmented sandstone carapace with golden mineral ridges, crownlike cluster of amber crystals behind its many-eyed head, massive circular toothed mouth angled RIGHT, lower coiled body firmly visible. Different armored royal silhouette from the normal worm. Cute-menacing polished RPG boss, not photorealistic horror, no gore."
+  },
+  {
+    "name": "battle_forest",
+    "file": "public/assets/v31/battle_forest.webp",
+    "source": "out/v31/battle_forest.png",
+    "tool": "built-in image_gen",
+    "transparent": false,
+    "references": [
+      "assets/v2/battle.webp"
+    ],
+    "prompt": "Use case: precise-object-edit. Edit this game battlefield BACKGROUND ONLY to this chapter theme: Dense ancient green forest, mossy stones, giant tree roots framing the sides, warm amber evening rays, woodland fortification. CRITICAL: preserve the reference image's exact wide 1672:941 composition, camera, perspective and layout. Preserve ALL TWELVE circular stone pedestal centers in exactly the same places (three columns, four rows), the three open horizontal enemy lanes at the same heights, and the castle gateway mouth at x=81.5%,y=43%. Do not add obstacles, characters, UI, letters, symbols or extra paths. Keep pedestal shapes/positions and gateway geometry, recolor their materials to fit theme. Change terrain/vegetation/distant scenery/lighting to theme. Hand-painted high-quality fantasy game environment matching reference detail. Clear playable middle-ground, decorated edges. Full opaque landscape."
+  },
+  {
+    "name": "battle_canyon",
+    "file": "public/assets/v31/battle_canyon.webp",
+    "source": "out/v31/battle_canyon.png",
+    "tool": "built-in image_gen",
+    "transparent": false,
+    "references": [
+      "assets/v2/battle.webp"
+    ],
+    "prompt": "Use case: precise-object-edit. Edit this game battlefield BACKGROUND ONLY to this chapter theme: Blue moonlit rocky gorge, distant cliffs, mist, indigo night sky and a few warm fortress torches. Still bright enough to read the battlefield. CRITICAL: preserve the reference image's exact wide 1672:941 composition, camera, perspective and layout. Preserve ALL TWELVE circular stone pedestal centers in exactly the same places (three columns, four rows), the three open horizontal enemy lanes at the same heights, and the castle gateway mouth at x=81.5%,y=43%. Do not add obstacles, characters, UI, letters, symbols or extra paths. Keep pedestal shapes/positions and gateway geometry, recolor their materials to fit theme. Change terrain/vegetation/distant scenery/lighting to theme. Hand-painted high-quality fantasy game environment matching reference detail. Clear playable middle-ground, decorated edges. Full opaque landscape."
+  },
+  {
+    "name": "battle_desert",
+    "file": "public/assets/v31/battle_desert.webp",
+    "source": "out/v31/battle_desert.png",
+    "tool": "built-in image_gen",
+    "transparent": false,
+    "references": [
+      "assets/v2/battle.webp"
+    ],
+    "prompt": "Use case: precise-object-edit. Edit this game battlefield BACKGROUND ONLY to this chapter theme: Sunlit ochre desert, distant dunes and sandstone cliffs, sandy ground, weathered sandstone fortress and small dry shrubs. No green grass. CRITICAL: preserve the reference image's exact wide 1672:941 composition, camera, perspective and layout. Preserve ALL TWELVE circular stone pedestal centers in exactly the same places (three columns, four rows), the three open horizontal enemy lanes at the same heights, and the castle gateway mouth at x=81.5%,y=43%. Do not add obstacles, characters, UI, letters, symbols or extra paths. Keep pedestal shapes/positions and gateway geometry, recolor their materials to fit theme. Change terrain/vegetation/distant scenery/lighting to theme. Hand-painted high-quality fantasy game environment matching reference detail. Clear playable middle-ground, decorated edges. Full opaque landscape."
+  },
+  {
+    "name": "battle_abyss",
+    "file": "public/assets/v31/battle_abyss.webp",
+    "source": "out/v31/battle_abyss.png",
+    "tool": "built-in image_gen",
+    "transparent": false,
+    "references": [
+      "assets/v2/battle.webp"
+    ],
+    "prompt": "Use case: precise-object-edit. Edit this game battlefield BACKGROUND ONLY to this chapter theme: Purple crystal badlands, dark basalt, violet luminous crystals on perimeter, distant magical rift, dramatic but readable pale stone fighting ground. CRITICAL: preserve the reference image's exact wide 1672:941 composition, camera, perspective and layout. Preserve ALL TWELVE circular stone pedestal centers in exactly the same places (three columns, four rows), the three open horizontal enemy lanes at the same heights, and the castle gateway mouth at x=81.5%,y=43%. Do not add obstacles, characters, UI, letters, symbols or extra paths. Keep pedestal shapes/positions and gateway geometry, recolor their materials to fit theme. Change terrain/vegetation/distant scenery/lighting to theme. Hand-painted high-quality fantasy game environment matching reference detail. Clear playable middle-ground, decorated edges. Full opaque landscape."
+  }
+]

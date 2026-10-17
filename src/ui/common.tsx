@@ -3,7 +3,7 @@ import { useState, type ReactNode } from 'react';
 import { playSe } from '../audio/sound';
 import type { Settings } from '../game/types';
 
-export const VERSION = '3.0.0';
+export const VERSION = '3.1.0';
 
 export function Modal({ title, onClose, children, wide, className }: { title?: ReactNode; onClose?: () => void; children: ReactNode; wide?: boolean; className?: string }) {
   return (

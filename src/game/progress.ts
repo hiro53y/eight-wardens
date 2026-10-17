@@ -108,7 +108,7 @@ export function limitBreak(p: Progress, w: Warden): boolean {
 
 /** 台座へ動かす（いれば入れ替える） */
 export function moveTo(p: Progress, w: Warden, pedestal: number): void {
-  if (pedestal < 0 || pedestal >= PEDESTALS.length) return;
+  if (!Number.isInteger(pedestal) || pedestal < 0 || pedestal >= PEDESTALS.length) return;
   const other = p.wardens.find((x) => x !== w && x.pedestal === pedestal);
   if (other) other.pedestal = w.pedestal;
   w.pedestal = pedestal;

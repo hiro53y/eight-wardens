@@ -1,0 +1,158 @@
+[
+  {
+    "path": "/assets/index-CbR8mFt3.js",
+    "equal": true,
+    "bytes": 291898,
+    "sha256": "f84917012eea4cf8cd2dc85f9c0f1cde55c8226537770daa37d905322f3a41dd"
+  },
+  {
+    "path": "/assets/index-BE5Q4VQU.css",
+    "equal": true,
+    "bytes": 29911,
+    "sha256": "553f256830323d2f2a6f18b51d0293053d49b2426fd9497a33a0f8c4e28845d5"
+  },
+  {
+    "path": "/service-worker.js",
+    "equal": true,
+    "bytes": 3704,
+    "sha256": "08b1986ab075be82789ecf738ca7f5f7f5945eaedc1d4d4005e637ca7a021289"
+  },
+  {
+    "path": "/sw.js",
+    "equal": true,
+    "bytes": 3704,
+    "sha256": "08b1986ab075be82789ecf738ca7f5f7f5945eaedc1d4d4005e637ca7a021289"
+  },
+  {
+    "path": "/manifest.webmanifest",
+    "equal": true,
+    "bytes": 1215,
+    "sha256": "69aa269bb98971758556d4704493a9834ef3e57600e3f67dcac43dba98f879b5"
+  },
+  {
+    "path": "/icons/icon-192.png",
+    "equal": true,
+    "bytes": 6304,
+    "sha256": "7921b29f5787fcb6cc1f71cb82c0b00fb43d8e74b6e5aa1208e138a7ff78c676"
+  },
+  {
+    "path": "/icons/icon-512.png",
+    "equal": true,
+    "bytes": 25330,
+    "sha256": "5adba1f65aa51fccc6a6ccf97faf60e6b834fbf9feaaf9c355e9eae1fd2b2929"
+  },
+  {
+    "path": "/icons/icon-maskable-512.png",
+    "equal": true,
+    "bytes": 25330,
+    "sha256": "5adba1f65aa51fccc6a6ccf97faf60e6b834fbf9feaaf9c355e9eae1fd2b2929"
+  },
+  {
+    "path": "/assets/v32/alto.webp",
+    "equal": true,
+    "bytes": 252544,
+    "sha256": "a88c27142dd68b2df3001a1ddfd25fbea93f44e094aa4739f135b2c3a2b28b27"
+  },
+  {
+    "path": "/assets/v32/battle1.webp",
+    "equal": true,
+    "bytes": 379042,
+    "sha256": "5104c7034ecdb11eaad4b5a6124a217f91fb6999ed9c18ea96f8f270e1fb44a4"
+  },
+  {
+    "path": "/assets/v32/battle2.webp",
+    "equal": true,
+    "bytes": 522004,
+    "sha256": "60c33ed0d41ceeb87628df1a75b3b133b387ac90ccf6648023ef19dfca9fcb66"
+  },
+  {
+    "path": "/assets/v32/battle3.webp",
+    "equal": true,
+    "bytes": 377256,
+    "sha256": "0e17dd31f1cd37f0159bef1892e3e3232c67dc44f5fa7279b5b4f814bb12bd00"
+  },
+  {
+    "path": "/assets/v32/battle4.webp",
+    "equal": true,
+    "bytes": 317770,
+    "sha256": "2465b70172077e397144a0b79fb65a4fc0f920de0bab5158b21c70c6c6c04233"
+  },
+  {
+    "path": "/assets/v32/battle5.webp",
+    "equal": true,
+    "bytes": 426254,
+    "sha256": "08872dab5944225c0947c7778c6618562aca1a49b5ac8fe35d60bb61f30b85a5"
+  },
+  {
+    "path": "/assets/v32/greta.webp",
+    "equal": true,
+    "bytes": 270810,
+    "sha256": "38fff718caca67072ab4914ac3683124efaf7208851d1233ba6fa328829bba4b"
+  },
+  {
+    "path": "/assets/v32/iris.webp",
+    "equal": true,
+    "bytes": 328256,
+    "sha256": "9b84efe5850894e7818d1642d2c2fce6224e804054e82ef354483de7bf479525"
+  },
+  {
+    "path": "/assets/v32/kai.webp",
+    "equal": true,
+    "bytes": 219776,
+    "sha256": "f4211aa1444a8977b77b13ed580a9dba05716226ef8406815dd9457f374a6816"
+  },
+  {
+    "path": "/assets/v32/lyca.webp",
+    "equal": true,
+    "bytes": 289456,
+    "sha256": "87c506b24da11a42c29270fcdacc319bca55a51bae4973296e1b5924344830fa"
+  },
+  {
+    "path": "/assets/v32/map1.webp",
+    "equal": true,
+    "bytes": 408150,
+    "sha256": "a5cc4539ce5cd9bd866c87c9be89e805c97c63273b25e1176df4d539403e1441"
+  },
+  {
+    "path": "/assets/v32/map2.webp",
+    "equal": true,
+    "bytes": 744620,
+    "sha256": "4d12677a1d2d70f4f8c2b930a926b1e4c50d1a7754f074fa544c3c972a879a74"
+  },
+  {
+    "path": "/assets/v32/map3.webp",
+    "equal": true,
+    "bytes": 614080,
+    "sha256": "0dc62e7453d9c9b8ffa5801f1094baf31ab1432f39d1046b1698948a2db306ab"
+  },
+  {
+    "path": "/assets/v32/map4.webp",
+    "equal": true,
+    "bytes": 669354,
+    "sha256": "cc267025ca9eb2089efc903370cb6fb8568df8792c428a6d6210d2c2750e5ba2"
+  },
+  {
+    "path": "/assets/v32/map5.webp",
+    "equal": true,
+    "bytes": 693648,
+    "sha256": "ada34239cb1e38f0e2911bd4dba87432792c95338edeee2d0c4eff7860cc93b2"
+  },
+  {
+    "path": "/assets/v32/minato.webp",
+    "equal": true,
+    "bytes": 255792,
+    "sha256": "8268169b8bedb64c1df795fa0d86c3b408574257122c4bdd7460a642d787ace6"
+  },
+  {
+    "path": "/assets/v32/sena.webp",
+    "equal": true,
+    "bytes": 316486,
+    "sha256": "32d98df1110a74f449fef5403fdd66ddbb87a86ffe2ff7c74f064b4fa478adcd"
+  },
+  {
+    "path": "/assets/v32/shino.webp",
+    "equal": true,
+    "bytes": 278420,
+    "sha256": "fefd9d729ffa5aa610f7c74cac9d76270394df0a524d9ab00c6a8f9e08c60f0e"
+  }
+]

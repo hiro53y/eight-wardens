@@ -1,6 +1,6 @@
 # 3.2 引継ぎ
 
-正本はこのリポジトリ。既存URL https://eight-wardens.pages.dev/ とmain連携を継続する。
+正本はこのリポジトリ。既存URL https://eight-wardens.pages.dev/ へ3.2.0公開済み。main連携を継続する。
 
 - 現行仕様はspec.md、検証は../_VERIFY.mdと../tests/test_checklist.md、素材はart-v32.json。
 - 新配置はfield.tsを正本とする。見た目だけずらして射程/タップ位置を食い違わせない。古いセーブの配置番号は保持する。

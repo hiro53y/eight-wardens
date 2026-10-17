@@ -31,7 +31,11 @@
 
 ## 公開
 
-作業中。既存URL・APP HUB登録・保存キー・PWA識別を維持する。
+- 実装110e290、案内文の補正73c4406をmainへpush。Cloudflare Pagesはcompleted/success。
+- https://eight-wardens.pages.dev/ でVer. 3.2.0を確認。JS/CSS、新画像18枚、SW2、manifest、アイコン3枚の計26ファイルがdistと一致。SWのみ改行を正規化。docs/public-readback-v32.json。
+- 旧公開版の確認用セーブで、EXP68/金貨176/星3を保持して再開。2面の出撃前に全8人の新画像と新地点を確認。公開版の警告/エラーログなし。
+- 公開画面の証跡：C:/Users/hiro_/Documents/Codex/2026-10-15/g/outputs/eight-wardens-v32-public-map.png と eight-wardens-v32-public-battle.png。
+- 既存URL・APP HUB登録・保存キー・PWA識別を維持。利用者の実セーブを削除/初期化せず、保存領域の消去も行っていない。
 
 ## 未確認
 
